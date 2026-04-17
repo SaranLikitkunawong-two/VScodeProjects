@@ -1,0 +1,448 @@
+/* ── Background plane scene ── */
+.bg-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Globe ── */
+.globe-scene {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 420px;
+  height: 420px;
+  z-index: 1;
+  pointer-events: none;
+  perspective: 1000px;
+}
+
+.globe-spin {
+  width: 420px;
+  height: 420px;
+  animation: globe-rotate 32s linear infinite;
+}
+
+.globe-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* Static light/shadow overlay so lighting doesn't spin with the globe */
+.globe-shading {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 36% 32%, rgba(255,255,255,0.22) 0%, transparent 52%),
+    radial-gradient(circle at 70% 72%, rgba(0,15,50,0.25)    0%, transparent 48%);
+}
+
+@keyframes globe-rotate {
+  from { transform: rotateY(0deg);   }
+  to   { transform: rotateY(360deg); }
+}
+
+/* ── Reset & base ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ── Page background ── */
+body {
+  min-height: 100dvh;
+  background-color: #F5ECD7;
+  background-image:
+    radial-gradient(ellipse at 20% 20%, #FADADD44 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 80%, #D4A57444 0%, transparent 60%);
+  font-family: 'Nunito', sans-serif;
+  color: #3D2B1F;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Centering wrapper ── */
+.page-wrapper {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Card ── */
+.container {
+  background: rgba(255, 248, 240, 0.85);
+  backdrop-filter: blur(6px);
+  border: 1px solid #E8D5B7;
+  border-radius: 24px;
+  box-shadow:
+    0 4px 24px rgba(160, 100, 40, 0.10),
+    0 1px 4px  rgba(160, 100, 40, 0.08);
+  padding: 3.5rem 4rem;
+  text-align: center;
+  max-width: 720px;
+  width: 100%;
+}
+
+/* ── Headings ── */
+.subtitle {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 300;
+  font-size: 0.95rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #A0723A;
+  margin-bottom: 0.5rem;
+}
+
+.title {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: #3D2B1F;
+  margin-bottom: 2.5rem;
+  line-height: 1.2;
+}
+
+/* ── Countdown row ── */
+.countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* ── Individual time unit ── */
+.unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #FFF3E3;
+  border: 1px solid #E8D0AF;
+  border-radius: 16px;
+  padding: 1.25rem 1.75rem;
+  min-width: 110px;
+  box-shadow: 0 2px 8px rgba(160, 100, 40, 0.08);
+}
+
+.number {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 6vw, 3.75rem);
+  font-weight: 600;
+  color: #C8763A;
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #A0723A;
+  margin-top: 0.5rem;
+}
+
+/* ── Colon separators ── */
+.separator {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 400;
+  color: #C8A882;
+  padding-bottom: 1.5rem;
+  user-select: none;
+}
+
+/* ── Target date line ── */
+.target-date {
+  margin-top: 2rem;
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: #B08860;
+  letter-spacing: 0.08em;
+}
+
+/* ── Hearts ── */
+.hearts {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4rem;
+  margin: 1.25rem 0;
+}
+
+.heart {
+  position: relative;
+  width: 28px;
+  height: 32px;
+  background-color: #C8A882;
+  transform: rotate(-45deg);
+  animation: heartbeat 1.6s ease-in-out infinite;
+}
+
+.heart::before,
+.heart::after {
+  content: "";
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  background-color: #C8A882;
+  border-radius: 50%;
+}
+
+.heart::before {
+  top: -16px;
+  left: 0;
+}
+
+.heart::after {
+  top: 0;
+  left: 16px;
+}
+
+.heart:nth-child(2) { animation-delay: 0.2s; }
+.heart:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes heartbeat {
+  0%, 100% { transform: rotate(-45deg) scale(1);    }
+  15%       { transform: rotate(-45deg) scale(1.3);  }
+  30%       { transform: rotate(-45deg) scale(1);    }
+  45%       { transform: rotate(-45deg) scale(1.18); }
+  60%       { transform: rotate(-45deg) scale(1);    }
+}
+
+/* ── Responsive: tablet (≤768px) ── */
+@media (max-width: 768px) {
+  .globe-scene,
+  .globe-spin {
+    width: min(380px, 80vw);
+    height: min(380px, 80vw);
+  }
+
+  .plane-1 { font-size: 54px; }
+  .plane-2 { font-size: 40px; }
+  .plane-3 { font-size: 28px; }
+
+  .container {
+    padding: 2.5rem 2.5rem;
+  }
+}
+
+/* ── Responsive: mobile (≤520px) ── */
+@media (max-width: 520px) {
+  .globe-scene,
+  .globe-spin {
+    width: min(300px, 85vw);
+    height: min(300px, 85vw);
+  }
+
+  .plane-1 { font-size: 38px; }
+  .plane-2 { font-size: 28px; }
+  .plane-3 { font-size: 20px; }
+
+  .container {
+    padding: 2rem 1.25rem;
+  }
+
+  /* Force all 4 units onto one line */
+  .countdown {
+    flex-wrap: nowrap;
+    gap: 0.35rem;
+  }
+
+  .unit {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0.75rem 0.25rem;
+  }
+
+  .number {
+    font-size: clamp(1.5rem, 8vw, 2.5rem);
+  }
+
+  .label {
+    font-size: 0.6rem;
+  }
+
+  .separator {
+    display: none;
+  }
+
+  .hearts {
+    gap: 1.5rem;
+  }
+}
+
+/* ── Responsive: small phones (≤380px) ── */
+@media (max-width: 380px) {
+  .container {
+    padding: 1.5rem 1rem;
+    border-radius: 16px;
+  }
+
+  .title {
+    margin-bottom: 1.5rem;
+  }
+
+  .hearts {
+    gap: 1rem;
+  }
+}
+
+
+/* ─────────────────────────────────────────────
+   Celebration Scene
+───────────────────────────────────────────── */
+#celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: linear-gradient(180deg, #070314 0%, #0b1850 55%, #1a0835 100%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.5s ease;
+  overflow: hidden;
+}
+#celebration.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Fireworks canvas */
+#fw-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* Star field */
+#celebration::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, #fff 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.7) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.5) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.85) 1px, transparent 1px);
+  background-size: 260px 260px, 190px 190px, 340px 340px, 150px 150px;
+  background-position: 30px 20px, 100px 85px, 65px 155px, 195px 45px;
+  opacity: 0.55;
+}
+
+/* ── Welcome message ── */
+#welcome-msg {
+  position: absolute;
+  bottom: 22%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  z-index: 5;
+  opacity: 0;
+  white-space: nowrap;
+  animation: msg-appear 1.5s ease 1s forwards;
+}
+#welcome-msg h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 7vw, 5rem);
+  color: #FFD700;
+  text-shadow:
+    0 0 20px rgba(255, 215, 0, 0.9),
+    0 0 55px rgba(255, 215, 0, 0.45),
+    0 2px 4px rgba(0, 0, 0, 0.65);
+  margin-bottom: 0.6rem;
+}
+#welcome-msg p {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(0.85rem, 2.5vw, 1.25rem);
+  color: #FFB6C1;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+@keyframes msg-appear {
+  from { opacity: 0; transform: translateX(-50%) translateY(22px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0);    }
+}
+
+/* ── Plane + Banner ── */
+#plane-row {
+  position: absolute;
+  top: 22%;
+  left: 0;
+  display: flex;
+  align-items: center;
+  z-index: 6;
+  white-space: nowrap;
+  /* Start mid-flight so it appears immediately when celebration triggers */
+  animation: fly-across 13s linear infinite;
+  animation-delay: -5s;
+  animation-play-state: paused;
+}
+#celebration.active #plane-row {
+  animation-play-state: running;
+}
+
+.banner-strip {
+  background: linear-gradient(135deg, #FF6EB4, #C8005A);
+  color: #fff;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  font-weight: 600;
+  padding: 0.35rem 1.1rem;
+  border-radius: 4px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 0 18px rgba(255, 20, 147, 0.75),
+    0 2px 6px rgba(0, 0, 0, 0.5);
+  letter-spacing: 0.04em;
+}
+
+.rope-svg {
+  flex-shrink: 0;
+  margin: 0 2px;
+}
+
+.plane-cel {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.65));
+  line-height: 1;
+}
+
+@keyframes fly-across {
+  0%   { transform: translateX(-1100px); }
+  100% { transform: translateX(calc(100vw + 500px)); }
+}
+
+/* ── Responsive: celebration ── */
+@media (max-width: 520px) {
+  #welcome-msg {
+    white-space: normal;
+    width: 88vw;
+    bottom: 14%;
+  }
+  #welcome-msg h1 {
+    font-size: clamp(1.8rem, 9vw, 2.5rem);
+  }
+}
+
+
+
+

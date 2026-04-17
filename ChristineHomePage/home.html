@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Counting Down</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Nunito:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Background: animated plane trails -->
+  <div class="bg-scene">
+    <svg class="bg-svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice"
+         xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+
+      <!-- Trail paths (dashed contrails) -->
+      <path id="trail-1"
+        d="M -40 160 C 280 40, 680 360, 980 210 S 1380 80, 1500 160"
+        fill="none" stroke="#C8A882" stroke-width="1.5" stroke-dasharray="7 15" opacity="0.45"/>
+
+      <path id="trail-2"
+        d="M -40 680 C 200 500, 560 640, 860 470 S 1280 310, 1500 390"
+        fill="none" stroke="#C8A882" stroke-width="1.5" stroke-dasharray="6 16" opacity="0.3"/>
+
+      <path id="trail-3"
+        d="M 320 960 C 460 730, 760 530, 1060 390 S 1340 230, 1500 170"
+        fill="none" stroke="#D4A574" stroke-width="1.2" stroke-dasharray="5 18" opacity="0.25"/>
+
+      <!-- Plane 1 — prominent, upper sweep -->
+      <text class="plane-1" font-size="90" fill="#B87A45" opacity="0.6" text-anchor="middle" dominant-baseline="central">✈
+        <animateMotion dur="30s" repeatCount="indefinite" rotate="auto">
+          <mpath href="#trail-1"/>
+        </animateMotion>
+      </text>
+
+      <!-- Plane 2 — mid, lower crossing, offset start -->
+      <text class="plane-2" font-size="70" fill="#C8A882" opacity="0.45" text-anchor="middle" dominant-baseline="central">✈
+        <animateMotion dur="40s" repeatCount="indefinite" rotate="auto" begin="-18s">
+          <mpath href="#trail-2"/>
+        </animateMotion>
+      </text>
+
+      <!-- Plane 3 — small, distant rising path, offset start -->
+      <text class="plane-3" font-size="50" fill="#D4B896" opacity="0.35" text-anchor="middle" dominant-baseline="central">✈
+        <animateMotion dur="24s" repeatCount="indefinite" rotate="auto" begin="-9s">
+          <mpath href="#trail-3"/>
+        </animateMotion>
+      </text>
+
+    </svg>
+  </div>
+
+  <div class="page-wrapper">
+    <div class="container">
+    <h1 class="title">Counting Down</h1>
+      <p class="subtitle">until Saran & Christine are reunited!</p>
+
+
+      <p class="target-date">8 April 2026 &middot; 11:30 pm</p>
+    <div class="hearts">
+      <div class="heart"> </div>
+      <div class="heart"> </div>
+      <div class="heart"> </div>
+    </div>
+      <div class="countdown">
+        <div class="unit">
+          <span class="number" id="days">00</span>
+          <span class="label">Days</span>
+        </div>
+        <div class="separator">:</div>
+        <div class="unit">
+          <span class="number" id="hours">00</span>
+          <span class="label">Hours</span>
+        </div>
+        <div class="separator">:</div>
+        <div class="unit">
+          <span class="number" id="minutes">00</span>
+          <span class="label">Minutes</span>
+        </div>
+        <div class="separator">:</div>
+        <div class="unit">
+          <span class="number" id="seconds">00</span>
+          <span class="label">Seconds</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ── Countdown ──────────────────────────────────────────────
+    // April 8, 2026 at 23:30:00 Melbourne AEST (UTC+10)
+    const target = new Date('2026-04-08T23:30:00+10:00');
+    let celebrationStarted = false;
+    let countdownTimer;
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function updateCountdown() {
+      const now  = new Date();
+      const diff = target - now;
+
+      if (diff <= 0) {
+        ['days', 'hours', 'minutes', 'seconds'].forEach(id => {
+          document.getElementById(id).textContent = '00';
+        });
+        if (!celebrationStarted) {
+          celebrationStarted = true;
+          clearInterval(countdownTimer);
+          triggerCelebration();
+        }
+        return;
+      }
+
+      const days    = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours   = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('days').textContent    = pad(days);
+      document.getElementById('hours').textContent   = pad(hours);
+      document.getElementById('minutes').textContent = pad(minutes);
+      document.getElementById('seconds').textContent = pad(seconds);
+    }
+
+    updateCountdown();
+    countdownTimer = setInterval(updateCountdown, 1000);
+
+    // ── Celebration ────────────────────────────────────────────
+    function triggerCelebration() {
+      document.title = 'Welcome Home Baby!';
+      document.getElementById('celebration').classList.add('active');
+      startFireworks();
+    }
+
+    function startFireworks() {
+      const canvas = document.getElementById('fw-canvas');
+      const ctx    = canvas.getContext('2d');
+
+      function resize() {
+        canvas.width  = window.innerWidth;
+        canvas.height = window.innerHeight;
+        // Fill with background colour so there's no flash of white
+        ctx.fillStyle = 'rgba(7, 3, 20, 1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      const COLORS = [
+        '#FF6EB4', '#FFD700', '#FF4500', '#00CFFF',
+        '#98FB98', '#FFA0C8', '#FFA500', '#C8A0FF'
+      ];
+
+      // ── Spark (explosion particle) ──
+      class Spark {
+        constructor(x, y) {
+          const angle  = Math.random() * Math.PI * 2;
+          const spd    = 1.5 + Math.random() * 5.5;
+          this.x       = x;
+          this.y       = y;
+          this.color   = COLORS[Math.floor(Math.random() * COLORS.length)];
+          this.vx      = Math.cos(angle) * spd;
+          this.vy      = Math.sin(angle) * spd;
+          this.alpha   = 1;
+          this.decay   = 0.011 + Math.random() * 0.015;
+          this.r       = 1.5 + Math.random() * 2.5;
+        }
+        tick() {
+          this.x     += this.vx;
+          this.y     += this.vy;
+          this.vy    += 0.07;   // gravity
+          this.vx    *= 0.97;
+          this.vy    *= 0.97;
+          this.alpha -= this.decay;
+        }
+        draw() {
+          ctx.save();
+          ctx.globalAlpha = Math.max(0, this.alpha);
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      // ── Shell (rising rocket) ──
+      class Shell {
+        constructor() {
+          this.x       = canvas.width * 0.1 + Math.random() * canvas.width * 0.8;
+          this.y       = canvas.height;
+          this.vy      = -(9 + Math.random() * 8);
+          this.targetY = canvas.height * (0.08 + Math.random() * 0.42);
+          this.color   = COLORS[Math.floor(Math.random() * COLORS.length)];
+          this.trail   = [];
+          this.done    = false;
+        }
+        tick(sparks) {
+          this.trail.push([this.x, this.y]);
+          if (this.trail.length > 10) this.trail.shift();
+          this.y  += this.vy;
+          this.vy += 0.22;  // gravity slows ascent
+          // Explode at target altitude or apex
+          if (this.y <= this.targetY || this.vy >= 0) {
+            const n = 80 + Math.floor(Math.random() * 70);
+            for (let i = 0; i < n; i++) sparks.push(new Spark(this.x, this.y));
+            this.done = true;
+          }
+        }
+        draw() {
+          ctx.save();
+          for (let i = 0; i < this.trail.length; i++) {
+            const [tx, ty] = this.trail[i];
+            ctx.globalAlpha = (i / this.trail.length) * 0.65;
+            ctx.beginPath();
+            ctx.arc(tx, ty, 2.5, 0, Math.PI * 2);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+      }
+
+      const sparks = [];
+      const shells = [];
+      let lastLaunch = 0;
+
+      function loop(ts) {
+        // Slight fade trail effect instead of clearing fully
+        ctx.fillStyle = 'rgba(7, 3, 20, 0.18)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Launch a new shell every ~500–1200 ms; occasionally a double burst
+        if (ts - lastLaunch > 500 + Math.random() * 700) {
+          shells.push(new Shell());
+          if (Math.random() < 0.4) shells.push(new Shell());
+          lastLaunch = ts;
+        }
+
+        for (let i = shells.length - 1; i >= 0; i--) {
+          shells[i].tick(sparks);
+          shells[i].draw();
+          if (shells[i].done) shells.splice(i, 1);
+        }
+        for (let i = sparks.length - 1; i >= 0; i--) {
+          sparks[i].tick();
+          sparks[i].draw();
+          if (sparks[i].alpha <= 0) sparks.splice(i, 1);
+        }
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+    }
+  </script>
+
+  <!-- ─── Celebration Scene (shown when countdown hits zero) ─── -->
+  <div id="celebration">
+    <canvas id="fw-canvas"></canvas>
+
+    <!-- Plane towing a banner -->
+    <div id="plane-row">
+      <div class="banner-strip">Welcome Home Baby</div>
+      <svg class="rope-svg" width="120" height="26" viewBox="0 0 120 26" aria-hidden="true">
+        <path d="M 0 5 Q 60 22 120 5"
+              stroke="rgba(255,255,255,0.72)" stroke-width="2.5"
+              fill="none" stroke-linecap="round"/>
+      </svg>
+      <span class="plane-cel">✈</span>
+    </div>
+
+    <!-- Centre message -->
+    <div id="welcome-msg">
+      <h1>Welcome Home Baby!</h1>
+      <p>Saran &amp; Christine, reunited at last ♡</p>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash",
+      "Bash(python -c \"import pandas; print\\(''pandas ok''\\)\")",
+      "Bash(py --version)",
+      "Bash(py -c \"import pandas; print\\(''pandas ok''\\)\")",
+      "Bash(dotnet --version)",
+      "Bash(where.exe python:*)",
+      "Bash(\"/c/Program Files/PostgreSQL/14/pgAdmin 4/python/python.exe\" --version)",
+      "Bash(\"/c/Program Files/PostgreSQL/14/pgAdmin 4/python/python.exe\" -c \"import pandas; print\\(''pandas ok''\\)\")",
+      "Bash(\"/c/Program Files/PostgreSQL/14/pgAdmin 4/python/python.exe\" \"C:\\\\Users\\\\Saran Likitkunawong\\\\VScode\\\\Medium\\\\Financials\\\\Reconciliations\\\\reconcile.py\")"
+    ]
+  }
+}
