@@ -15,9 +15,15 @@ Key facts: `DATABASE_URL=postgresql://postgres:WatermarkD21@127.0.0.1:5433/accso
 Chart of Accounts CRUD: grouped list by type, add/edit/deactivate/hard-delete, flash messages. All routes verified working in browser.
 
 ### Pending UX improvements (pick up when revisiting accounts)
-- [ ] Add/Edit account should open as a modal overlay on the accounts list page — user should see existing accounts while filling in the form
-- [ ] Actions (deactivate/reactivate, delete, edit) should preserve page scroll position
+- [x] Add/Edit account should open as a modal overlay on the accounts list page — user should see existing accounts while filling in the form
+- [x] Actions (deactivate/reactivate, delete, edit) should preserve page scroll position
 - [ ] Implement 3-level hierarchy: Level 1 = type, Level 2 = parent account, Level 3 = subaccount. Only Level 3 allows transaction posting. Render as indented tree; Levels 1–2 show aggregated balances from descendants only.
+
+### User review required
+- [ ] Verify modal opens correctly for Add and Edit — confirm accounts list is visible behind modal
+- [ ] Verify scroll position is restored after Deactivate/Activate, Delete, and Save actions
+- [ ] Verify Edit modal shows type as locked (disabled) for accounts that have transactions
+- [ ] Verify type dropdown auto-suggests account code in Add mode
 
 ---
 
