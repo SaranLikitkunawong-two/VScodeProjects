@@ -9,38 +9,83 @@
 </div>
 
 <!-- Filter bar -->
-<form method="get"
-      class="bg-white border border-gray-200 rounded-lg p-4 mb-6 flex flex-wrap gap-4 items-end">
-  <div>
-    <label class="block text-xs font-medium text-gray-600 mb-1">Account</label>
-    <select name="account_id"
-            class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 min-w-[260px]">
-      <option value="">— select account —</option>
-      {% for a in all_accounts %}
-      <option value="{{ a.id }}" {% if a.id == account_id %}selected{% endif %}>
-        {{ a.code }} — {{ a.name }}
-      </option>
-      {% endfor %}
-    </select>
+<form method="get" id="ledger-form"
+      class="bg-white border border-gray-200 rounded-lg p-4 mb-6">
+  <div class="flex flex-wrap gap-4 items-end">
+    <div>
+      <label class="block text-xs font-medium text-gray-600 mb-1">Account</label>
+      <select name="account_id"
+              class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 min-w-[260px]">
+        <option value="">— select account —</option>
+        {% for a in all_accounts %}
+        <option value="{{ a.id }}" {% if a.id == account_id %}selected{% endif %}>
+          {{ a.code }} — {{ a.name }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-gray-600 mb-1">From</label>
+      <input type="date" id="date_from" name="date_from"
+             value="{{ date_from.isoformat() if date_from else '' }}"
+             onclick="try{this.showPicker()}catch(e){}"
+             class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer" />
+    </div>
+    <div>
+      <label class="block text-xs font-medium text-gray-600 mb-1">To</label>
+      <input type="date" id="date_to" name="date_to"
+             value="{{ date_to.isoformat() if date_to else '' }}"
+             onclick="try{this.showPicker()}catch(e){}"
+             class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer" />
+    </div>
+    <button class="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">View</button>
+    {% if account_id %}
+    <a href="{{ url_for('transactions.ledger') }}"
+       class="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50">Clear</a>
+    {% endif %}
   </div>
-  <div>
-    <label class="block text-xs font-medium text-gray-600 mb-1">From</label>
-    <input type="date" name="date_from"
-           value="{{ date_from.isoformat() if date_from else '' }}"
-           class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+
+  <!-- Preset date range buttons -->
+  <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-100">
+    <span class="text-xs text-gray-400 self-center mr-1">Quick range:</span>
+    <button type="button" onclick="setDatePreset('today')"
+            class="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">Today</button>
+    <button type="button" onclick="setDatePreset('yesterday')"
+            class="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">Yesterday</button>
+    <button type="button" onclick="setDatePreset('last7')"
+            class="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">Last 7 Days</button>
+    <button type="button" onclick="setDatePreset('thisMonth')"
+            class="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">This Month</button>
+    <button type="button" onclick="setDatePreset('lastMonth')"
+            class="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">Last Month</button>
   </div>
-  <div>
-    <label class="block text-xs font-medium text-gray-600 mb-1">To</label>
-    <input type="date" name="date_to"
-           value="{{ date_to.isoformat() if date_to else '' }}"
-           class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
-  </div>
-  <button class="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">View</button>
-  {% if account_id %}
-  <a href="{{ url_for('transactions.ledger') }}"
-     class="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50">Clear</a>
-  {% endif %}
 </form>
+
+<script>
+function setDatePreset(preset) {
+  const today = new Date();
+  const fmt = d => d.toISOString().slice(0, 10);
+  let from, to;
+  if (preset === 'today') {
+    from = to = fmt(today);
+  } else if (preset === 'yesterday') {
+    const y = new Date(today); y.setDate(y.getDate() - 1);
+    from = to = fmt(y);
+  } else if (preset === 'last7') {
+    const d = new Date(today); d.setDate(d.getDate() - 6);
+    from = fmt(d); to = fmt(today);
+  } else if (preset === 'thisMonth') {
+    from = fmt(new Date(today.getFullYear(), today.getMonth(), 1));
+    to   = fmt(new Date(today.getFullYear(), today.getMonth() + 1, 0));
+  } else if (preset === 'lastMonth') {
+    from = fmt(new Date(today.getFullYear(), today.getMonth() - 1, 1));
+    to   = fmt(new Date(today.getFullYear(), today.getMonth(), 0));
+  }
+  document.getElementById('date_from').value = from;
+  document.getElementById('date_to').value   = to;
+  document.getElementById('ledger-form').submit();
+}
+</script>
 
 {% if account %}
 <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">

@@ -1,7 +1,9 @@
+import csv
+import io
 import os
 import uuid as _uuid
 from datetime import date as date_cls
-from flask import Blueprint, current_app, render_template, redirect, url_for, flash, request
+from flask import Blueprint, Response, current_app, render_template, redirect, url_for, flash, request
 from flask_login import login_required
 from app.extensions import db
 from app.models.transaction import Transaction
@@ -152,6 +154,34 @@ def delete_transaction(txn_id):
     service.delete_transaction(txn)
     flash("Transaction deleted.", "success")
     return redirect(url_for("transactions.list_transactions"))
+
+
+@transactions_bp.route("/export.csv")
+@login_required
+def export_csv():
+    search = request.args.get("search", "").strip()
+    txns = service.get_transactions(search=search or None, sort="date_desc")
+
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(["Date", "Description", "Reference", "Account Code", "Account Name", "Type", "Amount"])
+    for txn in txns:
+        for line in txn.lines:
+            writer.writerow([
+                txn.date.isoformat(),
+                txn.description,
+                txn.reference or "",
+                line.account.code,
+                line.account.name,
+                line.type.capitalize(),
+                f"{line.amount:.2f}",
+            ])
+
+    return Response(
+        buf.getvalue(),
+        mimetype="text/csv",
+        headers={"Content-Disposition": "attachment; filename=transactions.csv"},
+    )
 
 
 @transactions_bp.route("/ledger")

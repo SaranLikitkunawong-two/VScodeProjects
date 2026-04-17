@@ -20,7 +20,8 @@
         </label>
         <input type="date" name="date"
                value="{{ prefill.get('date', transaction.date.isoformat() if transaction else '') }}"
-               class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+               onclick="try{this.showPicker()}catch(e){}"
+               class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer"
                required />
       </div>
       <div class="sm:col-span-2">
@@ -73,8 +74,12 @@
     <h2 class="font-semibold text-gray-700 mb-4">Journal Lines</h2>
 
     <div class="grid gap-2 text-xs font-medium text-gray-500 uppercase mb-2 px-1"
-         style="grid-template-columns: 1fr 130px 160px 36px;">
-      <span>Account</span><span>Type</span><span class="text-right pr-3">Amount</span><span></span>
+         style="grid-template-columns: 2fr 120px 120px 48px 36px;">
+      <span>Account</span>
+      <span class="text-right pr-2">Debit</span>
+      <span class="text-right pr-2">Credit</span>
+      <span class="text-center">Effect</span>
+      <span></span>
     </div>
 
     <div id="lines-container" class="space-y-2"></div>
@@ -99,9 +104,11 @@
          class="hidden mt-2 text-right text-sm text-red-600 font-medium">
       Debits must equal credits before saving.
     </div>
+    <div id="balance-hint"
+         class="hidden mt-1 text-right text-xs text-red-400"></div>
   </div>
 
-  <!-- Attachments (add mode only — edit mode has its own section below) -->
+  <!-- Attachments (add mode only) -->
   {% if not transaction %}
   <div class="bg-white border border-gray-200 rounded-lg p-6 mb-5">
     <h2 class="font-semibold text-gray-700 mb-2">
@@ -193,7 +200,7 @@
 {% endif %}
 
 <script>
-// Customer/supplier initial display names
+// ── Customer / supplier autocomplete ─────────────────────────────────────────
 const customerInitial = {{ (transaction.customer.name if transaction and transaction.customer else '') | tojson }};
 const supplierInitial = {{ (transaction.supplier.name if transaction and transaction.supplier else '') | tojson }};
 
@@ -243,67 +250,127 @@ function setupAutocomplete(inputId, dropdownId, hiddenId, searchUrl) {
     if (input.value.trim()) input.dispatchEvent(new Event('input'));
   });
 
-  // Allow clearing
   input.addEventListener('keydown', e => {
-    if (e.key === 'Escape' || e.key === 'Delete' || e.key === 'Backspace') {
-      if (e.key === 'Escape') { input.value = ''; hidden.value = ''; }
-    }
+    if (e.key === 'Escape') { input.value = ''; hidden.value = ''; }
   });
 }
 
 setupAutocomplete('customer-search', 'customer-dropdown', 'customer-id', '{{ url_for("customers.search") }}');
 setupAutocomplete('supplier-search', 'supplier-dropdown', 'supplier-id', '{{ url_for("suppliers.search") }}');
 
+// ── Account options (pre-loaded, includes type for effect calculation) ────────
 const accountOptions = [
   {% for a in accounts -%}
-  { id: {{ a.id | tojson }}, label: {{ (a.code ~ ' \u2014 ' ~ a.name) | tojson }} },
+  { id: {{ a.id | tojson }}, label: {{ (a.code ~ ' \u2014 ' ~ a.name) | tojson }}, type: {{ a.type | tojson }} },
   {%- endfor %}
 ];
 
 const seedLines = {{ lines | tojson }};
 let lineIndex = 0;
 
-function buildAccountSelect(name, selectedId) {
-  let html = `<select name="${name}"
-    class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-    required>`;
-  html += `<option value="">— account —</option>`;
-  for (const a of accountOptions) {
-    const sel = a.id === selectedId ? 'selected' : '';
-    html += `<option value="${a.id}" ${sel}>${a.label}</option>`;
-  }
-  html += '</select>';
-  return html;
+// ── Account autocomplete — event delegation on lines-container ────────────────
+document.addEventListener('input', e => {
+  if (!e.target.classList.contains('acct-search')) return;
+  const wrap = e.target.closest('.acct-wrap');
+  wrap.querySelector('.acct-id').value = '';
+  renderAcctDrop(wrap, e.target.value.trim().toLowerCase());
+});
+
+document.addEventListener('focus', e => {
+  if (!e.target.classList.contains('acct-search')) return;
+  renderAcctDrop(e.target.closest('.acct-wrap'), e.target.value.trim().toLowerCase());
+}, true);
+
+document.addEventListener('blur', e => {
+  if (!e.target.classList.contains('acct-search')) return;
+  setTimeout(() => {
+    const wrap = e.target.closest('.acct-wrap');
+    if (wrap) wrap.querySelector('.acct-drop').classList.add('hidden');
+  }, 150);
+}, true);
+
+document.addEventListener('mousedown', e => {
+  const opt = e.target.closest('.acct-opt');
+  if (!opt) return;
+  e.preventDefault();
+  const wrap = opt.closest('.acct-wrap');
+  const acct = accountOptions.find(a => a.id == opt.dataset.id);
+  if (!acct) return;
+  wrap.querySelector('.acct-search').value = acct.label;
+  wrap.querySelector('.acct-id').value = acct.id;
+  wrap.querySelector('.acct-drop').classList.add('hidden');
+  updateTotals();
+});
+
+function renderAcctDrop(wrap, q) {
+  const drop = wrap.querySelector('.acct-drop');
+  const matches = q
+    ? accountOptions.filter(a => a.label.toLowerCase().includes(q)).slice(0, 12)
+    : accountOptions.slice(0, 12);
+  drop.innerHTML = matches.length
+    ? matches.map(a => `<div class="px-3 py-2 hover:bg-blue-50 cursor-pointer text-sm acct-opt" data-id="${a.id}">${a.label}</div>`).join('')
+    : '<div class="px-3 py-2 text-gray-400 text-sm">No accounts found</div>';
+  drop.classList.remove('hidden');
 }
 
-function buildTypeSelect(name, selectedType) {
-  const dSel = selectedType === 'debit' ? 'selected' : '';
-  const cSel = selectedType === 'credit' ? 'selected' : '';
-  return `<select name="${name}" onchange="updateTotals()"
-    class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-    <option value="debit" ${dSel}>Debit</option>
-    <option value="credit" ${cSel}>Credit</option>
-  </select>`;
-}
-
+// ── Line builder ──────────────────────────────────────────────────────────────
 function addLine(accountId = '', lineType = 'debit', amount = '') {
   const idx = lineIndex++;
   const div = document.createElement('div');
   div.className = 'grid gap-2 items-center';
-  div.style.gridTemplateColumns = '1fr 130px 160px 36px';
+  div.style.gridTemplateColumns = '2fr 120px 120px 48px 36px';
   div.dataset.lineIdx = idx;
+
+  const debitVal  = lineType === 'debit'  ? amount : '';
+  const creditVal = lineType === 'credit' ? amount : '';
+
   div.innerHTML = `
-    ${buildAccountSelect(`lines[${idx}][account_id]`, accountId)}
-    ${buildTypeSelect(`lines[${idx}][type]`, lineType)}
-    <input type="number" name="lines[${idx}][amount]"
-           value="${amount}" min="0.01" step="0.01" placeholder="0.00"
-           oninput="updateTotals()"
-           class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm text-right font-mono focus:outline-none focus:ring-2 focus:ring-blue-400"
-           required />
+    <div class="relative acct-wrap">
+      <input type="text" class="acct-search w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+             placeholder="Search account…" autocomplete="off">
+      <input type="hidden" name="lines[${idx}][account_id]" class="acct-id" value="${accountId}">
+      <input type="hidden" name="lines[${idx}][type]"       class="type-hidden"   value="${lineType}">
+      <input type="hidden" name="lines[${idx}][amount]"     class="amount-hidden" value="${amount}">
+      <div class="acct-drop hidden absolute z-20 left-0 mt-1 bg-white border border-gray-200 rounded shadow-lg max-h-48 overflow-y-auto"
+           style="min-width:300px"></div>
+    </div>
+    <input type="number" class="debit-input w-full border border-gray-300 rounded px-2 py-1.5 text-sm text-right font-mono focus:outline-none focus:ring-2 focus:ring-blue-400"
+           value="${debitVal}"  min="0.01" step="0.01" placeholder="0.00">
+    <input type="number" class="credit-input w-full border border-gray-300 rounded px-2 py-1.5 text-sm text-right font-mono focus:outline-none focus:ring-2 focus:ring-blue-400"
+           value="${creditVal}" min="0.01" step="0.01" placeholder="0.00">
+    <span class="effect-display text-center text-gray-300 text-sm font-semibold">—</span>
     <button type="button" onclick="removeLine(this)"
             class="text-gray-400 hover:text-red-500 text-xl leading-none font-light"
             title="Remove line">&times;</button>
   `;
+
+  if (accountId) {
+    const acct = accountOptions.find(a => a.id == accountId);
+    if (acct) div.querySelector('.acct-search').value = acct.label;
+  }
+
+  div.querySelector('.debit-input').addEventListener('input', function() {
+    if (this.value) {
+      div.querySelector('.credit-input').value = '';
+      div.querySelector('.type-hidden').value   = 'debit';
+      div.querySelector('.amount-hidden').value = this.value;
+    } else {
+      div.querySelector('.amount-hidden').value = '';
+    }
+    updateTotals();
+  });
+
+  div.querySelector('.credit-input').addEventListener('input', function() {
+    if (this.value) {
+      div.querySelector('.debit-input').value  = '';
+      div.querySelector('.type-hidden').value   = 'credit';
+      div.querySelector('.amount-hidden').value = this.value;
+    } else {
+      div.querySelector('.amount-hidden').value = '';
+    }
+    updateTotals();
+  });
+
   document.getElementById('lines-container').appendChild(div);
   updateTotals();
 }
@@ -318,30 +385,79 @@ function removeLine(btn) {
   updateTotals();
 }
 
+// ── Totals + balance hint + effect column ─────────────────────────────────────
+const DEBIT_NORMAL = new Set(['asset', 'expense']);
+
 function updateTotals() {
   let debits = 0, credits = 0;
+
   document.querySelectorAll('#lines-container [data-line-idx]').forEach(row => {
-    const typeEl = row.querySelector('select[name$="[type]"]');
-    const amtEl = row.querySelector('input[type="number"]');
-    const amt = parseFloat(amtEl.value) || 0;
-    if (typeEl.value === 'debit') debits += amt; else credits += amt;
+    const type   = row.querySelector('.type-hidden').value;
+    const amount = parseFloat(row.querySelector('.amount-hidden').value) || 0;
+    const acctId = row.querySelector('.acct-id').value;
+    const acct   = acctId ? accountOptions.find(a => a.id == acctId) : null;
+    const effectEl = row.querySelector('.effect-display');
+
+    if (amount > 0 && acct) {
+      const positive = DEBIT_NORMAL.has(acct.type)
+        ? type === 'debit'
+        : type === 'credit';
+      effectEl.textContent = positive ? '+' : '−';
+      effectEl.className = `effect-display text-center font-semibold text-sm ${positive ? 'text-green-600' : 'text-red-500'}`;
+    } else {
+      effectEl.textContent = '—';
+      effectEl.className = 'effect-display text-center text-gray-300 text-sm font-semibold';
+    }
+
+    if (type === 'debit') debits += amount; else credits += amount;
   });
-  document.getElementById('total-debits').textContent = '$' + debits.toFixed(2);
+
+  document.getElementById('total-debits').textContent  = '$' + debits.toFixed(2);
   document.getElementById('total-credits').textContent = '$' + credits.toFixed(2);
-  const nonZero = debits > 0 || credits > 0;
-  const balanced = Math.abs(debits - credits) < 0.005;
+
+  const nonZero  = debits > 0 || credits > 0;
+  const diff     = Math.abs(debits - credits);
+  const balanced = diff < 0.005;
+
   document.getElementById('balance-warning').classList.toggle('hidden', !nonZero || balanced);
+
+  const hintEl = document.getElementById('balance-hint');
+  if (nonZero && !balanced) {
+    const side = debits > credits ? 'credits' : 'debits';
+    hintEl.textContent = `$${diff.toFixed(2)} more needed on ${side} to balance`;
+    hintEl.classList.remove('hidden');
+  } else {
+    hintEl.classList.add('hidden');
+  }
 }
 
-// Seed lines
+// ── Seed lines ────────────────────────────────────────────────────────────────
 if (seedLines.length >= 2) {
   for (const l of seedLines) addLine(l.account_id, l.type, l.amount);
 } else {
-  addLine('', 'debit', '');
+  addLine('', 'debit',  '');
   addLine('', 'credit', '');
 }
 
-// Attachment viewer modal
+// ── Form submit validation (browser skips hidden inputs) ──────────────────────
+document.getElementById('txn-form').addEventListener('submit', e => {
+  const rows = document.querySelectorAll('#lines-container [data-line-idx]');
+  for (const row of rows) {
+    if (!row.querySelector('.acct-id').value) {
+      e.preventDefault();
+      alert('Each line must have an account selected.');
+      return;
+    }
+    const amount = parseFloat(row.querySelector('.amount-hidden').value) || 0;
+    if (amount <= 0) {
+      e.preventDefault();
+      alert('Each line must have an amount greater than zero.');
+      return;
+    }
+  }
+});
+
+// ── Attachment viewer modal ───────────────────────────────────────────────────
 function openAttachmentModal(url, mimeType, filename) {
   const content = document.getElementById('att-modal-content');
   if (mimeType.startsWith('image/')) {

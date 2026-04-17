@@ -39,12 +39,12 @@ A personal web-based accounting portal for a small service business. Accessible 
 
 ### Phase 1 — Core (Build First)
 - [x] User authentication (login/logout, single user)
-- [ ] Chart of Accounts (create/edit/deactivate accounts)
+- [x] Chart of Accounts (create/edit/deactivate accounts)
 - [x] Transaction entry (double-entry: debit/credit)
 - [x] Income & expense categorization
-- [ ] File attachments per transaction (invoices, receipts, photos)
+- [x] File attachments per transaction (invoices, receipts, photos)
 - [x] General ledger view (all transactions by account)
-- [ ] Basic dashboard (account balances, recent transactions)
+- [x] Basic dashboard (account balances, recent transactions)
 
 ### Phase 2 — Reconciliation & Reporting
 - [ ] Bank reconciliation (match transactions to bank statement)
@@ -54,18 +54,20 @@ A personal web-based accounting portal for a small service business. Accessible 
 - [ ] Export to CSV
 
 ### Phase 2.5 — OCR & Automated Invoice Processing
-- [ ] Upload invoice/receipt → extract fields automatically (vendor, date, total, line items, tax)
-- [ ] Review & confirm extracted fields before posting
-- [ ] Suggested GL account mapping based on vendor/description
-- [ ] User can correct suggestions; corrections are remembered per vendor
-- [ ] Support: digital PDFs, scanned PDFs, JPG/PNG photos
+- [x] Upload invoice/receipt → extract fields automatically (vendor, date, total, tax)
+- [x] Review & confirm extracted fields before posting
+- [x] Suggested GL account mapping based on vendor/description
+- [x] User can correct suggestions; corrections are remembered per vendor (save-mapping checkbox)
+- [x] Support: digital PDFs (pdfplumber)
+- [ ] Support: scanned PDFs / JPG/PNG photos via OCR — deferred (PaddleOCR not yet installed)
+- [ ] Bulk invoice upload — multiple files at once, queue-style review (Session 5.5, planned)
 
 ### Phase 2.6 — Customers & Suppliers
-- [ ] Customer profiles: name, contact, email, phone, address, ABN, notes
-- [ ] Supplier profiles: same fields
-- [ ] Link customers to AR transactions; link suppliers to AP transactions
-- [ ] Customer/supplier detail page showing linked transactions and outstanding balance
-- [ ] Customer/supplier selector on transaction form (search with autocomplete)
+- [x] Customer profiles: name, contact, email, phone, address, ABN, notes
+- [x] Supplier profiles: same fields
+- [x] Link customers to AR transactions; link suppliers to AP transactions
+- [x] Customer/supplier detail page showing linked transactions and outstanding balance
+- [x] Customer/supplier selector on transaction form
 
 ### Phase 3 — Maybe Later
 - [ ] Tax report export
@@ -223,50 +225,54 @@ Invoices arrive as digital PDFs, scanned PDFs, or photo receipts. We need to:
 - `Surya` / `doctr` — GPU-optimised, poor CPU performance
 - `AWS Textract` / `Google Vision` — not open-source, costs per API call
 
-### How It Works (Pipeline)
+### How It Works (Pipeline) — as built
 
 ```
 Upload invoice/receipt
         │
         ▼
-Is it a digital PDF? ──Yes──▶ pdfplumber (extract text + tables)
+Is it a digital PDF? ──Yes──▶ pdfplumber (extract raw text)
         │                             │
-        No                            ▼
-        ▼                     invoice2data (apply YAML templates)
-PaddleOCR (image → text)              │
-        │                             ▼
-        └──────────────────▶ Extracted fields:
-                                - vendor name
-                                - invoice date
-                                - invoice number
-                                - line items + amounts
-                                - subtotal / tax / total
-                                        │
-                                        ▼
+        No (image)                    ▼
+        ▼                     extractor.py (regex parser)
+Return empty text                     │   vendor, date, invoice_no,
+(manual entry)                        │   subtotal, GST, total
+                                      ▼
                              GL Suggestion Engine
+                              1. vendor_mappings (exact match)
+                              2. keyword_mappings (keyword scan)
+                              3. Flag unknown → manual selection
                                         │
                                         ▼
-                             User reviews & confirms
+                             User reviews & edits on review page
+                             (invoice preview modal available)
                                         │
                                         ▼
-                             Transaction posted to ledger
+                             Confirm → transaction posted to ledger
+                             Attachment linked to transaction
+                             Vendor mapping saved (if checkbox ticked)
 ```
+
+> **invoice2data** is installed but not used as the primary extractor — regex parsing in `extractor.py` is faster and more predictable for the field set we need. invoice2data YAML templates remain an option for future structured invoice formats.
+
+> **PaddleOCR** — deferred. Image uploads are accepted but return empty text; the user fills fields manually. Install `paddlepaddle` + `paddleocr` from `requirements-ocr.txt` when ready to add image OCR.
 
 ### GL Suggestion Engine
 
 Two-tier approach:
 
 **Tier 1 — Keyword Rules (fast, free, no API)**
-- Maintain a `vendor_mappings` table: vendor name → default GL account
-- Maintain a `keyword_mappings` table: keywords in description → GL account
+- `vendor_mappings` table: exact vendor name (case-insensitive) → default GL debit account
+- `keyword_mappings` table: keyword in `vendor + description` text → GL account, ordered by priority
   - e.g. "electricity", "power bill" → Utilities Expense
   - e.g. "office supplies", "stationery" → Office Expense
   - e.g. "consulting", "professional fee" → Professional Services Expense
-- When user corrects a suggestion, save the mapping for next time (learning)
+- Credit account defaults to the first active Accounts Payable account
+- When user confirms with "save mapping" checked, `gl_suggester.save_vendor_mapping()` upserts the vendor → debit account mapping
 
 **Tier 2 — Unrecognised vendors/descriptions**
-- If no keyword or vendor match found, flag the transaction for manual GL selection
-- User selects the account manually; the mapping is saved for future invoices from the same vendor
+- If no vendor or keyword match found, fields are left blank and a warning banner is shown
+- User selects accounts manually; mapping saved on confirm if checkbox is ticked
 
 ### New DB Tables for OCR
 
@@ -349,11 +355,11 @@ Two-tier approach:
 | python-dotenv | Load `.env` config variables |
 | Werkzeug | Password hashing (bundled with Flask) |
 | gunicorn | WSGI server (used in production/VPS) |
-| pdfplumber | Extract text + tables from digital PDFs |
-| paddlepaddle | Core engine for PaddleOCR |
-| paddleocr | OCR for scanned PDFs and image receipts |
-| invoice2data | Invoice field extraction via YAML templates |
-| Pillow | Image processing (required by PaddleOCR) |
+| pdfplumber | Extract text from digital PDFs (installed Session 5) |
+| invoice2data | Invoice field extraction — installed, available for YAML templates |
+| Pillow | Image processing (installed Session 5) |
+| paddlepaddle | Core engine for PaddleOCR — **not yet installed** (deferred) |
+| paddleocr | OCR for scanned PDFs and image receipts — **not yet installed** (deferred) |
 
 ### Frontend
 | Tool | How | Purpose |
@@ -374,39 +380,48 @@ Two-tier approach:
 ```
 accsoft/
 ├── app/
-│   ├── __init__.py           # App factory
+│   ├── __init__.py           # App factory — registers all blueprints
+│   ├── extensions.py         # db, migrate, login_manager instances
 │   ├── models/
 │   │   ├── user.py
 │   │   ├── account.py
-│   │   ├── transaction.py
-│   │   └── attachment.py
-│   ├── routes/
-│   │   ├── auth.py
-│   │   ├── accounts.py
-│   │   ├── transactions.py
-│   │   ├── attachments.py
-│   │   ├── ocr.py
-│   │   └── reports.py
-│   ├── ocr/
-│   │   ├── pipeline.py       # Orchestrates pdfplumber / PaddleOCR
-│   │   ├── extractor.py      # invoice2data field extraction
-│   │   └── gl_suggester.py   # Keyword/vendor → GL account mapping
+│   │   ├── transaction.py    # Transaction + TransactionLine
+│   │   ├── attachment.py
+│   │   ├── customer.py
+│   │   ├── supplier.py
+│   │   ├── ocr_result.py     # Stores raw text + extracted fields per attachment
+│   │   ├── vendor_mapping.py # Vendor name → default GL debit account
+│   │   └── keyword_mapping.py# Keyword → GL account (with priority)
+│   ├── blueprints/
+│   │   ├── auth/
+│   │   ├── dashboard/
+│   │   ├── accounts/         # Chart of Accounts CRUD
+│   │   ├── transactions/     # Transaction entry, list, ledger, CSV export
+│   │   ├── attachments/      # File upload, view, delete
+│   │   ├── customers/
+│   │   ├── suppliers/
+│   │   └── ocr/
+│   │       ├── routes.py     # /ocr/upload, /ocr/review/<id>, /ocr/confirm/<id>
+│   │       ├── pipeline.py   # pdfplumber extraction; image → empty (PaddleOCR deferred)
+│   │       ├── extractor.py  # Regex parser → vendor, date, invoice_no, subtotal, GST, total
+│   │       └── gl_suggester.py # vendor_mappings → keyword_mappings → flag unknown
 │   ├── templates/
 │   │   ├── base.html
 │   │   ├── auth/
 │   │   ├── accounts/
 │   │   ├── transactions/
-│   │   ├── ocr/
+│   │   ├── customers/
+│   │   ├── suppliers/
+│   │   ├── ocr/              # upload.html, review.html
 │   │   └── dashboard/
 │   └── static/
-│       ├── css/
-│       └── uploads/          # Attached invoices/receipts/photos
+│       └── uploads/          # Attached invoices/receipts/photos (UUID filenames)
 ├── migrations/               # Flask-Migrate auto-generated
 ├── config.py                 # App config (dev / prod)
-├── requirements.txt
-├── .env                      # Local secrets (never commit)
-├── .env.example              # Template for .env
-└── run.py                    # Entry point
+├── requirements.txt          # Core deps
+├── requirements-ocr.txt      # OCR deps (install separately)
+├── seed.py                   # Seed starter chart of accounts + admin user
+└── run.py                    # Entry point (exposes `app` for flask CLI)
 ```
 
 ---

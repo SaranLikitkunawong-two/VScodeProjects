@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Review Invoice – AccSoft{% endblock %}
+
+{% block content %}
+{% set att = ocr.attachment %}
+{% set is_image = att.mime_type.startswith('image/') %}
+{% set view_url = url_for('attachments.view', att_id=att.id) %}
+
+<div class="max-w-2xl mx-auto">
+  <h1 class="text-2xl font-bold mb-2">Review Extracted Invoice</h1>
+
+  {# ── File header with preview trigger ─────────────────────────────── #}
+  <p class="text-sm text-gray-500 mb-2">
+    <button type="button" onclick="openModal()"
+            class="font-medium text-blue-600 hover:underline focus:outline-none">
+      {{ att.filename }}
+    </button>
+    {% if ocr.confidence == 1.0 %}
+      &nbsp;·&nbsp; <span class="text-green-600">Digital PDF — full extraction</span>
+    {% elif ocr.confidence == 0.0 and not ocr.raw_text %}
+      &nbsp;·&nbsp; <span class="text-yellow-600">No text extracted — enter fields manually</span>
+    {% endif %}
+  </p>
+
+  {% if not vendor_known and fields.vendor %}
+  <div class="mb-4 px-4 py-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-800">
+    <strong>Unknown vendor</strong> — select GL accounts manually.
+    Check "Save mapping" below to remember this vendor next time.
+  </div>
+  {% endif %}
+
+  <form method="POST" action="{{ url_for('ocr.confirm', ocr_id=ocr.id) }}"
+        class="bg-white rounded-lg border border-gray-200 p-6 space-y-5">
+
+    {# ── Invoice details ───────────────────────────────────────────────── #}
+    <fieldset class="space-y-4">
+      <legend class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">Invoice Details</legend>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Vendor / Supplier</label>
+          <input type="text" name="vendor" value="{{ fields.vendor }}"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Invoice #</label>
+          <input type="text" name="invoice_no" value="{{ fields.invoice_no }}"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Date <span class="text-red-500">*</span></label>
+          <input type="date" name="invoice_date" value="{{ fields.invoice_date }}" required
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">Total (inc. GST) <span class="text-red-500">*</span></label>
+          <input type="number" name="total" value="{{ fields.total }}" step="0.01" min="0.01" required
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-medium mb-1">Subtotal (ex. GST)</label>
+          <input type="text" name="subtotal" value="{{ fields.subtotal }}"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-50" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-1">GST</label>
+          <input type="text" name="gst" value="{{ fields.gst }}"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-50" />
+        </div>
+      </div>
+    </fieldset>
+
+    {# ── GL accounts ───────────────────────────────────────────────────── #}
+    <fieldset class="space-y-4">
+      <legend class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-2">GL Accounts</legend>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Debit account (expense / asset) <span class="text-red-500">*</span></label>
+        <select name="debit_account_id" required
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+          <option value="">— Select account —</option>
+          {% for acc in accounts %}
+            <option value="{{ acc.id }}"
+              {% if acc.id == suggestion_debit %}selected{% endif %}>
+              {{ acc.code }} – {{ acc.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium mb-1">Credit account (payable / bank) <span class="text-red-500">*</span></label>
+        <select name="credit_account_id" required
+                class="w-full border border-gray-300 rounded px-3 py-2 text-sm">
+          <option value="">— Select account —</option>
+          {% for acc in accounts %}
+            <option value="{{ acc.id }}"
+              {% if acc.id == suggestion_credit %}selected{% endif %}>
+              {{ acc.code }} – {{ acc.name }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      {% if not vendor_known %}
+      <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <input type="checkbox" name="save_vendor_mapping" value="1"
+               class="rounded border-gray-300" />
+        Save this vendor → debit account mapping for future invoices
+      </label>
+      {% endif %}
+    </fieldset>
+
+    {# ── Actions ───────────────────────────────────────────────────────── #}
+    <div class="flex items-center gap-3 pt-2">
+      <button type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded">
+        Post to Ledger
+      </button>
+      <a href="{{ url_for('ocr.upload') }}"
+         class="text-sm text-gray-500 hover:text-gray-700">Cancel</a>
+    </div>
+  </form>
+
+  {# ── Raw text panel ────────────────────────────────────────────────── #}
+  {% if ocr.raw_text %}
+  <details class="mt-6 text-xs text-gray-400">
+    <summary class="cursor-pointer hover:text-gray-600">Show raw extracted text</summary>
+    <pre class="mt-2 bg-gray-50 border border-gray-200 rounded p-3 whitespace-pre-wrap break-words max-h-64 overflow-y-auto">{{ ocr.raw_text }}</pre>
+  </details>
+  {% endif %}
+</div>
+
+{# ── Invoice preview modal ─────────────────────────────────────────────── #}
+<div id="invoice-modal"
+     class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/60"
+     onclick="if(event.target===this) closeModal()">
+  <div class="bg-white rounded-lg shadow-xl w-full max-w-3xl mx-4 flex flex-col"
+       style="max-height: 90vh;">
+    <div class="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+      <span class="text-sm font-medium text-gray-700 truncate">{{ att.filename }}</span>
+      <div class="flex items-center gap-3 ml-4 shrink-0">
+        <a href="{{ view_url }}" target="_blank"
+           class="text-xs text-blue-600 hover:underline">Open in new tab</a>
+        <button type="button" onclick="closeModal()"
+                class="text-gray-400 hover:text-gray-600 text-xl leading-none">&times;</button>
+      </div>
+    </div>
+    <div class="flex-1 overflow-auto p-2 min-h-0">
+      {% if is_image %}
+        <img src="{{ view_url }}" alt="{{ att.filename }}"
+             class="max-w-full mx-auto rounded" />
+      {% else %}
+        <iframe src="{{ view_url }}" class="w-full rounded border-0"
+                style="height: 75vh;" title="{{ att.filename }}"></iframe>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<script>
+function openModal()  { document.getElementById('invoice-modal').classList.remove('hidden'); }
+function closeModal() { document.getElementById('invoice-modal').classList.add('hidden'); }
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+</script>
+{% endblock %}

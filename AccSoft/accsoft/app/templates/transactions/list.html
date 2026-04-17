@@ -4,10 +4,16 @@
 {% block content %}
 <div class="flex items-center justify-between mb-6">
   <h1 class="text-2xl font-bold">Transactions</h1>
-  <a href="{{ url_for('transactions.add_transaction') }}"
-     class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium">
-    + New Transaction
-  </a>
+  <div class="flex gap-2">
+    <a href="{{ url_for('transactions.export_csv', search=search) }}"
+       class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50 text-sm font-medium text-gray-600">
+      Export CSV
+    </a>
+    <a href="{{ url_for('transactions.add_transaction') }}"
+       class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium">
+      + New Transaction
+    </a>
+  </div>
 </div>
 
 <form method="get" class="flex gap-3 mb-6">
