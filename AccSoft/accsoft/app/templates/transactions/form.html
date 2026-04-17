@@ -8,7 +8,7 @@
   <h1 class="text-2xl font-bold">{{ title }}</h1>
 </div>
 
-<form method="post" action="{{ form_action }}" id="txn-form">
+<form method="post" action="{{ form_action }}" id="txn-form" enctype="multipart/form-data">
 
   <!-- Header fields -->
   <div class="bg-white border border-gray-200 rounded-lg p-6 mb-5">
@@ -38,6 +38,32 @@
                value="{{ prefill.get('reference', transaction.reference if transaction else '') }}"
                placeholder="Invoice #, receipt #…"
                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Customer <span class="text-gray-400 font-normal">(optional)</span></label>
+        <div class="relative">
+          <input type="text" id="customer-search"
+                 placeholder="Search customers…"
+                 autocomplete="off"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          <input type="hidden" name="customer_id" id="customer-id"
+                 value="{{ prefill.get('customer_id', transaction.customer_id if transaction else '') }}" />
+          <div id="customer-dropdown"
+               class="hidden absolute z-20 left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg max-h-48 overflow-y-auto text-sm"></div>
+        </div>
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Supplier <span class="text-gray-400 font-normal">(optional)</span></label>
+        <div class="relative">
+          <input type="text" id="supplier-search"
+                 placeholder="Search suppliers…"
+                 autocomplete="off"
+                 class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+          <input type="hidden" name="supplier_id" id="supplier-id"
+                 value="{{ prefill.get('supplier_id', transaction.supplier_id if transaction else '') }}" />
+          <div id="supplier-dropdown"
+               class="hidden absolute z-20 left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg max-h-48 overflow-y-auto text-sm"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -75,6 +101,21 @@
     </div>
   </div>
 
+  <!-- Attachments (add mode only — edit mode has its own section below) -->
+  {% if not transaction %}
+  <div class="bg-white border border-gray-200 rounded-lg p-6 mb-5">
+    <h2 class="font-semibold text-gray-700 mb-2">
+      Attachments <span class="text-gray-400 font-normal text-sm">(optional)</span>
+    </h2>
+    <input type="file" name="attachments" multiple accept=".jpg,.jpeg,.png,.pdf"
+           class="block text-sm text-gray-600
+                  file:mr-3 file:py-1.5 file:px-4 file:rounded file:border-0
+                  file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700
+                  hover:file:bg-blue-100 cursor-pointer">
+    <p class="text-xs text-gray-400 mt-1.5">JPG, PNG, or PDF · max 16 MB each</p>
+  </div>
+  {% endif %}
+
   <!-- Actions -->
   <div class="flex gap-3">
     <button type="submit"
@@ -88,7 +129,131 @@
   </div>
 </form>
 
+<!-- Attachments (edit mode only) -->
+{% if transaction %}
+<div class="bg-white border border-gray-200 rounded-lg p-6 mt-5">
+  <h2 class="font-semibold text-gray-700 mb-4">Attachments</h2>
+
+  {% if transaction.attachments %}
+  <div class="space-y-2 mb-5">
+    {% for att in transaction.attachments %}
+    {% set view_url = url_for('attachments.view', att_id=att.id) %}
+    <div class="flex items-center gap-4 p-3 bg-gray-50 rounded-lg border border-gray-100">
+      {% if att.mime_type.startswith('image/') %}
+      <button type="button" onclick="openAttachmentModal('{{ view_url }}', '{{ att.mime_type }}', '{{ att.filename }}')"
+              class="shrink-0 cursor-zoom-in">
+        <img src="{{ view_url }}"
+             class="h-16 w-16 object-cover rounded border border-gray-200 hover:opacity-80 transition"
+             alt="{{ att.filename }}">
+      </button>
+      {% else %}
+      <button type="button" onclick="openAttachmentModal('{{ view_url }}', '{{ att.mime_type }}', '{{ att.filename }}')"
+              class="shrink-0 h-16 w-16 flex items-center justify-center bg-red-50 rounded border border-red-100 text-red-400 font-semibold text-xs tracking-wide hover:bg-red-100 transition cursor-pointer">
+        PDF
+      </button>
+      {% endif %}
+      <div class="flex-1 min-w-0">
+        <button type="button" onclick="openAttachmentModal('{{ view_url }}', '{{ att.mime_type }}', '{{ att.filename }}')"
+                class="text-sm font-medium text-gray-800 hover:text-blue-600 truncate block text-left w-full">
+          {{ att.filename }}
+        </button>
+        <div class="text-xs text-gray-400 mt-0.5">{{ att.uploaded_at.strftime('%d %b %Y') }}</div>
+      </div>
+      <form method="post" action="{{ url_for('attachments.delete', att_id=att.id) }}"
+            onsubmit="return confirm('Delete this attachment?')">
+        <button type="submit"
+                class="text-xs text-gray-400 hover:text-red-500 px-2 py-1 rounded hover:bg-red-50 transition">
+          Delete
+        </button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="text-sm text-gray-400 mb-4">No attachments yet.</p>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('attachments.upload', txn_id=transaction.id) }}"
+        enctype="multipart/form-data">
+    <label class="block text-sm font-medium text-gray-700 mb-2">Add files</label>
+    <div class="flex items-center gap-3">
+      <input type="file" name="attachments" multiple accept=".jpg,.jpeg,.png,.pdf"
+             class="block text-sm text-gray-600
+                    file:mr-3 file:py-1.5 file:px-4 file:rounded file:border-0
+                    file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700
+                    hover:file:bg-blue-100 cursor-pointer">
+      <button type="submit"
+              class="px-4 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 font-medium shrink-0">
+        Upload
+      </button>
+    </div>
+    <p class="text-xs text-gray-400 mt-1.5">JPG, PNG, or PDF · max 16 MB each</p>
+  </form>
+</div>
+{% endif %}
+
 <script>
+// Customer/supplier initial display names
+const customerInitial = {{ (transaction.customer.name if transaction and transaction.customer else '') | tojson }};
+const supplierInitial = {{ (transaction.supplier.name if transaction and transaction.supplier else '') | tojson }};
+
+if (customerInitial) document.getElementById('customer-search').value = customerInitial;
+if (supplierInitial) document.getElementById('supplier-search').value = supplierInitial;
+
+function setupAutocomplete(inputId, dropdownId, hiddenId, searchUrl) {
+  const input = document.getElementById(inputId);
+  const dropdown = document.getElementById(dropdownId);
+  const hidden = document.getElementById(hiddenId);
+  let debounceTimer;
+
+  input.addEventListener('input', () => {
+    hidden.value = '';
+    clearTimeout(debounceTimer);
+    const q = input.value.trim();
+    if (!q) { dropdown.classList.add('hidden'); return; }
+    debounceTimer = setTimeout(async () => {
+      const res = await fetch(`${searchUrl}?q=${encodeURIComponent(q)}`);
+      const items = await res.json();
+      dropdown.innerHTML = '';
+      if (!items.length) {
+        dropdown.innerHTML = '<div class="px-3 py-2 text-gray-400">No results</div>';
+      } else {
+        items.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'px-3 py-2 hover:bg-blue-50 cursor-pointer';
+          div.textContent = item.name;
+          div.addEventListener('mousedown', e => {
+            e.preventDefault();
+            input.value = item.name;
+            hidden.value = item.id;
+            dropdown.classList.add('hidden');
+          });
+          dropdown.appendChild(div);
+        });
+      }
+      dropdown.classList.remove('hidden');
+    }, 200);
+  });
+
+  input.addEventListener('blur', () => {
+    setTimeout(() => dropdown.classList.add('hidden'), 150);
+  });
+
+  input.addEventListener('focus', () => {
+    if (input.value.trim()) input.dispatchEvent(new Event('input'));
+  });
+
+  // Allow clearing
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Escape' || e.key === 'Delete' || e.key === 'Backspace') {
+      if (e.key === 'Escape') { input.value = ''; hidden.value = ''; }
+    }
+  });
+}
+
+setupAutocomplete('customer-search', 'customer-dropdown', 'customer-id', '{{ url_for("customers.search") }}');
+setupAutocomplete('supplier-search', 'supplier-dropdown', 'supplier-id', '{{ url_for("suppliers.search") }}');
+
 const accountOptions = [
   {% for a in accounts -%}
   { id: {{ a.id | tojson }}, label: {{ (a.code ~ ' \u2014 ' ~ a.name) | tojson }} },
@@ -175,5 +340,40 @@ if (seedLines.length >= 2) {
   addLine('', 'debit', '');
   addLine('', 'credit', '');
 }
+
+// Attachment viewer modal
+function openAttachmentModal(url, mimeType, filename) {
+  const content = document.getElementById('att-modal-content');
+  if (mimeType.startsWith('image/')) {
+    content.innerHTML = `<img src="${url}" class="max-w-full max-h-[85vh] object-contain block mx-auto" alt="${filename}">`;
+  } else {
+    content.innerHTML = `<iframe src="${url}" class="w-full h-[85vh] block" title="${filename}"></iframe>`;
+  }
+  document.getElementById('att-modal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeAttachmentModal() {
+  document.getElementById('att-modal').classList.add('hidden');
+  document.getElementById('att-modal-content').innerHTML = '';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAttachmentModal();
+});
 </script>
+
+<!-- Attachment viewer modal -->
+<div id="att-modal"
+     class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+     onclick="if(event.target===this) closeAttachmentModal()">
+  <div class="relative w-full max-w-4xl">
+    <button onclick="closeAttachmentModal()"
+            class="absolute -top-9 right-0 text-white text-3xl leading-none hover:text-gray-300 font-light"
+            aria-label="Close">&times;</button>
+    <div id="att-modal-content" class="bg-white rounded-lg overflow-hidden shadow-2xl"></div>
+  </div>
+</div>
+
 {% endblock %}

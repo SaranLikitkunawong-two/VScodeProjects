@@ -2,6 +2,106 @@
 {% block title %}Dashboard — AccSoft{% endblock %}
 
 {% block content %}
-<h1 class="text-2xl font-bold mb-2">Dashboard</h1>
-<p class="text-gray-500 text-sm">Welcome to AccSoft. More to come in Session 4.</p>
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold">Dashboard</h1>
+  <a href="{{ url_for('transactions.add_transaction') }}"
+     class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 font-medium">
+    + New Transaction
+  </a>
+</div>
+
+<!-- Balance summary cards -->
+{% if ordered_balances %}
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+  {% for group in ordered_balances %}
+  <div class="bg-white border border-gray-200 rounded-lg p-4">
+    <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">{{ group.label }}</div>
+    <div class="text-xl font-bold font-mono text-gray-800">
+      ${{ '{:,.2f}'.format(group.total.__abs__()) }}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Main content grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+  <!-- Account balances breakdown -->
+  <div class="bg-white border border-gray-200 rounded-lg p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold text-gray-700">Account Balances</h2>
+      <a href="{{ url_for('accounts.list_accounts') }}" class="text-xs text-blue-600 hover:underline">Manage</a>
+    </div>
+
+    {% if ordered_balances %}
+      {% for group in ordered_balances %}
+      <div class="mb-5 last:mb-0">
+        <div class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1.5">
+          {{ group.label }}
+        </div>
+        {% set debit_normal = group.type in ('asset', 'expense') %}
+        {% for acct in group.accounts %}
+        {% set unusual = acct.balance < 0 %}
+        <div class="flex justify-between items-center py-1 border-b border-gray-50 text-sm">
+          <span class="text-gray-600 truncate mr-4">{{ acct.code }} — {{ acct.name }}</span>
+          <span class="font-mono shrink-0 {% if unusual %}text-amber-600{% else %}text-gray-700{% endif %}">
+            ${{ '{:,.2f}'.format(acct.balance.__abs__()) }}
+            {%- if unusual %}
+              <span class="text-xs">{{ 'CR' if debit_normal else 'DR' }}</span>
+            {%- endif %}
+          </span>
+        </div>
+        {% endfor %}
+        <div class="flex justify-between items-center pt-1.5 text-sm font-semibold text-gray-700">
+          <span>Total {{ group.label }}</span>
+          <span class="font-mono">${{ '{:,.2f}'.format(group.total.__abs__()) }}</span>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="text-sm text-gray-400">No accounts yet.</p>
+    {% endif %}
+  </div>
+
+  <!-- Recent transactions -->
+  <div class="bg-white border border-gray-200 rounded-lg p-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="font-semibold text-gray-700">Recent Transactions</h2>
+      <a href="{{ url_for('transactions.list_transactions') }}" class="text-xs text-blue-600 hover:underline">View all</a>
+    </div>
+
+    {% if recent_txns %}
+    <div class="divide-y divide-gray-50">
+      {% for item in recent_txns %}
+      {% set txn = item.txn %}
+      <a href="{{ url_for('transactions.edit_transaction', txn_id=txn.id) }}"
+         class="flex items-center justify-between py-2.5 px-1 -mx-1 rounded hover:bg-gray-50 group">
+        <div class="min-w-0">
+          <div class="text-sm font-medium text-gray-800 truncate group-hover:text-blue-600">
+            {{ txn.description }}
+          </div>
+          <div class="text-xs text-gray-400 mt-0.5">
+            {{ txn.date.strftime('%d %b %Y') }}{% if txn.reference %} &middot; {{ txn.reference }}{% endif %}
+            {% if txn.attachments %}<span class="ml-1 text-gray-300">&#128206;</span>{% endif %}
+          </div>
+        </div>
+        <div class="ml-4 text-sm font-mono text-gray-600 shrink-0">
+          ${{ '{:,.2f}'.format(item.amount) }}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-10">
+      <p class="text-sm text-gray-400 mb-3">No transactions yet.</p>
+      <a href="{{ url_for('transactions.add_transaction') }}"
+         class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 font-medium">
+        + New Transaction
+      </a>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
 {% endblock %}

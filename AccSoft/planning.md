@@ -60,12 +60,18 @@ A personal web-based accounting portal for a small service business. Accessible 
 - [ ] User can correct suggestions; corrections are remembered per vendor
 - [ ] Support: digital PDFs, scanned PDFs, JPG/PNG photos
 
+### Phase 2.6 — Customers & Suppliers
+- [ ] Customer profiles: name, contact, email, phone, address, ABN, notes
+- [ ] Supplier profiles: same fields
+- [ ] Link customers to AR transactions; link suppliers to AP transactions
+- [ ] Customer/supplier detail page showing linked transactions and outstanding balance
+- [ ] Customer/supplier selector on transaction form (search with autocomplete)
+
 ### Phase 3 — Maybe Later
 - [ ] Tax report export
 - [ ] Migrate file storage to Cloudflare R2 / AWS S3
 - [ ] Migrate hosting to self-hosted machine
 - [ ] Multi-currency support
-- [ ] Client/vendor directory
 - [ ] Claude API fallback for GL suggestions (unrecognised vendor/description → AI suggests account from chart of accounts)
 
 ---

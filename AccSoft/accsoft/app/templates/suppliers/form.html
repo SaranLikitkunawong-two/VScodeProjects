@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — AccSoft{% endblock %}
+
+{% block content %}
+<div class="flex items-center gap-3 mb-6">
+  <a href="{{ url_for('suppliers.list_suppliers') }}"
+     class="text-gray-500 hover:text-gray-700 text-sm">← Suppliers</a>
+  <h1 class="text-2xl font-bold">{{ title }}</h1>
+</div>
+
+<form method="post" action="{{ form_action }}">
+  <div class="bg-white border border-gray-200 rounded-lg p-6 mb-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Name <span class="text-red-500">*</span>
+        </label>
+        <input type="text" name="name"
+               value="{{ prefill.get('name', supplier.name if supplier else '') }}"
+               class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+               required autofocus />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Contact Person</label>
+        <input type="text" name="contact_person"
+               value="{{ prefill.get('contact_person', supplier.contact_person if supplier else '') }}"
+               class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+        <input type="email" name="email"
+               value="{{ prefill.get('email', supplier.email if supplier else '') }}"
+               class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+        <input type="text" name="phone"
+               value="{{ prefill.get('phone', supplier.phone if supplier else '') }}"
+               class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">ABN</label>
+        <input type="text" name="abn"
+               value="{{ prefill.get('abn', supplier.abn if supplier else '') }}"
+               placeholder="e.g. 12 345 678 901"
+               class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+        <textarea name="address" rows="2"
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">{{ prefill.get('address', supplier.address if supplier else '') }}</textarea>
+      </div>
+
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+        <textarea name="notes" rows="3"
+                  class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">{{ prefill.get('notes', supplier.notes if supplier else '') }}</textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="flex gap-3">
+    <button type="submit"
+            class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium">
+      Save Supplier
+    </button>
+    <a href="{{ url_for('suppliers.list_suppliers') }}"
+       class="px-6 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50">
+      Cancel
+    </a>
+  </div>
+</form>
+{% endblock %}

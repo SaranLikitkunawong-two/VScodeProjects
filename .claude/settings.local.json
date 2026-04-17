@@ -3,7 +3,11 @@
     "allow": [
       "Bash(C:/Program Files/PostgreSQL/18/bin/psql.exe *)",
       "Read(//c/Users/**)",
-      "Read(//c/ProgramData/**)"
+      "Read(//c/ProgramData/**)",
+      "Bash(set FLASK_APP=run.py)",
+      "Bash(set FLASK_ENV=development)",
+      "Bash(\"C:/Users/Saran Likitkunawong/VScode/AccSoft/accsoft/venv/Scripts/python.exe\" -m flask db migrate -m \"add customers suppliers\")",
+      "Bash(\"C:/Users/Saran Likitkunawong/VScode/AccSoft/accsoft/venv/Scripts/python.exe\" -m flask db upgrade)"
     ]
   }
 }

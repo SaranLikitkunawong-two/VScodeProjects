@@ -12,8 +12,13 @@ class Transaction(db.Model):
     reference = db.Column(db.String(100), default="")
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
+    customer_id = db.Column(db.String(36), db.ForeignKey("customers.id"), nullable=True)
+    supplier_id = db.Column(db.String(36), db.ForeignKey("suppliers.id"), nullable=True)
+
     lines = db.relationship("TransactionLine", back_populates="transaction", cascade="all, delete-orphan")
     attachments = db.relationship("Attachment", back_populates="transaction", cascade="all, delete-orphan")
+    customer = db.relationship("Customer", back_populates="transactions")
+    supplier = db.relationship("Supplier", back_populates="transactions")
 
     def __repr__(self):
         return f"<Transaction {self.date} {self.description}>"

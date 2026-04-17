@@ -55,8 +55,10 @@ def validate_lines(lines_data: list) -> list[str]:
     return errors
 
 
-def create_transaction(date, description, reference, lines_data) -> Transaction:
-    txn = Transaction(date=date, description=description, reference=reference or "")
+def create_transaction(date, description, reference, lines_data,
+                       customer_id=None, supplier_id=None) -> Transaction:
+    txn = Transaction(date=date, description=description, reference=reference or "",
+                      customer_id=customer_id or None, supplier_id=supplier_id or None)
     db.session.add(txn)
     for line in lines_data:
         db.session.add(TransactionLine(
@@ -69,10 +71,13 @@ def create_transaction(date, description, reference, lines_data) -> Transaction:
     return txn
 
 
-def update_transaction(txn: Transaction, date, description, reference, lines_data) -> None:
+def update_transaction(txn: Transaction, date, description, reference, lines_data,
+                       customer_id=None, supplier_id=None) -> None:
     txn.date = date
     txn.description = description
     txn.reference = reference or ""
+    txn.customer_id = customer_id or None
+    txn.supplier_id = supplier_id or None
     for line in list(txn.lines):
         db.session.delete(line)
     db.session.flush()

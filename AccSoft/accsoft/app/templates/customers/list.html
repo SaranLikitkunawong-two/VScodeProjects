@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Customers — AccSoft{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold">Customers</h1>
+  <div class="flex items-center gap-3">
+    <a href="{{ url_for('customers.list_customers', show_inactive='1' if not show_inactive else '0') }}"
+       class="text-sm text-gray-500 hover:text-gray-700">
+      {{ 'Hide inactive' if show_inactive else 'Show inactive' }}
+    </a>
+    <a href="{{ url_for('customers.add_customer') }}"
+       class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 font-medium">
+      + New Customer
+    </a>
+  </div>
+</div>
+
+{% if customers %}
+<div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 border-b border-gray-200">
+      <tr>
+        <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Name</th>
+        <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Contact</th>
+        <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
+        <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Phone</th>
+        <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">ABN</th>
+        <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
+        <th class="px-4 py-3"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for c in customers %}
+      <tr class="hover:bg-gray-50 {% if not c.is_active %}opacity-50{% endif %}">
+        <td class="px-4 py-3 font-medium">
+          <a href="{{ url_for('customers.detail', cust_id=c.id) }}"
+             class="text-blue-600 hover:underline">{{ c.name }}</a>
+        </td>
+        <td class="px-4 py-3 text-gray-600">{{ c.contact_person or '—' }}</td>
+        <td class="px-4 py-3 text-gray-600">
+          {% if c.email %}<a href="mailto:{{ c.email }}" class="hover:underline">{{ c.email }}</a>{% else %}—{% endif %}
+        </td>
+        <td class="px-4 py-3 text-gray-600">{{ c.phone or '—' }}</td>
+        <td class="px-4 py-3 text-gray-500 font-mono text-xs">{{ c.abn or '—' }}</td>
+        <td class="px-4 py-3">
+          {% if c.is_active %}
+            <span class="inline-block px-2 py-0.5 rounded text-xs bg-green-100 text-green-700">Active</span>
+          {% else %}
+            <span class="inline-block px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-500">Inactive</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3 text-right">
+          <div class="flex items-center justify-end gap-3">
+            <a href="{{ url_for('customers.edit_customer', cust_id=c.id) }}"
+               class="text-xs text-gray-500 hover:text-blue-600">Edit</a>
+            <form method="post" action="{{ url_for('customers.toggle_customer', cust_id=c.id) }}">
+              <button type="submit"
+                      class="text-xs text-gray-500 hover:text-orange-600">
+                {{ 'Deactivate' if c.is_active else 'Activate' }}
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="text-center py-16 text-gray-400">
+  <p class="text-lg mb-2">No customers yet.</p>
+  <a href="{{ url_for('customers.add_customer') }}" class="text-blue-600 hover:underline text-sm">
+    Add your first customer
+  </a>
+</div>
+{% endif %}
+{% endblock %}

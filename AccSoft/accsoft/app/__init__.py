@@ -23,10 +23,16 @@ def create_app(config_name=None):
     from app.blueprints.dashboard import dashboard_bp
     from app.blueprints.accounts import accounts_bp
     from app.blueprints.transactions import transactions_bp
+    from app.blueprints.attachments import attachments_bp
+    from app.blueprints.customers import customers_bp
+    from app.blueprints.suppliers import suppliers_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
     app.register_blueprint(accounts_bp)
     app.register_blueprint(transactions_bp)
+    app.register_blueprint(attachments_bp)
+    app.register_blueprint(customers_bp)
+    app.register_blueprint(suppliers_bp)
 
     return app

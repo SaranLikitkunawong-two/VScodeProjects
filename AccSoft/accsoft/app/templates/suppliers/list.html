@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Suppliers — AccSoft{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold">Suppliers</h1>
+  <div class="flex items-center gap-3">
+    <a href="{{ url_for('suppliers.list_suppliers', show_inactive='1' if not show_inactive else '0') }}"
+       class="text-sm text-gray-500 hover:text-gray-700">
+      {{ 'Hide inactive' if show_inactive else 'Show inactive' }}
+    </a>
+    <a href="{{ url_for('suppliers.add_supplier') }}"
+       class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 font-medium">
+      + New Supplier
+    </a>
+  </div>
+</div>
+
+{% if suppliers %}
+<div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 border-b border-gray-200">
+      <tr>
+        <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Name</th>
+        <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Contact</th>
+        <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Email</th>
+        <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Phone</th>
+        <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">ABN</th>
+        <th class="text-left px-4 py-3 text-xs font-medium text-gray-500 uppercase">Status</th>
+        <th class="px-4 py-3"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for s in suppliers %}
+      <tr class="hover:bg-gray-50 {% if not s.is_active %}opacity-50{% endif %}">
+        <td class="px-4 py-3 font-medium">
+          <a href="{{ url_for('suppliers.detail', supp_id=s.id) }}"
+             class="text-blue-600 hover:underline">{{ s.name }}</a>
+        </td>
+        <td class="px-4 py-3 text-gray-600">{{ s.contact_person or '—' }}</td>
+        <td class="px-4 py-3 text-gray-600">
+          {% if s.email %}<a href="mailto:{{ s.email }}" class="hover:underline">{{ s.email }}</a>{% else %}—{% endif %}
+        </td>
+        <td class="px-4 py-3 text-gray-600">{{ s.phone or '—' }}</td>
+        <td class="px-4 py-3 text-gray-500 font-mono text-xs">{{ s.abn or '—' }}</td>
+        <td class="px-4 py-3">
+          {% if s.is_active %}
+            <span class="inline-block px-2 py-0.5 rounded text-xs bg-green-100 text-green-700">Active</span>
+          {% else %}
+            <span class="inline-block px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-500">Inactive</span>
+          {% endif %}
+        </td>
+        <td class="px-4 py-3 text-right">
+          <div class="flex items-center justify-end gap-3">
+            <a href="{{ url_for('suppliers.edit_supplier', supp_id=s.id) }}"
+               class="text-xs text-gray-500 hover:text-blue-600">Edit</a>
+            <form method="post" action="{{ url_for('suppliers.toggle_supplier', supp_id=s.id) }}">
+              <button type="submit"
+                      class="text-xs text-gray-500 hover:text-orange-600">
+                {{ 'Deactivate' if s.is_active else 'Activate' }}
+              </button>
+            </form>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="text-center py-16 text-gray-400">
+  <p class="text-lg mb-2">No suppliers yet.</p>
+  <a href="{{ url_for('suppliers.add_supplier') }}" class="text-blue-600 hover:underline text-sm">
+    Add your first supplier
+  </a>
+</div>
+{% endif %}
+{% endblock %}

@@ -31,66 +31,54 @@ Chart of Accounts CRUD: grouped list by type, add/edit/deactivate/hard-delete, f
 **Goal:** Enter double-entry transactions and view the general ledger.  
 **Status:** Code complete — awaiting browser verification.
 
+### Pending UX improvements
+- [ ] Add CSV export button to the transactions list page
+- [ ] Transactions page: add a left-hand filter panel with:
+  - Date range slicer (from / to date pickers)
+  - Account slicer — search input with filtered dropdown, supports multi-select
+  - Panel filters the transaction list in real time (or on apply)
+- [ ] Replace account dropdown on transaction line rows with a search input that shows autocomplete suggestions (behaves like a dropdown on click, but also filters by typing)
+- [ ] Date field on new transaction form: clicking anywhere on the input should open the calendar picker (not just the calendar icon)
+- [ ] Transaction entry: support selecting multiple GL account lines at once via checkboxes
+- [ ] Transaction entry: split amount column into separate Debit and Credit columns
+- [ ] Add a balance effect column (+/−) calculated from account type and entry side:
+  - Asset, Expense, Equity: Debit → +, Credit → −
+  - Liability, Revenue: Debit → −, Credit → +
+- [ ] Ledger page: apply the same separate Debit/Credit columns and balance effect column (+/−) as above
+- [ ] Ledger date filter: add preset range buttons — Today, Yesterday, Last 7 Days, This Month, Last Month — that populate the from/to date fields when clicked
+
 ### Verify
 **Setup:** Open CMD → activate venv → `set FLASK_APP=run.py` → `flask run`
 
 **Transaction list**
-- [ ] Navigate to `http://127.0.0.1:5000/transactions/` — page loads with empty state and "+ New Transaction" button
-- [ ] "Transactions" and "Ledger" links appear in the nav bar
+- [x] Navigate to `http://127.0.0.1:5000/transactions/` — page loads with empty state and "+ New Transaction" button
+- [x] "Transactions" and "Ledger" links appear in the nav bar
 
 **Add transaction — happy path**
-- [ ] Click "+ New Transaction" → form loads with 2 pre-filled lines (one debit, one credit)
-- [ ] Enter: Date = today, Description = "Office supplies", Reference = "INV-001"
-- [ ] Line 1: account = any Expense account, type = Debit, amount = 50.00
-- [ ] Line 2: account = any Asset/Bank account, type = Credit, amount = 50.00
-- [ ] Running totals show Debits $50.00 / Credits $50.00 with no warning
-- [ ] Click Save → redirects to transaction list with success flash message
-- [ ] Transaction appears in the list with correct date, description, amount $50.00
+- [x] Click "+ New Transaction" → form loads with 2 pre-filled lines (one debit, one credit)
+- [x] Enter: Date = today, Description = "Office supplies", Reference = "INV-001"
+- [x] Line 1: account = any Expense account, type = Debit, amount = 50.00
+- [x] Line 2: account = any Asset/Bank account, type = Credit, amount = 50.00
+- [x] Running totals show Debits $50.00 / Credits $50.00 with no warning
+- [x] Click Save → redirects to transaction list with success flash message
+- [x] Transaction appears in the list with correct date, description, amount $50.00
 
-**Validation — debits ≠ credits**
-- [ ] Enter Line 1 Debit $100.00 / Line 2 Credit $90.00 → "Debits must equal credits" warning appears in real time
-- [ ] Submit anyway → server rejects it and shows error flash (does not save)
+**Add Transaction testing**
+Validation works - does not submit if debit and credits doesn't balance, or if fields are missing. 
 
-**Validation — missing fields**
-- [ ] Submit with no date → error: "Date is required."
-- [ ] Submit with no description → error: "Description is required."
-- [ ] Submit with amount = 0 → error: "amount must be greater than zero."
-
-**Dynamic line rows**
-- [ ] Click "+ Add line" → third row appears; totals update
-- [ ] Click × on a row → row removed; totals update
-- [ ] Try to remove a row when only 2 remain → alert shown, row not removed
-
-**Edit transaction**
-- [ ] Click Edit → form loads with correct date, description, and lines pre-filled
-- [ ] Change description and save → list shows updated description
-
-**Delete transaction**
-- [ ] Click Delete → confirm dialog; confirm → transaction removed, success flash shown
-- [ ] Re-add a transaction for ledger tests below
-
-**General ledger**
-- [ ] Navigate to `http://127.0.0.1:5000/transactions/ledger` — filter bar shown, no table yet
-- [ ] Select the Bank/Asset account → ledger table appears with correct date, description, debit/credit, running balance
-- [ ] Filter by date range that excludes the transaction → "No entries" message
-- [ ] Filter by date range that includes it → row reappears
-- [ ] Description is a link → clicking opens the edit form for that transaction
-
-**Re-test Session 2 — delete restriction**
-- [ ] Go to Accounts → try to delete the account used in the transaction above
-- [ ] Error shown: "Cannot delete — it has linked transactions. Deactivate it instead."
 
 ---
 
 ## Session 4 — File Attachments & Dashboard
-**Goal:** Attach invoices/receipts to transactions; working dashboard.
+**Goal:** Attach invoices/receipts to transactions; working dashboard.  
+**Status:** Code complete — awaiting browser verification.
 
 ### Steps
-- [ ] File upload on transaction form (JPG, PNG, PDF accepted)
-- [ ] Store file in `app/static/uploads/` with UUID filename
-- [ ] View attachment inline (images) or download link (PDFs)
-- [ ] Multiple attachments per transaction
-- [ ] Dashboard page:
+- [x] File upload on transaction form (JPG, PNG, PDF accepted)
+- [x] Store file in `app/static/uploads/` with UUID filename
+- [x] View attachment inline (images) or download link (PDFs)
+- [x] Multiple attachments per transaction
+- [x] Dashboard page:
   - Account balances summary (grouped by type)
   - Recent 10 transactions
   - Quick-add transaction button
@@ -99,6 +87,30 @@ Chart of Accounts CRUD: grouped list by type, add/edit/deactivate/hard-delete, f
 - Upload a JPG receipt to a transaction → visible on transaction detail page
 - Upload a PDF invoice → download link works
 - Dashboard shows correct balances after transactions entered in Session 3
+
+---
+
+## Session 4.5 — Customers & Suppliers
+**Goal:** Customer and supplier profiles to support invoicing and payment tracking.
+**Status:** Code complete — awaiting browser verification.
+
+### Steps
+- [x] `customers` table: name, contact person, email, phone, address, ABN, notes, is_active
+- [x] `suppliers` table: same fields as customers
+- [x] Customer CRUD UI — list, add, edit, deactivate
+- [x] Supplier CRUD UI — list, add, edit, deactivate
+- [x] Link customers to AR transactions (Accounts Receivable)
+- [x] Link suppliers to AP transactions (Accounts Payable)
+- [x] Customer/supplier selector on transaction form (search with autocomplete)
+- [x] Customer detail page — shows all linked transactions and outstanding balance
+- [x] Supplier detail page — shows all linked transactions and outstanding balance
+
+### Verify
+- [ ] Add a customer → appears in customer list
+- [ ] Add a supplier → appears in supplier list
+- [ ] Create a transaction linked to a customer → appears on customer detail page
+- [ ] Outstanding balance calculates correctly from linked AR transactions
+- [ ] Deactivating a customer hides them from the transaction selector but preserves history
 
 ---
 
@@ -187,8 +199,20 @@ Chart of Accounts CRUD: grouped list by type, add/edit/deactivate/hard-delete, f
 | 1 | Project setup, models, auth | **Complete** |
 | 2 | Chart of Accounts | **Complete** |
 | 3 | Transaction entry + ledger | **Code complete — awaiting browser verify** |
-| 4 | Attachments + dashboard | Not started |
+| 4 | Attachments + dashboard | **Code complete — awaiting browser verify** |
+| 4.5 | Customers & Suppliers | **Code complete — awaiting browser verify** |
 | 5 | OCR pipeline | Not started |
 | 6 | Bank reconciliation | Not started |
 | 7 | Reports + CSV | Not started |
 | 8 | VPS deployment | Not started |
+
+## UX Suggestions (user-provided)
+
+When you list UX suggestions here in the chat, they will be added below as checklist todos. Template:
+- [ ] Short description — added on YYYY-MM-DD by user
+
+Instructions: Post your UX suggestion in a single line; it will be appended to this section and saved to todo.md.
+
+- [ ] Show balancing hint under transaction totals: when debits ≠ credits, display the amount needed to balance (e.g., Debits 100 / Credits 90 → show "+10" in smaller text beneath the lesser side) — added on 2026-04-17 by user
+- [x] Dashboard balance display: fix "deficit" label and red DR/CR indicators to respect normal balance sides. Debit-normal accounts (asset, expense) carry a natural debit balance — a positive computed balance is normal and should never show "deficit" or red. Only flag unusual balances (e.g. an asset with a credit balance, or equity with a debit balance). Also fix the individual account suffix: the "DR" label currently appears when `balance < 0` on a debit-normal account, but that computed negative means a credit balance — the suffix should say "CR", not "DR". — added on 2026-04-17 by user
+
