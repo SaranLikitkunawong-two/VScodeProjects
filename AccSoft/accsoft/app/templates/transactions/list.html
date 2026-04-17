@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Transactions — AccSoft{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold">Transactions</h1>
+  <a href="{{ url_for('transactions.add_transaction') }}"
+     class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium">
+    + New Transaction
+  </a>
+</div>
+
+<form method="get" class="flex gap-3 mb-6">
+  <input name="search" value="{{ search }}" placeholder="Search description or reference…"
+         class="flex-1 border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+  <select name="sort" class="border border-gray-300 rounded px-3 py-2 text-sm">
+    <option value="date_desc" {% if sort == 'date_desc' %}selected{% endif %}>Date ↓ (newest)</option>
+    <option value="date_asc"  {% if sort == 'date_asc'  %}selected{% endif %}>Date ↑ (oldest)</option>
+  </select>
+  <button class="px-4 py-2 bg-gray-600 text-white rounded text-sm hover:bg-gray-700">Search</button>
+  {% if search %}
+  <a href="{{ url_for('transactions.list_transactions') }}"
+     class="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50">Clear</a>
+  {% endif %}
+</form>
+
+{% if transactions %}
+<div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-gray-600 text-left">
+      <tr>
+        <th class="px-4 py-3 font-medium">Date</th>
+        <th class="px-4 py-3 font-medium">Description</th>
+        <th class="px-4 py-3 font-medium">Reference</th>
+        <th class="px-4 py-3 font-medium text-right">Amount</th>
+        <th class="px-4 py-3 font-medium text-center">Lines</th>
+        <th class="px-4 py-3 font-medium"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for txn in transactions %}
+      {% set ns = namespace(total=0) %}
+      {% for line in txn.lines %}{% if line.type == 'debit' %}{% set ns.total = ns.total + line.amount %}{% endif %}{% endfor %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-3 whitespace-nowrap text-gray-700">{{ txn.date.strftime('%d %b %Y') }}</td>
+        <td class="px-4 py-3">{{ txn.description }}</td>
+        <td class="px-4 py-3 text-gray-500">{{ txn.reference or '—' }}</td>
+        <td class="px-4 py-3 text-right font-mono text-gray-800">${{ '%.2f'|format(ns.total) }}</td>
+        <td class="px-4 py-3 text-center text-gray-500">{{ txn.lines|length }}</td>
+        <td class="px-4 py-3 text-right whitespace-nowrap">
+          <a href="{{ url_for('transactions.edit_transaction', txn_id=txn.id) }}"
+             class="text-blue-600 hover:underline mr-4">Edit</a>
+          <form method="post"
+                action="{{ url_for('transactions.delete_transaction', txn_id=txn.id) }}"
+                class="inline"
+                onsubmit="return confirm('Delete transaction \'{{ txn.description }}\'?')">
+            <button class="text-red-500 hover:underline">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="text-center py-16 text-gray-400">
+  <p class="text-lg mb-2">No transactions yet.</p>
+  <a href="{{ url_for('transactions.add_transaction') }}" class="text-blue-600 hover:underline text-sm">
+    Add your first transaction →
+  </a>
+</div>
+{% endif %}
+
+<div class="mt-6">
+  <a href="{{ url_for('transactions.ledger') }}" class="text-blue-600 hover:underline text-sm">
+    → View General Ledger
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — AccSoft{% endblock %}
+
+{% block content %}
+
+{# Helper: value from prefill → existing account → fallback #}
+{% macro field_val(key, fallback='') %}
+  {{- prefill.get(key) if prefill.get(key) is not none and prefill.get(key) != '' else (account[key] if account and account[key] else fallback) -}}
+{% endmacro %}
+
+<div class="max-w-lg">
+  <div class="flex items-center gap-3 mb-6">
+    <a href="{{ url_for('accounts.list_accounts') }}" class="text-gray-400 hover:text-gray-600 text-sm">← Accounts</a>
+    <h1 class="text-xl font-bold">{{ title }}</h1>
+  </div>
+
+  <form method="POST" action="{{ form_action }}" class="space-y-5 bg-white border border-gray-200 rounded-lg p-6">
+
+    {# ── Name ── #}
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="name">
+        Account Name <span class="text-red-500">*</span>
+      </label>
+      <input
+        id="name" name="name" type="text" required
+        value="{{ prefill.get('name') or (account.name if account else '') }}"
+        placeholder="e.g. Office Expenses"
+        class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+    </div>
+
+    {# ── Type ── #}
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="type">
+        Account Type <span class="text-red-500">*</span>
+        {% if type_locked %}
+          <span class="ml-2 text-xs text-gray-400">(locked — has transactions)</span>
+        {% endif %}
+      </label>
+      {% if type_locked %}
+        <input type="hidden" name="type" value="{{ account.type }}">
+        <input
+          type="text"
+          value="{{ account.type | title }}"
+          disabled
+          class="w-full border border-gray-200 rounded px-3 py-2 text-sm bg-gray-50 text-gray-500 cursor-not-allowed"
+        />
+      {% else %}
+        {% set selected_type = prefill.get('type') or (account.type if account else '') %}
+        <select
+          id="type" name="type" required
+          onchange="updateCode(this.value)"
+          class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <option value="" disabled {{ 'selected' if not selected_type }}>Select a type…</option>
+          {% for t in account_types %}
+            <option value="{{ t }}" {{ 'selected' if selected_type == t }}>
+              {{ t | title }}
+            </option>
+          {% endfor %}
+        </select>
+      {% endif %}
+    </div>
+
+    {# ── Code ── #}
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="code">
+        Account Code <span class="text-red-500">*</span>
+        {% if not account %}
+          <span class="ml-2 text-xs text-gray-400">(auto-suggested; you can change it)</span>
+        {% endif %}
+      </label>
+      <input
+        id="code" name="code" type="text" required
+        value="{{ prefill.get('code') or (account.code if account else '') }}"
+        placeholder="e.g. 5100"
+        class="w-full border border-gray-300 rounded px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-400"
+      />
+    </div>
+
+    {# ── Description ── #}
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1" for="description">
+        Description <span class="text-gray-400 font-normal">(optional)</span>
+      </label>
+      <textarea
+        id="description" name="description" rows="2"
+        placeholder="Brief note on what belongs in this account"
+        class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+      >{{ prefill.get('description') or (account.description if account else '') }}</textarea>
+    </div>
+
+    {# ── Submit ── #}
+    <div class="flex items-center gap-3 pt-2">
+      <button type="submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded">
+        {{ 'Save Changes' if account else 'Create Account' }}
+      </button>
+      <a href="{{ url_for('accounts.list_accounts') }}"
+         class="text-sm text-gray-500 hover:text-gray-700">Cancel</a>
+    </div>
+
+  </form>
+</div>
+
+<script>
+  const nextCodes = {{ next_codes | tojson }};
+
+  function updateCode(type) {
+    const codeInput = document.getElementById('code');
+    {% if not account %}
+    if (nextCodes[type]) {
+      codeInput.value = nextCodes[type];
+    }
+    {% endif %}
+  }
+
+  // Auto-fill code on page load if add form and type already selected
+  {% if not account %}
+  const typeEl = document.getElementById('type');
+  if (typeEl && typeEl.value) {
+    updateCode(typeEl.value);
+  }
+  {% endif %}
+</script>
+
+{% endblock %}

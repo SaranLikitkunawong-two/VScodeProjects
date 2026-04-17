@@ -1,0 +1,6 @@
+# Install in Session 5 when OCR pipeline is being built
+pdfplumber==0.11.4
+paddlepaddle
+paddleocr
+invoice2data==0.4.5
+Pillow==11.1.0

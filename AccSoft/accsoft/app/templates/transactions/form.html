@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} — AccSoft{% endblock %}
+
+{% block content %}
+<div class="flex items-center gap-3 mb-6">
+  <a href="{{ url_for('transactions.list_transactions') }}"
+     class="text-gray-500 hover:text-gray-700 text-sm">← Transactions</a>
+  <h1 class="text-2xl font-bold">{{ title }}</h1>
+</div>
+
+<form method="post" action="{{ form_action }}" id="txn-form">
+
+  <!-- Header fields -->
+  <div class="bg-white border border-gray-200 rounded-lg p-6 mb-5">
+    <h2 class="font-semibold text-gray-700 mb-4">Details</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Date <span class="text-red-500">*</span>
+        </label>
+        <input type="date" name="date"
+               value="{{ prefill.get('date', transaction.date.isoformat() if transaction else '') }}"
+               class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+               required />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Description <span class="text-red-500">*</span>
+        </label>
+        <input type="text" name="description"
+               value="{{ prefill.get('description', transaction.description if transaction else '') }}"
+               class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+               required />
+      </div>
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Reference</label>
+        <input type="text" name="reference"
+               value="{{ prefill.get('reference', transaction.reference if transaction else '') }}"
+               placeholder="Invoice #, receipt #…"
+               class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+      </div>
+    </div>
+  </div>
+
+  <!-- Journal lines -->
+  <div class="bg-white border border-gray-200 rounded-lg p-6 mb-5">
+    <h2 class="font-semibold text-gray-700 mb-4">Journal Lines</h2>
+
+    <div class="grid gap-2 text-xs font-medium text-gray-500 uppercase mb-2 px-1"
+         style="grid-template-columns: 1fr 130px 160px 36px;">
+      <span>Account</span><span>Type</span><span class="text-right pr-3">Amount</span><span></span>
+    </div>
+
+    <div id="lines-container" class="space-y-2"></div>
+
+    <button type="button" onclick="addLine()"
+            class="mt-4 text-sm text-blue-600 hover:underline">
+      + Add line
+    </button>
+
+    <!-- Running totals -->
+    <div class="mt-5 pt-4 border-t border-gray-100 flex justify-end gap-10 text-sm">
+      <div>
+        <span class="text-gray-500">Total Debits</span>
+        <span id="total-debits" class="ml-3 font-mono font-medium text-gray-800">$0.00</span>
+      </div>
+      <div>
+        <span class="text-gray-500">Total Credits</span>
+        <span id="total-credits" class="ml-3 font-mono font-medium text-gray-800">$0.00</span>
+      </div>
+    </div>
+    <div id="balance-warning"
+         class="hidden mt-2 text-right text-sm text-red-600 font-medium">
+      Debits must equal credits before saving.
+    </div>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex gap-3">
+    <button type="submit"
+            class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium">
+      Save Transaction
+    </button>
+    <a href="{{ url_for('transactions.list_transactions') }}"
+       class="px-6 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50">
+      Cancel
+    </a>
+  </div>
+</form>
+
+<script>
+const accountOptions = [
+  {% for a in accounts -%}
+  { id: {{ a.id | tojson }}, label: {{ (a.code ~ ' \u2014 ' ~ a.name) | tojson }} },
+  {%- endfor %}
+];
+
+const seedLines = {{ lines | tojson }};
+let lineIndex = 0;
+
+function buildAccountSelect(name, selectedId) {
+  let html = `<select name="${name}"
+    class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+    required>`;
+  html += `<option value="">— account —</option>`;
+  for (const a of accountOptions) {
+    const sel = a.id === selectedId ? 'selected' : '';
+    html += `<option value="${a.id}" ${sel}>${a.label}</option>`;
+  }
+  html += '</select>';
+  return html;
+}
+
+function buildTypeSelect(name, selectedType) {
+  const dSel = selectedType === 'debit' ? 'selected' : '';
+  const cSel = selectedType === 'credit' ? 'selected' : '';
+  return `<select name="${name}" onchange="updateTotals()"
+    class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+    <option value="debit" ${dSel}>Debit</option>
+    <option value="credit" ${cSel}>Credit</option>
+  </select>`;
+}
+
+function addLine(accountId = '', lineType = 'debit', amount = '') {
+  const idx = lineIndex++;
+  const div = document.createElement('div');
+  div.className = 'grid gap-2 items-center';
+  div.style.gridTemplateColumns = '1fr 130px 160px 36px';
+  div.dataset.lineIdx = idx;
+  div.innerHTML = `
+    ${buildAccountSelect(`lines[${idx}][account_id]`, accountId)}
+    ${buildTypeSelect(`lines[${idx}][type]`, lineType)}
+    <input type="number" name="lines[${idx}][amount]"
+           value="${amount}" min="0.01" step="0.01" placeholder="0.00"
+           oninput="updateTotals()"
+           class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm text-right font-mono focus:outline-none focus:ring-2 focus:ring-blue-400"
+           required />
+    <button type="button" onclick="removeLine(this)"
+            class="text-gray-400 hover:text-red-500 text-xl leading-none font-light"
+            title="Remove line">&times;</button>
+  `;
+  document.getElementById('lines-container').appendChild(div);
+  updateTotals();
+}
+
+function removeLine(btn) {
+  const container = document.getElementById('lines-container');
+  if (container.children.length <= 2) {
+    alert('A transaction needs at least 2 lines.');
+    return;
+  }
+  btn.closest('[data-line-idx]').remove();
+  updateTotals();
+}
+
+function updateTotals() {
+  let debits = 0, credits = 0;
+  document.querySelectorAll('#lines-container [data-line-idx]').forEach(row => {
+    const typeEl = row.querySelector('select[name$="[type]"]');
+    const amtEl = row.querySelector('input[type="number"]');
+    const amt = parseFloat(amtEl.value) || 0;
+    if (typeEl.value === 'debit') debits += amt; else credits += amt;
+  });
+  document.getElementById('total-debits').textContent = '$' + debits.toFixed(2);
+  document.getElementById('total-credits').textContent = '$' + credits.toFixed(2);
+  const nonZero = debits > 0 || credits > 0;
+  const balanced = Math.abs(debits - credits) < 0.005;
+  document.getElementById('balance-warning').classList.toggle('hidden', !nonZero || balanced);
+}
+
+// Seed lines
+if (seedLines.length >= 2) {
+  for (const l of seedLines) addLine(l.account_id, l.type, l.amount);
+} else {
+  addLine('', 'debit', '');
+  addLine('', 'credit', '');
+}
+</script>
+{% endblock %}

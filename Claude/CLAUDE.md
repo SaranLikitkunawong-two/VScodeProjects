@@ -1,26 +1,65 @@
-# CLAUDE.md
+Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Tradeoff: These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
-## Project Overview
+1. Think Before Coding
+Don't assume. Don't hide confusion. Surface tradeoffs.
 
-A static single-page countdown timer website with no build system or dependencies. Open `home.html` directly in a browser to run it — no server required.
+Before implementing:
 
-## Architecture
+State your assumptions explicitly. If uncertain, ask.
+If multiple interpretations exist, present them - don't pick silently.
+If a simpler approach exists, say so. Push back when warranted.
+If something is unclear, stop. Name what's confusing. Ask.
+2. Simplicity First
+Minimum code that solves the problem. Nothing speculative.
 
-Two files make up the entire site:
+No features beyond what was asked.
+No abstractions for single-use code.
+No "flexibility" or "configurability" that wasn't requested.
+No error handling for impossible scenarios.
+If you write 200 lines and it could be 50, rewrite it.
+Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
-- **`home.html`** — all markup and inline JavaScript. The countdown logic targets `2026-04-08T22:35:00+10:00` (Melbourne AEST). The SVG background contains three animated planes using SMIL `<animateMotion>` along `<path>` elements.
-- **`style.css`** — all styling. Z-index layering: `z-index 0` = bg-scene (SVG planes), `z-index 1` = globe-scene (unused in current HTML but defined in CSS), `z-index 2` = page-wrapper (card).
+3. Surgical Changes
+Touch only what you must. Clean up only your own mess.
 
-## Key Implementation Notes
+When editing existing code:
 
-**Countdown timer:** Always hardcode the timezone offset in the ISO string (e.g. `+10:00` for AEST). April 8 is after the first Sunday of April, so AEST (UTC+10) applies — not AEDT (UTC+11).
+Don't "improve" adjacent code, comments, or formatting.
+Don't refactor things that aren't broken.
+Match existing style, even if you'd do it differently.
+If you notice unrelated dead code, mention it - don't delete it.
+When your changes create orphans:
 
-**Heart shape:** CSS-only hearts using a rotated square (`rotate(-45deg)`) with `::before`/`::after` pseudo-elements as circles. Pulse animation must preserve the `-45deg` rotation: `transform: rotate(-45deg) scale(1.3)`.
+Remove imports/variables/functions that YOUR changes made unused.
+Don't remove pre-existing dead code unless asked.
+The test: Every changed line should trace directly to the user's request.
 
-**SVG plane animation:** Uses SMIL `<animateMotion>` with `<mpath href="#trail-id"/>` and `rotate="auto"`. The `begin="-Xs"` offset makes planes visible immediately on load rather than starting off-screen.
+4. Goal-Driven Execution
+Define success criteria. Loop until verified.
 
-**Responsive breakpoints:** `≤768px` (tablet), `≤520px` (mobile — separators hidden, `flex-wrap: nowrap` with `flex: 1 1 0` + `min-width: 0` on `.unit`), `≤380px` (small phone). Uses `100dvh` (not `100vh`) for correct mobile viewport height.
+Transform tasks into verifiable goals:
 
-**VS Code conflict:** If edits revert, VS Code may have an unsaved buffer open. When prompted "file modified outside editor", choose **Discard Changes** to keep the disk version.
+"Add validation" → "Write tests for invalid inputs, then make them pass"
+"Fix the bug" → "Write a test that reproduces it, then make it pass"
+"Refactor X" → "Ensure tests pass before and after"
+For multi-step tasks, state a brief plan:
+
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+3. [Step] → verify: [check]
+Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+These guidelines are working if: fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+5. Provide Guidance
+Define your key decisions in a teaching manner - such as design architecture and explaining key concepts
+
+6. Windows + PostgreSQL Gotchas
+When debugging PostgreSQL connection failures on Windows:
+- Check if multiple PostgreSQL versions are installed (`ls /c/Program Files/PostgreSQL/`) — each uses a different port (PG14 → 5432, PG18 → 5433 by default)
+- Verify the port in `postgresql.conf` (`grep "^port" .../data/postgresql.conf`) before assuming the default
+- To reset a password without knowing it: edit `pg_hba.conf` to use `trust` for localhost, restart the service (requires admin), run `ALTER USER postgres WITH PASSWORD '...'`, restore `scram-sha-256`, restart again
+- Service restart requires Administrator Command Prompt: `net stop postgresql-x64-18 && net start postgresql-x64-18`
+- `localhost` may resolve to IPv6 `::1` — use `127.0.0.1` explicitly in `DATABASE_URL` to force IPv4

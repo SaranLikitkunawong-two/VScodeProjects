@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}General Ledger — AccSoft{% endblock %}
+
+{% block content %}
+<div class="flex items-center gap-3 mb-6">
+  <a href="{{ url_for('transactions.list_transactions') }}"
+     class="text-gray-500 hover:text-gray-700 text-sm">← Transactions</a>
+  <h1 class="text-2xl font-bold">General Ledger</h1>
+</div>
+
+<!-- Filter bar -->
+<form method="get"
+      class="bg-white border border-gray-200 rounded-lg p-4 mb-6 flex flex-wrap gap-4 items-end">
+  <div>
+    <label class="block text-xs font-medium text-gray-600 mb-1">Account</label>
+    <select name="account_id"
+            class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 min-w-[260px]">
+      <option value="">— select account —</option>
+      {% for a in all_accounts %}
+      <option value="{{ a.id }}" {% if a.id == account_id %}selected{% endif %}>
+        {{ a.code }} — {{ a.name }}
+      </option>
+      {% endfor %}
+    </select>
+  </div>
+  <div>
+    <label class="block text-xs font-medium text-gray-600 mb-1">From</label>
+    <input type="date" name="date_from"
+           value="{{ date_from.isoformat() if date_from else '' }}"
+           class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+  </div>
+  <div>
+    <label class="block text-xs font-medium text-gray-600 mb-1">To</label>
+    <input type="date" name="date_to"
+           value="{{ date_to.isoformat() if date_to else '' }}"
+           class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
+  </div>
+  <button class="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">View</button>
+  {% if account_id %}
+  <a href="{{ url_for('transactions.ledger') }}"
+     class="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50">Clear</a>
+  {% endif %}
+</form>
+
+{% if account %}
+<div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+  <!-- Account header -->
+  <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+    <div>
+      <span class="font-semibold text-lg">{{ account.code }} — {{ account.name }}</span>
+      <span class="ml-3 text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 capitalize">
+        {{ account.type }}
+      </span>
+    </div>
+    {% if entries %}
+    <div class="text-sm">
+      <span class="text-gray-500">Closing balance:</span>
+      <span class="ml-2 font-mono font-semibold
+        {% if entries[-1][2] >= 0 %}text-gray-800{% else %}text-red-600{% endif %}">
+        ${{ '%.2f'|format(entries[-1][2]) }}
+      </span>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if entries %}
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-gray-600 text-left">
+      <tr>
+        <th class="px-4 py-3 font-medium">Date</th>
+        <th class="px-4 py-3 font-medium">Description</th>
+        <th class="px-4 py-3 font-medium">Reference</th>
+        <th class="px-4 py-3 font-medium text-right">Debit</th>
+        <th class="px-4 py-3 font-medium text-right">Credit</th>
+        <th class="px-4 py-3 font-medium text-right">Balance</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for txn, line, balance in entries %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-3 whitespace-nowrap">{{ txn.date.strftime('%d %b %Y') }}</td>
+        <td class="px-4 py-3">
+          <a href="{{ url_for('transactions.edit_transaction', txn_id=txn.id) }}"
+             class="hover:text-blue-600 hover:underline">{{ txn.description }}</a>
+        </td>
+        <td class="px-4 py-3 text-gray-500">{{ txn.reference or '—' }}</td>
+        <td class="px-4 py-3 text-right font-mono text-gray-700">
+          {% if line.type == 'debit' %}${{ '%.2f'|format(line.amount) }}{% else %}&nbsp;{% endif %}
+        </td>
+        <td class="px-4 py-3 text-right font-mono text-gray-700">
+          {% if line.type == 'credit' %}${{ '%.2f'|format(line.amount) }}{% else %}&nbsp;{% endif %}
+        </td>
+        <td class="px-4 py-3 text-right font-mono font-medium
+          {% if balance >= 0 %}text-gray-800{% else %}text-red-600{% endif %}">
+          ${{ '%.2f'|format(balance) }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="px-6 py-10 text-gray-500 text-sm text-center">
+    No entries for this account{% if date_from or date_to %} in the selected date range{% endif %}.
+  </p>
+  {% endif %}
+</div>
+
+{% elif account_id %}
+<p class="text-red-600 text-sm">Account not found.</p>
+
+{% else %}
+<p class="text-gray-500 text-sm">Select an account above to view its ledger entries.</p>
+{% endif %}
+{% endblock %}
