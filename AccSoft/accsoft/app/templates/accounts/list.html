@@ -1,262 +1,476 @@
 {% extends "base.html" %}
 {% block title %}Chart of Accounts — AccSoft{% endblock %}
 
+{% block head %}
+<script>
+(function() {
+  if (sessionStorage.getItem('accountsScroll')) {
+    document.documentElement.style.visibility = 'hidden';
+  }
+})();
+</script>
+<style>
+  @keyframes sidebar-in {
+    from { opacity: 0; transform: translateX(1.5rem); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  .sidebar-open { animation: sidebar-in 0.18s ease-out; }
+</style>
+{% endblock %}
+
 {% block content %}
 
-{% set color_bg     = {'asset':'bg-blue-50',   'liability':'bg-red-50',   'equity':'bg-purple-50',   'income':'bg-green-50',   'expense':'bg-amber-50'}   %}
+{% set color_bg     = {'asset':'bg-blue-50',    'liability':'bg-red-50',    'equity':'bg-purple-50',    'income':'bg-green-50',    'expense':'bg-amber-50'}    %}
 {% set color_border = {'asset':'border-blue-200','liability':'border-red-200','equity':'border-purple-200','income':'border-green-200','expense':'border-amber-200'} %}
 {% set color_head   = {'asset':'text-blue-800', 'liability':'text-red-800', 'equity':'text-purple-800', 'income':'text-green-800', 'expense':'text-amber-800'} %}
 {% set color_badge  = {'asset':'bg-blue-100 text-blue-700','liability':'bg-red-100 text-red-700','equity':'bg-purple-100 text-purple-700','income':'bg-green-100 text-green-700','expense':'bg-amber-100 text-amber-700'} %}
 
+{# ── row macro ─────────────────────────────────────────────────────────────── #}
+{% macro acct_row(acct, indent_px) %}
+{% set is_locked = acct.id in type_locked_ids %}
+<tr class="{{ 'opacity-50' if not acct.is_active }}
+           {{ 'bg-gray-100' if acct.hierarchy == 2 else ('bg-gray-50' if acct.hierarchy == 1 else 'bg-white') }}">
+
+  <td class="px-4 py-2 font-mono text-gray-600 whitespace-nowrap" style="padding-left:{{ indent_px + 16 }}px">
+    {{ acct.code }}
+  </td>
+
+  <td class="px-4 py-2 {{ 'font-semibold text-gray-700' if acct.hierarchy == 2 else ('font-medium text-gray-600' if acct.hierarchy == 1 else 'font-medium') }}">
+    {{ acct.name }}
+    {% if acct.hierarchy == 2 %}
+      <span class="ml-1.5 text-xs font-normal text-gray-400 bg-gray-200 px-1.5 py-0.5 rounded">Category</span>
+    {% elif acct.hierarchy == 1 %}
+      <span class="ml-1.5 text-xs font-normal text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">Group</span>
+    {% endif %}
+    {% if not acct.allows_posting and acct.hierarchy == 0 %}
+      <span class="ml-1 text-xs text-orange-500">(no posting)</span>
+    {% endif %}
+    {% if not acct.is_active %}
+      <span class="ml-1 text-xs text-gray-400">(inactive)</span>
+    {% endif %}
+  </td>
+
+  <td class="px-4 py-2 text-gray-500 text-xs hidden lg:table-cell">
+    {{ acct.gl_description or acct.description or '—' }}
+  </td>
+
+  <td class="px-4 py-2">
+    {% if acct.is_active %}
+      <span class="text-xs text-green-700 bg-green-100 px-2 py-0.5 rounded">Active</span>
+    {% else %}
+      <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Inactive</span>
+    {% endif %}
+  </td>
+
+  <td class="px-4 py-2 text-right space-x-1 whitespace-nowrap">
+    <button type="button"
+      onclick="openEditSidebar({{ {
+        'id':                  acct.id,
+        'name':                acct.name,
+        'type':                acct.type,
+        'code':                acct.code,
+        'description':         acct.description or '',
+        'hierarchy':           acct.hierarchy,
+        'allows_posting':      acct.allows_posting,
+        'level_0_account_id':  acct.level_0_account_id or '',
+        'level_1_account_id':  acct.level_1_account_id or '',
+        'gl_description':      acct.gl_description or '',
+        'type_locked':         (acct.id in type_locked_ids)
+      } | tojson }})"
+      class="text-xs text-blue-600 hover:underline px-2 py-1">Edit</button>
+
+    <form method="POST"
+          action="{{ url_for('accounts.deactivate_account', account_id=acct.id) }}"
+          class="inline" onsubmit="saveScroll()">
+      <button type="submit" class="text-xs text-yellow-700 hover:underline px-2 py-1">
+        {{ 'Activate' if not acct.is_active else 'Deactivate' }}
+      </button>
+    </form>
+
+    <form method="POST"
+          action="{{ url_for('accounts.delete_account', account_id=acct.id) }}"
+          class="inline"
+          onsubmit="return saveScrollAndConfirm({{ ('Delete \'' + acct.name + '\'? This cannot be undone.') | tojson }})">
+      <button type="submit" class="text-xs text-red-600 hover:underline px-2 py-1">Delete</button>
+    </form>
+  </td>
+</tr>
+{% endmacro %}
+
+{# ────────────────────────────────────────────────────────────────────────── #}
+
 <div class="flex items-center justify-between mb-6">
   <h1 class="text-2xl font-bold">Chart of Accounts</h1>
-  <button type="button" onclick="openAddModal()"
+  <button type="button" onclick="openAddSidebar()"
      class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded">
     + Add Account
   </button>
 </div>
 
-{% for type in type_order %}
-  {% set accounts = grouped[type] %}
-  <div class="mb-8">
-    <div class="flex items-center gap-3 mb-2">
-      <span class="px-2 py-0.5 rounded text-xs font-semibold {{ color_badge[type] }}">
-        {{ type_labels[type] | upper }}
-      </span>
-      <span class="text-xs text-gray-400">{{ accounts | length }} account{{ 's' if accounts | length != 1 }}</span>
-    </div>
+<div class="flex gap-6 items-start">
 
-    {% if accounts %}
-    <div class="rounded-lg border {{ color_border[type] }} overflow-hidden">
-      <table class="w-full text-sm">
-        <thead class="{{ color_bg[type] }}">
-          <tr>
-            <th class="text-left px-4 py-2 font-medium {{ color_head[type] }} w-24">Code</th>
-            <th class="text-left px-4 py-2 font-medium {{ color_head[type] }}">Name</th>
-            <th class="text-left px-4 py-2 font-medium {{ color_head[type] }} hidden sm:table-cell">Description</th>
-            <th class="text-left px-4 py-2 font-medium {{ color_head[type] }} w-24">Status</th>
-            <th class="text-right px-4 py-2 font-medium {{ color_head[type] }} w-48">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-100">
-          {% for acct in accounts %}
-          <tr class="{{ 'opacity-50' if not acct.is_active }}">
-            <td class="px-4 py-2 font-mono text-gray-600">{{ acct.code }}</td>
-            <td class="px-4 py-2 font-medium">
-              {{ acct.name }}
-              {% if not acct.is_active %}
-                <span class="ml-1 text-xs text-gray-400">(inactive)</span>
-              {% endif %}
-            </td>
-            <td class="px-4 py-2 text-gray-500 hidden sm:table-cell">{{ acct.description or '—' }}</td>
-            <td class="px-4 py-2">
-              {% if acct.is_active %}
-                <span class="text-xs text-green-700 bg-green-100 px-2 py-0.5 rounded">Active</span>
-              {% else %}
-                <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded">Inactive</span>
-              {% endif %}
-            </td>
-            <td class="px-4 py-2 text-right space-x-1">
-              <button type="button"
-                onclick="openEditModal(
-                  {{ acct.id | tojson }},
-                  {{ acct.name | tojson }},
-                  {{ acct.type | tojson }},
-                  {{ acct.code | tojson }},
-                  {{ (acct.description or '') | tojson }},
-                  {{ (acct.id in type_locked_ids) | tojson }}
-                )"
-                class="text-xs text-blue-600 hover:underline px-2 py-1">Edit</button>
+  <!-- ── Accounts list ──────────────────────────────────────────────────── -->
+  <div id="list-col" class="flex-1 min-w-0">
+    {% for type in type_order %}
+      {% set td = grouped[type] %}
+      <div class="mb-8">
+        <div class="flex items-center gap-3 mb-2">
+          <span class="px-2 py-0.5 rounded text-xs font-semibold {{ color_badge[type] }}">
+            {{ type_labels[type] | upper }}
+          </span>
+          <span class="text-xs text-gray-400">{{ td.count }} account{{ 's' if td.count != 1 }}</span>
+        </div>
 
-              <form method="POST"
-                    action="{{ url_for('accounts.deactivate_account', account_id=acct.id) }}"
-                    class="inline"
-                    onsubmit="saveScroll()">
-                <button type="submit"
-                        class="text-xs text-yellow-700 hover:underline px-2 py-1">
-                  {{ 'Activate' if not acct.is_active else 'Deactivate' }}
-                </button>
-              </form>
+        {% if td.count > 0 %}
+        <div class="rounded-lg border {{ color_border[type] }} overflow-hidden">
+          <table class="w-full text-sm">
+            <thead class="{{ color_bg[type] }}">
+              <tr>
+                <th class="text-left px-4 py-2 font-medium {{ color_head[type] }} w-28">Code</th>
+                <th class="text-left px-4 py-2 font-medium {{ color_head[type] }}">Name</th>
+                <th class="text-left px-4 py-2 font-medium {{ color_head[type] }} hidden lg:table-cell">Description</th>
+                <th class="text-left px-4 py-2 font-medium {{ color_head[type] }} w-24">Status</th>
+                <th class="text-right px-4 py-2 font-medium {{ color_head[type] }} w-40">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
 
-              <form method="POST"
-                    action="{{ url_for('accounts.delete_account', account_id=acct.id) }}"
-                    class="inline"
-                    onsubmit="return saveScrollAndConfirm({{ ('Delete account \'' + acct.name + '\'? This cannot be undone.') | tojson }})">
-                <button type="submit"
-                        class="text-xs text-red-600 hover:underline px-2 py-1">Delete</button>
-              </form>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-    {% else %}
-    <p class="text-sm text-gray-400 italic px-1">No {{ type_labels[type] | lower }} accounts yet.</p>
-    {% endif %}
+              {# Level-2 → Level-1 → Level-0 tree #}
+              {% for l2_node in td.level2 %}
+                {{ acct_row(l2_node.account, 0) }}
+                {% for l1_node in l2_node.level1 %}
+                  {{ acct_row(l1_node.account, 20) }}
+                  {% for l0 in l1_node.children %}
+                    {{ acct_row(l0, 44) }}
+                  {% endfor %}
+                {% endfor %}
+                {% for l0 in l2_node.direct_level0 %}
+                  {{ acct_row(l0, 20) }}
+                {% endfor %}
+              {% endfor %}
+
+              {# Orphan level-1 (no level-2 parent) #}
+              {% for l1_node in td.orphan_level1 %}
+                {{ acct_row(l1_node.account, 0) }}
+                {% for l0 in l1_node.children %}
+                  {{ acct_row(l0, 20) }}
+                {% endfor %}
+              {% endfor %}
+
+              {# Orphan level-0 — existing flat accounts, backward-compat #}
+              {% for l0 in td.orphan_level0 %}
+                {{ acct_row(l0, 0) }}
+              {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <p class="text-sm text-gray-400 italic px-1">No {{ type_labels[type] | lower }} accounts yet.</p>
+        {% endif %}
+      </div>
+    {% endfor %}
   </div>
-{% endfor %}
 
+  <!-- ── Right sidebar ──────────────────────────────────────────────────── -->
+  <div id="account-sidebar" class="hidden w-80 flex-shrink-0 sticky top-8 self-start">
+    <div class="bg-white rounded-lg border border-gray-200 shadow-lg">
 
-<!-- ── Account Modal ─────────────────────────────────────────────────── -->
-<div id="account-modal"
-     class="hidden fixed inset-0 bg-black/40 z-50 flex items-start justify-center overflow-y-auto pt-16 pb-8"
-     onclick="if(event.target===this) closeModal()">
-  <div class="bg-white rounded-lg shadow-xl w-full max-w-lg mx-4">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
+        <h2 id="sidebar-title" class="text-base font-bold text-gray-900"></h2>
+        <button type="button" onclick="closeSidebar()"
+                class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+      </div>
 
-    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-      <h2 id="modal-title" class="text-lg font-bold text-gray-900"></h2>
-      <button type="button" onclick="closeModal()"
-              class="text-gray-400 hover:text-gray-600 text-2xl leading-none">&times;</button>
+      <div class="overflow-y-auto max-h-[calc(100vh-8rem)]">
+        <form id="sidebar-form" method="POST" class="p-5 space-y-4">
+
+          <!-- Name -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="sb-name">
+              Account Name <span class="text-red-500">*</span>
+            </label>
+            <input id="sb-name" name="name" type="text" required
+              placeholder="e.g. Office Expenses"
+              class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+
+          <!-- Type -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">
+              Account Type <span class="text-red-500">*</span>
+              <span id="sb-type-locked-note" class="hidden ml-2 text-xs text-gray-400">(locked — has transactions)</span>
+            </label>
+            <select id="sb-type-select" name="type" required onchange="onTypeChange(this.value)"
+              class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <option value="" disabled selected>Select a type…</option>
+              {% for t in account_types %}
+              <option value="{{ t }}">{{ t | title }}</option>
+              {% endfor %}
+            </select>
+            <input id="sb-type-locked-hidden" type="hidden">
+            <input id="sb-type-locked-display" type="text" disabled
+              class="hidden w-full border border-gray-200 rounded px-3 py-2 text-sm bg-gray-50 text-gray-500 cursor-not-allowed">
+          </div>
+
+          <!-- Account Level -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="sb-hierarchy">
+              Account Level
+            </label>
+            <select id="sb-hierarchy" name="hierarchy" onchange="onHierarchyChange(parseInt(this.value))"
+              class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <option value="0">0 — Posting account (leaf)</option>
+              <option value="1">1 — Group</option>
+              <option value="2">2 — Category (top)</option>
+            </select>
+          </div>
+
+          <!-- Level-1 Parent (shown when level = 0) -->
+          <div id="sb-l1-parent-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="sb-l1-parent">
+              Parent Group <span class="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <select id="sb-l1-parent" name="level_0_account_id" onchange="onL1ParentChange(this.value)"
+              class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <option value="">— None —</option>
+            </select>
+          </div>
+
+          <!-- Level-2 Parent (shown when level = 0 or 1) -->
+          <div id="sb-l2-parent-group">
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="sb-l2-parent">
+              Parent Category <span class="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <select id="sb-l2-parent" name="level_1_account_id"
+              class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+              <option value="">— None —</option>
+            </select>
+          </div>
+
+          <!-- Code -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="sb-code">
+              Account Code <span class="text-red-500">*</span>
+              <span id="sb-code-hint" class="ml-2 text-xs text-gray-400">(auto-suggested)</span>
+            </label>
+            <input id="sb-code" name="code" type="text" required
+              placeholder="e.g. 5100"
+              class="w-full border border-gray-300 rounded px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+
+          <!-- GL Description -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="sb-gl-description">
+              GL Description <span class="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <input id="sb-gl-description" name="gl_description" type="text"
+              placeholder="Short GL label"
+              class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+          </div>
+
+          <!-- Notes / Description -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="sb-description">
+              Notes <span class="text-gray-400 font-normal">(optional)</span>
+            </label>
+            <textarea id="sb-description" name="description" rows="2"
+              placeholder="Brief note on what belongs in this account"
+              class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
+          </div>
+
+          <!-- Allows Posting -->
+          <div class="flex items-center gap-2">
+            <input id="sb-allows-posting" name="allows_posting" type="checkbox" value="1"
+              class="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-400">
+            <label for="sb-allows-posting" class="text-sm font-medium text-gray-700">
+              Allows posting
+            </label>
+            <span class="text-xs text-gray-400">(auto-set by level)</span>
+          </div>
+
+          <!-- Submit -->
+          <div class="flex items-center gap-3 pt-1">
+            <button type="submit" id="sb-submit"
+              class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded">
+              Create Account
+            </button>
+            <button type="button" onclick="closeSidebar()"
+              class="text-sm text-gray-500 hover:text-gray-700">Cancel</button>
+          </div>
+
+        </form>
+      </div>
     </div>
-
-    <form id="modal-form" method="POST" class="p-6 space-y-5">
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1" for="modal-name">
-          Account Name <span class="text-red-500">*</span>
-        </label>
-        <input id="modal-name" name="name" type="text" required
-          placeholder="e.g. Office Expenses"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">
-          Account Type <span class="text-red-500">*</span>
-          <span id="modal-type-locked-note" class="hidden ml-2 text-xs text-gray-400">(locked — has transactions)</span>
-        </label>
-        <select id="modal-type-select" name="type" required onchange="onModalTypeChange(this.value)"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
-          <option value="" disabled selected>Select a type…</option>
-          {% for t in account_types %}
-          <option value="{{ t }}">{{ t | title }}</option>
-          {% endfor %}
-        </select>
-        <input id="modal-type-locked-hidden" type="hidden">
-        <input id="modal-type-locked-display" type="text" disabled
-          class="hidden w-full border border-gray-200 rounded px-3 py-2 text-sm bg-gray-50 text-gray-500 cursor-not-allowed">
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1" for="modal-code">
-          Account Code <span class="text-red-500">*</span>
-          <span id="modal-code-hint" class="ml-2 text-xs text-gray-400">(auto-suggested; you can change it)</span>
-        </label>
-        <input id="modal-code" name="code" type="text" required
-          placeholder="e.g. 5100"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-blue-400">
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1" for="modal-description">
-          Description <span class="text-gray-400 font-normal">(optional)</span>
-        </label>
-        <textarea id="modal-description" name="description" rows="2"
-          placeholder="Brief note on what belongs in this account"
-          class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-      </div>
-
-      <div class="flex items-center gap-3 pt-2">
-        <button type="submit" id="modal-submit"
-          class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-5 py-2 rounded">
-          Create Account
-        </button>
-        <button type="button" onclick="closeModal()"
-          class="text-sm text-gray-500 hover:text-gray-700">Cancel</button>
-      </div>
-
-    </form>
   </div>
-</div>
+
+</div><!-- /flex -->
 
 
 <script>
-  const nextCodes   = {{ next_codes | tojson }};
-  const addUrl      = {{ url_for('accounts.add_account') | tojson }};
-  const accountsUrl = {{ url_for('accounts.list_accounts') | tojson }};
+  const nextCodes       = {{ next_codes | tojson }};
+  const addUrl          = {{ url_for('accounts.add_account') | tojson }};
+  const accountsUrl     = {{ url_for('accounts.list_accounts') | tojson }};
+  const parentAccounts  = {{ parent_accounts_js | tojson }};
 
-  let isAddMode = true;
+  let isAddMode   = true;
+  let currentType = '';
 
-  function openAddModal() {
+  // ── Sidebar open/close ───────────────────────────────────────────────────
+
+  function openAddSidebar() {
     isAddMode = true;
-    document.getElementById('modal-title').textContent = 'Add Account';
-    document.getElementById('modal-form').action = addUrl;
-    document.getElementById('modal-submit').textContent = 'Create Account';
-    document.getElementById('modal-name').value = '';
-    document.getElementById('modal-code').value = '';
-    document.getElementById('modal-description').value = '';
-    document.getElementById('modal-code-hint').classList.remove('hidden');
+    document.getElementById('sidebar-title').textContent = 'Add Account';
+    document.getElementById('sidebar-form').action = addUrl;
+    document.getElementById('sb-submit').textContent  = 'Create Account';
+    document.getElementById('sb-name').value          = '';
+    document.getElementById('sb-code').value          = '';
+    document.getElementById('sb-description').value   = '';
+    document.getElementById('sb-gl-description').value = '';
+    document.getElementById('sb-code-hint').classList.remove('hidden');
+    document.getElementById('sb-hierarchy').value     = '0';
+    document.getElementById('sb-allows-posting').checked = true;
 
-    const sel = document.getElementById('modal-type-select');
+    const sel = document.getElementById('sb-type-select');
     sel.classList.remove('hidden');
-    sel.name = 'type';
+    sel.name  = 'type';
     sel.value = '';
-    document.getElementById('modal-type-locked-hidden').name = '';
-    document.getElementById('modal-type-locked-display').classList.add('hidden');
-    document.getElementById('modal-type-locked-note').classList.add('hidden');
+    document.getElementById('sb-type-locked-hidden').name = '';
+    document.getElementById('sb-type-locked-display').classList.add('hidden');
+    document.getElementById('sb-type-locked-note').classList.add('hidden');
 
-    showModal();
+    currentType = '';
+    applyHierarchyVisibility(0);
+    refreshParentDropdowns('', 0, '', '');
+    showSidebar();
   }
 
-  function openEditModal(id, name, type, code, description, typeLocked) {
+  function openEditSidebar(acct) {
     isAddMode = false;
-    document.getElementById('modal-title').textContent = 'Edit Account';
-    document.getElementById('modal-form').action = accountsUrl + id + '/edit';
-    document.getElementById('modal-submit').textContent = 'Save Changes';
-    document.getElementById('modal-name').value = name;
-    document.getElementById('modal-code').value = code;
-    document.getElementById('modal-description').value = description;
-    document.getElementById('modal-code-hint').classList.add('hidden');
+    document.getElementById('sidebar-title').textContent  = 'Edit Account';
+    document.getElementById('sidebar-form').action        = accountsUrl + acct.id + '/edit';
+    document.getElementById('sb-submit').textContent      = 'Save Changes';
+    document.getElementById('sb-name').value              = acct.name;
+    document.getElementById('sb-code').value              = acct.code;
+    document.getElementById('sb-description').value       = acct.description;
+    document.getElementById('sb-gl-description').value    = acct.gl_description;
+    document.getElementById('sb-code-hint').classList.add('hidden');
+    document.getElementById('sb-hierarchy').value         = String(acct.hierarchy);
+    document.getElementById('sb-allows-posting').checked  = acct.allows_posting;
 
-    if (typeLocked) {
-      const sel = document.getElementById('modal-type-select');
+    if (acct.type_locked) {
+      const sel = document.getElementById('sb-type-select');
       sel.classList.add('hidden');
-      sel.name = '';
-      const hidden = document.getElementById('modal-type-locked-hidden');
-      hidden.name = 'type';
-      hidden.value = type;
-      const display = document.getElementById('modal-type-locked-display');
+      sel.name  = '';
+      const hidden = document.getElementById('sb-type-locked-hidden');
+      hidden.name  = 'type';
+      hidden.value = acct.type;
+      const display = document.getElementById('sb-type-locked-display');
       display.classList.remove('hidden');
-      display.value = type.charAt(0).toUpperCase() + type.slice(1);
-      document.getElementById('modal-type-locked-note').classList.remove('hidden');
+      display.value = acct.type.charAt(0).toUpperCase() + acct.type.slice(1);
+      document.getElementById('sb-type-locked-note').classList.remove('hidden');
     } else {
-      const sel = document.getElementById('modal-type-select');
+      const sel = document.getElementById('sb-type-select');
       sel.classList.remove('hidden');
-      sel.name = 'type';
-      sel.value = type;
-      document.getElementById('modal-type-locked-hidden').name = '';
-      document.getElementById('modal-type-locked-display').classList.add('hidden');
-      document.getElementById('modal-type-locked-note').classList.add('hidden');
+      sel.name  = 'type';
+      sel.value = acct.type;
+      document.getElementById('sb-type-locked-hidden').name = '';
+      document.getElementById('sb-type-locked-display').classList.add('hidden');
+      document.getElementById('sb-type-locked-note').classList.add('hidden');
     }
 
-    showModal();
+    currentType = acct.type;
+    applyHierarchyVisibility(acct.hierarchy);
+    refreshParentDropdowns(acct.type, acct.hierarchy, acct.level_0_account_id, acct.level_1_account_id);
+    showSidebar();
   }
 
-  function showModal() {
-    document.getElementById('account-modal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-    setTimeout(() => document.getElementById('modal-name').focus(), 50);
+  function showSidebar() {
+    const sb = document.getElementById('account-sidebar');
+    sb.classList.remove('hidden');
+    sb.classList.remove('sidebar-open');
+    void sb.offsetWidth;
+    sb.classList.add('sidebar-open');
+    setTimeout(() => document.getElementById('sb-name').focus(), 50);
   }
 
-  function closeModal() {
-    document.getElementById('account-modal').classList.add('hidden');
-    document.body.style.overflow = '';
+  function closeSidebar() {
+    document.getElementById('account-sidebar').classList.add('hidden');
   }
 
-  function onModalTypeChange(type) {
+  // ── Hierarchy change ─────────────────────────────────────────────────────
+
+  function onHierarchyChange(level) {
+    applyHierarchyVisibility(level);
+    document.getElementById('sb-allows-posting').checked = (level === 0);
+    const type = currentType || document.getElementById('sb-type-select').value;
+    refreshParentDropdowns(type, level,
+      document.getElementById('sb-l1-parent').value,
+      document.getElementById('sb-l2-parent').value);
+  }
+
+  function applyHierarchyVisibility(level) {
+    // Level-1 parent dropdown: only for level-0 accounts
+    document.getElementById('sb-l1-parent-group').classList.toggle('hidden', level !== 0);
+    // Level-2 parent dropdown: for level-0 and level-1 accounts
+    document.getElementById('sb-l2-parent-group').classList.toggle('hidden', level === 2);
+  }
+
+  // ── Type change ──────────────────────────────────────────────────────────
+
+  function onTypeChange(type) {
+    currentType = type;
     if (isAddMode && nextCodes[type]) {
-      document.getElementById('modal-code').value = nextCodes[type];
+      document.getElementById('sb-code').value = nextCodes[type];
+    }
+    const level = parseInt(document.getElementById('sb-hierarchy').value) || 0;
+    refreshParentDropdowns(type, level, '', '');
+  }
+
+  // ── Parent dropdowns ─────────────────────────────────────────────────────
+
+  function refreshParentDropdowns(type, level, selL1, selL2) {
+    const l1List = (parentAccounts[type] && parentAccounts[type]['1']) || [];
+    const l2List = (parentAccounts[type] && parentAccounts[type]['2']) || [];
+
+    const l1Sel = document.getElementById('sb-l1-parent');
+    const l2Sel = document.getElementById('sb-l2-parent');
+
+    l1Sel.innerHTML = '<option value="">— None —</option>' +
+      l1List.map(a =>
+        `<option value="${a.id}"${a.id === selL1 ? ' selected' : ''}>${a.code} ${a.name}</option>`
+      ).join('');
+
+    l2Sel.innerHTML = '<option value="">— None —</option>' +
+      l2List.map(a =>
+        `<option value="${a.id}"${a.id === selL2 ? ' selected' : ''}>${a.code} ${a.name}</option>`
+      ).join('');
+  }
+
+  // When user picks a level-1 parent, auto-fill the level-2 grandparent.
+  function onL1ParentChange(l1Id) {
+    if (!l1Id) return;
+    const type   = currentType || document.getElementById('sb-type-select').value;
+    const l1List = (parentAccounts[type] && parentAccounts[type]['1']) || [];
+    const l1     = l1List.find(a => a.id === l1Id);
+    if (l1 && l1.level_1_account_id) {
+      document.getElementById('sb-l2-parent').value = l1.level_1_account_id;
     }
   }
 
-  document.getElementById('modal-form').addEventListener('submit', saveScroll);
-
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeModal();
+  // Wire the l1 select to its onchange (can't use inline in dynamic HTML)
+  document.getElementById('sb-l1-parent').addEventListener('change', function() {
+    onL1ParentChange(this.value);
   });
 
-  // ── Scroll preservation ──────────────────────────────────────────────
+  // ── Form submit & scroll preservation ────────────────────────────────────
+
+  document.getElementById('sidebar-form').addEventListener('submit', saveScroll);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeSidebar();
+  });
+
   function saveScroll() {
     sessionStorage.setItem('accountsScroll', window.scrollY);
   }
@@ -267,12 +481,13 @@
     return true;
   }
 
-  window.addEventListener('load', function() {
+  document.addEventListener('DOMContentLoaded', function() {
     const y = sessionStorage.getItem('accountsScroll');
     if (y !== null) {
       window.scrollTo(0, parseInt(y, 10));
       sessionStorage.removeItem('accountsScroll');
     }
+    document.documentElement.style.visibility = '';
   });
 </script>
 

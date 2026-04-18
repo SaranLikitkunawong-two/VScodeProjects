@@ -40,18 +40,18 @@
 
 ---
 
-## Session 5.5 — Bulk Invoice Upload *(future)*
+## Session 5.5 — Bulk Invoice Upload
 **Goal:** Upload multiple invoices at once → system processes each → user reviews and approves one by one.
 
 ### Steps
-- [ ] Bulk upload form — multi-file input, accepts PDF/JPG/PNG
-- [ ] `BulkUploadJob` model — tracks a batch: id, status (pending/processing/done), created_at
-- [ ] `BulkUploadItem` model — one row per file: job_id, attachment_id, ocr_result_id, status (pending/approved/skipped), transaction_id (null until approved)
-- [ ] On submit: save all files, create `OcrResult` per file (run pipeline immediately — files are small so sync is fine for now)
-- [ ] Batch queue page — list all items in the job with status badges (extracted / needs review / approved / skipped)
-- [ ] Per-item review — same review form as Session 5 single upload, but with prev/next navigation between items in the batch
-- [ ] Approve posts the transaction and marks item approved; Skip marks it skipped (file still saved, no transaction)
-- [ ] Batch summary page — shown when all items are approved or skipped: count posted, count skipped, link to each transaction
+- [x] Bulk upload form — multi-file input, accepts PDF/JPG/PNG
+- [x] `BulkUploadJob` model — tracks a batch: id, status (processing/completed), created_at
+- [x] `BulkUploadItem` model — one row per file: job_id, attachment_id, ocr_result_id, status (pending/approved/auto_approved/skipped), transaction_id (null until approved)
+- [x] On submit: save all files, create `OcrResult` per file (run pipeline immediately — files are small so sync is fine for now)
+- [x] Batch queue page — list all items in the job with status badges (pending / approved / auto-approved / skipped)
+- [x] Per-item review — same review form as Session 5 single upload, but with prev/next navigation between items in the batch
+- [x] Approve posts the transaction and marks item approved; Skip marks it skipped (file still saved, no transaction)
+- [x] Batch summary page — shown when all items are approved or skipped: count posted, count skipped, link to each transaction
 
 ### Design notes
 - Reuse `ocr/pipeline.py`, `ocr/extractor.py`, `ocr/gl_suggester.py` unchanged
@@ -70,18 +70,96 @@
 ## Session 6 — Bank Reconciliation
 **Goal:** Match posted transactions against a bank statement.
 
+### Data Models (`models/reconciliation.py`)
+
+**`BankStatement`** — one record per CSV import
+- `id` (UUID PK), `account_id` (FK → Account), `filename`, `imported_at`, `statement_date` (period end, optional)
+
+**`BankStatementLine`** — immutable rows from CSV
+- `id`, `bank_statement_id` (FK), `date`, `description`, `amount` (Decimal), `reference` (nullable), `balance` (nullable), `external_id` (nullable — for deduplication), `is_matched` (bool)
+
+**`ReconciliationSession`** — one per reconciliation period
+- `id`, `account_id` (FK), `bank_statement_id` (FK), `period_start`, `period_end`, `status` (enum: `open / in_review / complete / reopened`), `opening_balance`, `closing_balance` (nullable), `created_at`, `completed_at` (nullable), `notes`
+
+**`ReconciliationMatch`** — join table, true many-to-many between bank lines and ledger transactions
+- `id`, `session_id` (FK), `bank_statement_line_id` (FK), `transaction_id` (FK), `matched_at`, `matched_by` (FK → User)
+
+### Blueprint Structure
+
+```
+blueprints/reconciliation/
+    __init__.py      ← exports reconciliation_bp
+    routes.py        ← route handlers
+    service.py       ← all business logic
+templates/reconciliation/
+    list.html        ← all sessions with status badges
+    new.html         ← create session + CSV upload
+    detail.html      ← two-column reconciliation screen
+    history.html     ← audit trail of matches
+```
+
+### Routes
+
+| Method | URL | Purpose |
+|---|---|---|
+| GET | `/reconciliation/` | List all sessions |
+| GET/POST | `/reconciliation/new` | Create session, import CSV |
+| GET | `/reconciliation/<id>` | Main reconciliation screen |
+| POST | `/reconciliation/<id>/match` | Create match (bank lines ↔ transactions) |
+| POST | `/reconciliation/<id>/unmatch` | Remove a match |
+| POST | `/reconciliation/<id>/complete` | Lock session as complete |
+| POST | `/reconciliation/<id>/reopen` | Reopen a completed session |
+
+### Service Functions (`service.py`)
+
+- `import_csv(file, account_id)` — parse CSV, validate columns, dedupe via `external_id`, create `BankStatement` + `BankStatementLine` records
+- `get_unmatched_bank_lines(session)` — lines where `is_matched = False`
+- `get_unmatched_transactions(session)` — `Transaction` rows for the same account + period not in any `ReconciliationMatch` for this session
+- `create_match(session_id, line_ids, transaction_ids)` — writes `ReconciliationMatch` rows, sets `is_matched = True` on lines
+- `remove_match(match_id)` — deletes match rows, resets `is_matched`
+- `complete_session(session)` — validates all lines matched or skipped, sets status + `completed_at`
+- `reopen_session(session)` — sets status to `reopened`, clears `completed_at`
+
+### Reconciliation Screen Layout (`detail.html`)
+
+Two-column layout with checkboxes on both sides. User selects one or many from each column then clicks **Match Selected**. A warning is shown if selected amounts differ significantly (to support split transactions without blocking the match).
+
+```
+[ Account: ANZ Cheque | Period: 1 Apr – 30 Apr | Status: open ]
+[ Bank Total: $X | Ledger Total: $Y | Difference: $Z ]
+
+┌─────────────────────────┬─────────────────────────┐
+│  Bank Statement Lines   │   Ledger Transactions   │
+│  (unmatched)            │   (unmatched)           │
+│  ☐ 01 Apr  Rent  -1200 │  ☐ 01 Apr  Rent   1200  │
+│  ☐ 05 Apr  AWS    -89  │  ☐ 05 Apr  AWS      89  │
+└─────────────────────────┴─────────────────────────┘
+[ Match Selected ]
+
+─── Matched Items ────────────────────────────────────
+  Bank: 01 Apr Rent $1200 ↔ Ledger: Rent $1200  [Unmatch]
+```
+
+### Locking
+
+- `status = complete` → match/unmatch routes return a flash error, no changes allowed
+- **Reopen** sets status to `reopened` and re-enables editing
+
 ### Steps
-- [ ] Import bank statement (CSV upload — date, description, amount)
-- [ ] Reconciliation view — two columns: bank transactions vs ledger transactions
-- [ ] Match/unmatch transactions manually
-- [ ] Flag unmatched items on both sides
-- [ ] Mark reconciliation period as complete
-- [ ] Reconciliation history
+- [ ] `models/reconciliation.py` — BankStatement, BankStatementLine, ReconciliationSession, ReconciliationMatch
+- [ ] Export new models in `models/__init__.py`
+- [ ] `flask db migrate && flask db upgrade`
+- [ ] `blueprints/reconciliation/__init__.py`
+- [ ] `service.py` — CSV import first, then matching logic, then session state
+- [ ] `routes.py` — list → new → detail → match/unmatch → complete/reopen
+- [ ] Templates — list → new → detail → history
+- [ ] Register blueprint in `app/__init__.py`, add nav link in `base.html`
 
 ### Verify
-- Import a sample bank statement CSV
-- Match a ledger transaction to a bank line
-- Unmatched items clearly flagged
+- Import a sample CSV → rows appear as bank statement lines
+- Match one ledger transaction to one bank line → both disappear from unmatched columns
+- Unmatched items visually flagged and counted in totals
+- Complete a reconciliation period → status badge shows complete, edits locked, appears in history
 
 ---
 
@@ -132,7 +210,7 @@
 | 4 | Attachments + dashboard | **Complete** |
 | 4.5 | Customers & Suppliers | **Complete** |
 | 5 | OCR pipeline | **Complete** |
-| 5.5 | Bulk invoice upload | Not started |
-| 6 | Bank reconciliation | Not started |
+| 5.5 | Bulk invoice upload | **Complete** |
+| 6 | Bank reconciliation | **Ready for testing** |
 | 7 | Reports + CSV | Not started |
 | 8 | VPS deployment | Not started |

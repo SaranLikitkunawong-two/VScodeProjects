@@ -4,11 +4,44 @@
 {% block content %}
 <div class="flex items-center justify-between mb-6">
   <h1 class="text-2xl font-bold">Dashboard</h1>
-  <a href="{{ url_for('transactions.add_transaction') }}"
-     class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 font-medium">
-    + New Transaction
-  </a>
+  <div class="relative" id="new-txn-dropdown">
+    <button type="button" onclick="toggleNewTxnMenu()"
+            class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 font-medium inline-flex items-center gap-2">
+      + New Transaction
+      <svg class="w-3 h-3" viewBox="0 0 12 8" fill="none"><path d="M1 1l5 5 5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div id="new-txn-menu"
+         class="hidden absolute right-0 mt-1 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-20 overflow-hidden">
+      <a href="{{ url_for('transactions.new_customer_invoice') }}"
+         class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700">
+        <div class="font-medium">Customer Invoice</div>
+        <div class="text-xs text-gray-400">Bill issued to a customer</div>
+      </a>
+      <a href="{{ url_for('transactions.new_supplier_bill') }}"
+         class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 border-t border-gray-100">
+        <div class="font-medium">Supplier Bill</div>
+        <div class="text-xs text-gray-400">Bill received from a supplier</div>
+      </a>
+      <a href="{{ url_for('transactions.add_transaction') }}"
+         class="block px-4 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-700 border-t border-gray-100">
+        <div class="font-medium">Manual Journal</div>
+        <div class="text-xs text-gray-400">General journal entry</div>
+      </a>
+    </div>
+  </div>
 </div>
+
+<script>
+function toggleNewTxnMenu() {
+  document.getElementById('new-txn-menu').classList.toggle('hidden');
+}
+document.addEventListener('click', e => {
+  const wrap = document.getElementById('new-txn-dropdown');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('new-txn-menu').classList.add('hidden');
+  }
+});
+</script>
 
 <!-- Balance summary cards -->
 {% if ordered_balances %}
@@ -83,7 +116,7 @@
           </div>
           <div class="text-xs text-gray-400 mt-0.5">
             {{ txn.date.strftime('%d %b %Y') }}{% if txn.reference %} &middot; {{ txn.reference }}{% endif %}
-            {% if txn.attachments %}<span class="ml-1 text-gray-300">&#128206;</span>{% endif %}
+            {% if txn.attachments %}<svg xmlns="http://www.w3.org/2000/svg" class="inline w-3 h-3 ml-1 text-gray-400 align-middle" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.586-6.586a4 4 0 10-5.656-5.656l-6.586 6.586a6 6 0 108.486 8.486L20.5 13"/></svg>{% endif %}
           </div>
         </div>
         <div class="ml-4 text-sm font-mono text-gray-600 shrink-0">

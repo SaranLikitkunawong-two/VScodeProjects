@@ -13,7 +13,11 @@
       "Bash(venv/Scripts/python.exe -c \"import PIL; print\\('Pillow ok'\\)\")",
       "Bash(venv/Scripts/pip.exe install *)",
       "Bash(venv/Scripts/flask.exe --app run:app db migrate -m \"add ocr vendor keyword tables\")",
-      "Bash(venv/Scripts/python.exe -c ' *)"
+      "Bash(venv/Scripts/python.exe -c ' *)",
+      "Bash(\"venv/Scripts/python.exe\" -c \"from app import create_app; app = create_app\\(\\); print\\('OK'\\)\")",
+      "Bash(FLASK_APP=run.py flask db migrate -m \"add bulk upload tables\")",
+      "Bash(venv\\\\Scripts\\\\activate.bat)",
+      "Bash(flask db *)"
     ]
   }
 }

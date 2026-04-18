@@ -4,7 +4,22 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% block title %}AccSoft{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            mono: ['"Open Sans"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  {% block head %}{% endblock %}
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen">
 
@@ -19,6 +34,8 @@
       <a href="{{ url_for('customers.list_customers') }}" class="hover:text-blue-600">Customers</a>
       <a href="{{ url_for('suppliers.list_suppliers') }}" class="hover:text-blue-600">Suppliers</a>
       <a href="{{ url_for('ocr.upload') }}" class="hover:text-blue-600">Scan Invoice</a>
+      <a href="{{ url_for('ocr.bulk_upload') }}" class="hover:text-blue-600">Bulk Upload</a>
+      <a href="{{ url_for('reconciliation.list_sessions') }}" class="hover:text-blue-600">Reconciliation</a>
       <a href="{{ url_for('auth.logout') }}" class="hover:text-red-500">Logout</a>
     </div>
   </nav>

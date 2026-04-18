@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Batch Queue – AccSoft{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+
+  {# ── Header ──────────────────────────────────────────────────────────── #}
+  <div class="flex items-start justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold">Batch Queue</h1>
+      <p class="text-sm text-gray-500 mt-1">
+        {{ job.items|length }} invoice(s) &nbsp;·&nbsp;
+        <span class="text-blue-600">{{ pending|length }} pending</span> &nbsp;·&nbsp;
+        <span class="text-green-600">{{ approved|length }} approved</span> &nbsp;·&nbsp;
+        <span class="text-gray-400">{{ skipped|length }} skipped</span>
+      </p>
+    </div>
+    <div class="flex gap-2 shrink-0">
+      {% if job.status == 'completed' %}
+        <a href="{{ url_for('ocr.bulk_summary', job_id=job.id) }}"
+           class="bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 px-4 rounded">
+          View Summary
+        </a>
+      {% elif first_pending %}
+        <a href="{{ url_for('ocr.bulk_review', job_id=job.id, item_id=first_pending.id) }}"
+           class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-4 rounded">
+          Review Next
+        </a>
+      {% endif %}
+      <a href="{{ url_for('ocr.bulk_upload') }}"
+         class="border border-gray-300 hover:border-gray-400 text-gray-600 text-sm font-medium py-2 px-4 rounded">
+        New Batch
+      </a>
+    </div>
+  </div>
+
+  {# ── Item list ────────────────────────────────────────────────────────── #}
+  <div class="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
+    {% for item in job.items %}
+    <div class="flex items-center gap-3 px-4 py-3">
+      <span class="text-xs text-gray-400 w-5 text-right shrink-0">{{ loop.index }}</span>
+
+      <span class="flex-1 text-sm font-medium truncate min-w-0" title="{{ item.original_filename }}">
+        {{ item.original_filename }}
+      </span>
+
+      {# Extraction quality badge #}
+      {% if item.ocr_result %}
+        {% if item.ocr_result.confidence == 1.0 %}
+          <span class="text-xs text-green-600 shrink-0">Digital PDF</span>
+        {% else %}
+          <span class="text-xs text-yellow-600 shrink-0">Image / manual</span>
+        {% endif %}
+      {% endif %}
+
+      {# Status badge #}
+      {% if item.status == 'pending' %}
+        <span class="text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full shrink-0">Pending</span>
+        <a href="{{ url_for('ocr.bulk_review', job_id=job.id, item_id=item.id) }}"
+           class="text-sm text-blue-600 hover:underline shrink-0">Review</a>
+      {% elif item.status == 'approved' %}
+        <span class="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded-full shrink-0">Approved</span>
+        {% if item.transaction_id %}
+          <a href="{{ url_for('transactions.edit_transaction', txn_id=item.transaction_id) }}"
+             class="text-xs text-gray-500 hover:underline shrink-0">View txn</a>
+        {% endif %}
+      {% elif item.status == 'auto_approved' %}
+        <span class="text-xs px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded-full shrink-0">Auto-approved</span>
+        {% if item.transaction_id %}
+          <a href="{{ url_for('transactions.edit_transaction', txn_id=item.transaction_id) }}"
+             class="text-xs text-gray-500 hover:underline shrink-0">View txn</a>
+        {% endif %}
+      {% elif item.status == 'skipped' %}
+        <span class="text-xs px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full shrink-0">Skipped</span>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

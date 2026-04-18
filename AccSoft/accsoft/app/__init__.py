@@ -27,6 +27,7 @@ def create_app(config_name=None):
     from app.blueprints.customers import customers_bp
     from app.blueprints.suppliers import suppliers_bp
     from app.blueprints.ocr import ocr_bp
+    from app.blueprints.reconciliation import reconciliation_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(dashboard_bp)
@@ -36,5 +37,6 @@ def create_app(config_name=None):
     app.register_blueprint(customers_bp)
     app.register_blueprint(suppliers_bp)
     app.register_blueprint(ocr_bp)
+    app.register_blueprint(reconciliation_bp)
 
     return app

@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% block title %}Reconciliation — {{ session.account.name }} — AccSoft{% endblock %}
+
+{% block content %}
+{% set locked = session.status == 'complete' %}
+{% set badge = {
+  'open':     'bg-blue-100 text-blue-800',
+  'in_review':'bg-yellow-100 text-yellow-800',
+  'complete': 'bg-green-100 text-green-800',
+  'reopened': 'bg-orange-100 text-orange-800',
+} %}
+
+<div class="mb-4">
+  <a href="{{ url_for('reconciliation.list_sessions') }}"
+     class="text-sm text-gray-500 hover:text-blue-600">&larr; All sessions</a>
+</div>
+
+<!-- Header -->
+<div class="flex flex-wrap items-start justify-between gap-3 mb-4">
+  <div>
+    <h1 class="text-xl font-semibold">
+      {{ session.account.code }} {{ session.account.name }}
+    </h1>
+    <p class="text-sm text-gray-500 mt-0.5">
+      {{ session.period_start.strftime('%d %b %Y') }} –
+      {{ session.period_end.strftime('%d %b %Y') }}
+      &nbsp;·&nbsp;
+      <span class="px-1.5 py-0.5 rounded text-xs font-medium {{ badge.get(session.status, 'bg-gray-100') }}">
+        {{ session.status.replace('_', ' ').title() }}
+      </span>
+    </p>
+  </div>
+  <div class="flex gap-2">
+    <a href="{{ url_for('reconciliation.history', session_id=session.id) }}"
+       class="text-sm px-3 py-1.5 rounded border border-gray-300 text-gray-600 hover:bg-gray-50">
+      History
+    </a>
+    {% if locked %}
+    <form method="POST" action="{{ url_for('reconciliation.reopen', session_id=session.id) }}">
+      <button class="text-sm px-3 py-1.5 rounded bg-orange-500 text-white hover:bg-orange-600">
+        Reopen
+      </button>
+    </form>
+    {% else %}
+    <form method="POST" action="{{ url_for('reconciliation.complete', session_id=session.id) }}"
+          onsubmit="return confirm('Mark this reconciliation as complete?')">
+      <button class="text-sm px-3 py-1.5 rounded bg-green-600 text-white hover:bg-green-700">
+        Mark Complete
+      </button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Locked banner -->
+{% if locked %}
+<div class="mb-4 px-4 py-2 bg-green-50 border border-green-200 rounded text-sm text-green-800">
+  This reconciliation is <strong>complete</strong> and locked. Click <strong>Reopen</strong> to make changes.
+</div>
+{% endif %}
+
+<!-- Totals bar -->
+<div class="grid grid-cols-4 gap-3 mb-5">
+  {% set stat_cls = "bg-white border border-gray-200 rounded px-4 py-3" %}
+  <div class="{{ stat_cls }}">
+    <p class="text-xs text-gray-500 uppercase">Total bank lines</p>
+    <p class="text-lg font-semibold">{{ totals.total_count }}</p>
+  </div>
+  <div class="{{ stat_cls }}">
+    <p class="text-xs text-gray-500 uppercase">Matched</p>
+    <p class="text-lg font-semibold text-green-700">{{ totals.matched_count }}</p>
+  </div>
+  <div class="{{ stat_cls }}">
+    <p class="text-xs text-gray-500 uppercase">Unmatched</p>
+    <p class="text-lg font-semibold {% if totals.unmatched_count > 0 %}text-red-600{% else %}text-gray-700{% endif %}">
+      {{ totals.unmatched_count }}
+    </p>
+  </div>
+  <div class="{{ stat_cls }}">
+    <p class="text-xs text-gray-500 uppercase">Unmatched amount</p>
+    <p class="text-lg font-semibold {% if totals.unmatched_bank != 0 %}text-red-600{% else %}text-gray-700{% endif %}">
+      ${{ "%.2f"|format(totals.unmatched_bank) }}
+    </p>
+  </div>
+</div>
+
+<!-- Two-column matching area -->
+{% if not locked %}
+<form method="POST" action="{{ url_for('reconciliation.match', session_id=session.id) }}">
+{% endif %}
+
+<div class="grid grid-cols-2 gap-4 mb-6">
+
+  <!-- Left: Bank Statement Lines -->
+  <div class="bg-white border border-gray-200 rounded overflow-hidden">
+    <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 flex items-center justify-between">
+      <span class="text-sm font-medium text-gray-700">Bank Statement Lines</span>
+      <span class="text-xs text-gray-400">{{ unmatched_lines|length }} unmatched</span>
+    </div>
+    {% if unmatched_lines %}
+    <div class="overflow-y-auto max-h-96">
+      <table class="w-full text-xs">
+        <thead class="bg-gray-50 text-gray-500 uppercase sticky top-0">
+          <tr>
+            <th class="px-3 py-2 text-left w-6"></th>
+            <th class="px-3 py-2 text-left">Date</th>
+            <th class="px-3 py-2 text-left">Description</th>
+            <th class="px-3 py-2 text-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% for line in unmatched_lines %}
+          <tr class="hover:bg-blue-50 cursor-pointer" onclick="this.querySelector('input').click()">
+            <td class="px-3 py-2">
+              <input type="checkbox" name="line_ids" value="{{ line.id }}"
+                     class="rounded border-gray-300"
+                     {% if locked %}disabled{% endif %}>
+            </td>
+            <td class="px-3 py-2 whitespace-nowrap text-gray-600">
+              {{ line.date.strftime('%d %b') }}
+            </td>
+            <td class="px-3 py-2 text-gray-800 truncate max-w-[140px]" title="{{ line.description }}">
+              {{ line.description }}
+            </td>
+            <td class="px-3 py-2 text-right font-mono
+                       {% if line.amount >= 0 %}text-green-700{% else %}text-red-600{% endif %}">
+              {{ "%.2f"|format(line.amount) }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-sm text-gray-400 text-center py-8">All bank lines matched.</p>
+    {% endif %}
+  </div>
+
+  <!-- Right: Ledger Transactions -->
+  <div class="bg-white border border-gray-200 rounded overflow-hidden">
+    <div class="bg-gray-50 border-b border-gray-200 px-4 py-2 flex items-center justify-between">
+      <span class="text-sm font-medium text-gray-700">Ledger Transactions</span>
+      <span class="text-xs text-gray-400">{{ unmatched_txns|length }} unmatched</span>
+    </div>
+    {% if unmatched_txns %}
+    <div class="overflow-y-auto max-h-96">
+      <table class="w-full text-xs">
+        <thead class="bg-gray-50 text-gray-500 uppercase sticky top-0">
+          <tr>
+            <th class="px-3 py-2 text-left w-6"></th>
+            <th class="px-3 py-2 text-left">Date</th>
+            <th class="px-3 py-2 text-left">Description</th>
+            <th class="px-3 py-2 text-right">Amount</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% for txn in unmatched_txns %}
+          {% set amt = txn_amounts[txn.id] %}
+          <tr class="hover:bg-blue-50 cursor-pointer" onclick="this.querySelector('input').click()">
+            <td class="px-3 py-2">
+              <input type="checkbox" name="txn_ids" value="{{ txn.id }}"
+                     class="rounded border-gray-300"
+                     {% if locked %}disabled{% endif %}>
+            </td>
+            <td class="px-3 py-2 whitespace-nowrap text-gray-600">
+              {{ txn.date.strftime('%d %b') }}
+            </td>
+            <td class="px-3 py-2 text-gray-800 truncate max-w-[140px]" title="{{ txn.description }}">
+              {{ txn.description }}
+            </td>
+            <td class="px-3 py-2 text-right font-mono
+                       {% if amt >= 0 %}text-green-700{% else %}text-red-600{% endif %}">
+              {{ "%.2f"|format(amt) }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="text-sm text-gray-400 text-center py-8">No unmatched transactions in this period.</p>
+    {% endif %}
+  </div>
+</div>
+
+{% if not locked %}
+<div class="mb-8 flex items-center gap-3">
+  <button type="submit"
+          class="bg-blue-600 text-white text-sm px-5 py-2 rounded hover:bg-blue-700">
+    Match Selected
+  </button>
+  <p class="text-xs text-gray-400">
+    Tick one or more items on each side, then click Match Selected.
+    A warning is shown if amounts differ — matching still proceeds.
+  </p>
+</div>
+</form>
+{% endif %}
+
+<!-- Matched Items -->
+{% if matched_lines %}
+<div class="bg-white border border-gray-200 rounded overflow-hidden">
+  <div class="bg-gray-50 border-b border-gray-200 px-4 py-2">
+    <span class="text-sm font-medium text-gray-700">Matched Items</span>
+  </div>
+  <table class="w-full text-xs">
+    <thead class="text-gray-500 uppercase bg-gray-50 border-b border-gray-100">
+      <tr>
+        <th class="px-4 py-2 text-left">Bank line</th>
+        <th class="px-4 py-2 text-right">Bank amt</th>
+        <th class="px-4 py-2 text-left">Matched transactions</th>
+        <th class="px-4 py-2 text-right">Ledger amt</th>
+        <th class="px-4 py-2"></th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for line, txns in matched_lines %}
+      {% set ledger_total = namespace(v=0) %}
+      {% for txn in txns %}{% set ledger_total.v = ledger_total.v + txn_amounts[txn.id] %}{% endfor %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-2">
+          <span class="font-medium">{{ line.date.strftime('%d %b %Y') }}</span>
+          <span class="text-gray-600 ml-1">{{ line.description }}</span>
+        </td>
+        <td class="px-4 py-2 text-right font-mono
+                   {% if line.amount >= 0 %}text-green-700{% else %}text-red-600{% endif %}">
+          {{ "%.2f"|format(line.amount) }}
+        </td>
+        <td class="px-4 py-2 text-gray-700">
+          {% for txn in txns %}
+          <div>{{ txn.date.strftime('%d %b') }} — {{ txn.description }}</div>
+          {% else %}
+          <span class="text-gray-400 italic">none</span>
+          {% endfor %}
+        </td>
+        <td class="px-4 py-2 text-right font-mono
+                   {% if ledger_total.v >= 0 %}text-green-700{% else %}text-red-600{% endif %}">
+          {{ "%.2f"|format(ledger_total.v) }}
+        </td>
+        <td class="px-4 py-2 text-right">
+          {% if not locked %}
+          <form method="POST"
+                action="{{ url_for('reconciliation.unmatch', session_id=session.id) }}"
+                onsubmit="return confirm('Remove this match?')">
+            <input type="hidden" name="line_id" value="{{ line.id }}">
+            <button class="text-red-500 hover:underline text-xs">Unmatch</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

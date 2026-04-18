@@ -1,14 +1,41 @@
 {% extends "base.html" %}
 {% block title %}{{ title }} — AccSoft{% endblock %}
 
+{% set kind = kind or (transaction.kind if transaction else 'manual_journal') %}
+{% set show_customer = kind in ('manual_journal', 'customer_invoice', 'customer_credit_note') %}
+{% set show_supplier = kind in ('manual_journal', 'supplier_bill', 'supplier_credit_note') %}
+{% set customer_required = kind in ('customer_invoice', 'customer_credit_note') %}
+{% set supplier_required = kind in ('supplier_bill', 'supplier_credit_note') %}
+{% set kind_badge = {
+  'manual_journal': ('bg-gray-100 text-gray-700', 'Manual Journal'),
+  'customer_invoice': ('bg-blue-100 text-blue-700', 'Customer Invoice'),
+  'supplier_bill': ('bg-amber-100 text-amber-700', 'Supplier Bill'),
+  'customer_credit_note': ('bg-purple-100 text-purple-700', 'Customer Credit Note'),
+  'supplier_credit_note': ('bg-rose-100 text-rose-700', 'Supplier Credit Note'),
+} %}
+
 {% block content %}
 <div class="flex items-center gap-3 mb-6">
   <a href="{{ url_for('transactions.list_transactions') }}"
      class="text-gray-500 hover:text-gray-700 text-sm">← Transactions</a>
   <h1 class="text-2xl font-bold">{{ title }}</h1>
+  {% if kind and kind != 'manual_journal' %}
+  <span class="text-xs px-2.5 py-1 rounded-full {{ kind_badge[kind][0] }} font-medium">
+    {{ kind_badge[kind][1] }}
+  </span>
+  {% endif %}
+  {% if transaction and transaction.related_transaction %}
+  <a href="{{ url_for('transactions.edit_transaction', txn_id=transaction.related_transaction.id) }}"
+     class="text-xs text-blue-600 hover:underline ml-2">
+    ↪ Related to {{ transaction.related_transaction.kind_label }}: {{ transaction.related_transaction.description }}
+  </a>
+  {% endif %}
 </div>
 
 <form method="post" action="{{ form_action }}" id="txn-form" enctype="multipart/form-data">
+  {% if related_transaction_id %}
+  <input type="hidden" name="related_transaction_id" value="{{ related_transaction_id }}">
+  {% endif %}
 
   <!-- Header fields -->
   <div class="bg-white border border-gray-200 rounded-lg p-6 mb-5">
@@ -40,8 +67,13 @@
                placeholder="Invoice #, receipt #…"
                class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400" />
       </div>
+      {% if show_customer %}
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Customer <span class="text-gray-400 font-normal">(optional)</span></label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Customer
+          {% if customer_required %}<span class="text-red-500">*</span>
+          {% else %}<span class="text-gray-400 font-normal">(optional)</span>{% endif %}
+        </label>
         <div class="relative">
           <input type="text" id="customer-search"
                  placeholder="Search customers…"
@@ -53,8 +85,14 @@
                class="hidden absolute z-20 left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg max-h-48 overflow-y-auto text-sm"></div>
         </div>
       </div>
+      {% endif %}
+      {% if show_supplier %}
       <div>
-        <label class="block text-sm font-medium text-gray-700 mb-1">Supplier <span class="text-gray-400 font-normal">(optional)</span></label>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Supplier
+          {% if supplier_required %}<span class="text-red-500">*</span>
+          {% else %}<span class="text-gray-400 font-normal">(optional)</span>{% endif %}
+        </label>
         <div class="relative">
           <input type="text" id="supplier-search"
                  placeholder="Search suppliers…"
@@ -66,6 +104,7 @@
                class="hidden absolute z-20 left-0 right-0 mt-1 bg-white border border-gray-200 rounded shadow-lg max-h-48 overflow-y-auto text-sm"></div>
         </div>
       </div>
+      {% endif %}
     </div>
   </div>
 
@@ -74,7 +113,10 @@
     <h2 class="font-semibold text-gray-700 mb-4">Journal Lines</h2>
 
     <div class="grid gap-2 text-xs font-medium text-gray-500 uppercase mb-2 px-1"
-         style="grid-template-columns: 2fr 120px 120px 48px 36px;">
+         style="grid-template-columns: 20px 2fr 120px 120px 48px 36px;">
+      <input type="checkbox" id="select-all-lines" title="Select all"
+             class="mt-0.5 accent-blue-600 cursor-pointer"
+             onchange="toggleAllLines(this.checked)">
       <span>Account</span>
       <span class="text-right pr-2">Debit</span>
       <span class="text-right pr-2">Credit</span>
@@ -84,10 +126,20 @@
 
     <div id="lines-container" class="space-y-2"></div>
 
-    <button type="button" onclick="addLine()"
-            class="mt-4 text-sm text-blue-600 hover:underline">
-      + Add line
-    </button>
+    <div class="mt-4 flex items-center gap-5">
+      <button type="button" onclick="addLine()"
+              class="text-sm text-blue-600 hover:underline">
+        + Add line
+      </button>
+      <button type="button" id="delete-selected-btn" onclick="deleteSelected()"
+              class="hidden text-sm text-red-500 hover:underline">
+        Delete selected
+      </button>
+      <button type="button" id="auto-balance-btn" onclick="autoBalance()"
+              class="hidden text-sm text-blue-600 hover:underline">
+        Auto balance
+      </button>
+    </div>
 
     <!-- Running totals -->
     <div class="mt-5 pt-4 border-t border-gray-100 flex justify-end gap-10 text-sm">
@@ -124,7 +176,7 @@
   {% endif %}
 
   <!-- Actions -->
-  <div class="flex gap-3">
+  <div class="flex gap-3 items-center">
     <button type="submit"
             class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium">
       Save Transaction
@@ -133,6 +185,12 @@
        class="px-6 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50">
       Cancel
     </a>
+    {% if transaction and transaction.is_invoice_like %}
+    <a href="{{ url_for('transactions.new_credit_note_from', txn_id=transaction.id) }}"
+       class="ml-auto px-4 py-2 border border-purple-300 text-purple-700 rounded text-sm hover:bg-purple-50 font-medium">
+      Create Credit Note
+    </a>
+    {% endif %}
   </div>
 </form>
 
@@ -204,11 +262,14 @@
 const customerInitial = {{ (transaction.customer.name if transaction and transaction.customer else '') | tojson }};
 const supplierInitial = {{ (transaction.supplier.name if transaction and transaction.supplier else '') | tojson }};
 
-if (customerInitial) document.getElementById('customer-search').value = customerInitial;
-if (supplierInitial) document.getElementById('supplier-search').value = supplierInitial;
+const customerSearchEl = document.getElementById('customer-search');
+const supplierSearchEl = document.getElementById('supplier-search');
+if (customerSearchEl && customerInitial) customerSearchEl.value = customerInitial;
+if (supplierSearchEl && supplierInitial) supplierSearchEl.value = supplierInitial;
 
 function setupAutocomplete(inputId, dropdownId, hiddenId, searchUrl) {
   const input = document.getElementById(inputId);
+  if (!input) return;
   const dropdown = document.getElementById(dropdownId);
   const hidden = document.getElementById(hiddenId);
   let debounceTimer;
@@ -318,13 +379,14 @@ function addLine(accountId = '', lineType = 'debit', amount = '') {
   const idx = lineIndex++;
   const div = document.createElement('div');
   div.className = 'grid gap-2 items-center';
-  div.style.gridTemplateColumns = '2fr 120px 120px 48px 36px';
+  div.style.gridTemplateColumns = '20px 2fr 120px 120px 48px 36px';
   div.dataset.lineIdx = idx;
 
   const debitVal  = lineType === 'debit'  ? amount : '';
   const creditVal = lineType === 'credit' ? amount : '';
 
   div.innerHTML = `
+    <input type="checkbox" class="line-checkbox mt-2 accent-blue-600 cursor-pointer">
     <div class="relative acct-wrap">
       <input type="text" class="acct-search w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
              placeholder="Search account…" autocomplete="off">
@@ -382,8 +444,41 @@ function removeLine(btn) {
     return;
   }
   btn.closest('[data-line-idx]').remove();
+  updateDeleteSelectedBtn();
   updateTotals();
 }
+
+function deleteSelected() {
+  const container = document.getElementById('lines-container');
+  const checked = [...container.querySelectorAll('.line-checkbox:checked')];
+  if (container.children.length - checked.length < 2) {
+    alert('A transaction needs at least 2 lines.');
+    return;
+  }
+  checked.forEach(cb => cb.closest('[data-line-idx]').remove());
+  document.getElementById('select-all-lines').checked = false;
+  updateDeleteSelectedBtn();
+  updateTotals();
+}
+
+function toggleAllLines(checked) {
+  document.querySelectorAll('#lines-container .line-checkbox').forEach(cb => { cb.checked = checked; });
+  updateDeleteSelectedBtn();
+}
+
+function updateDeleteSelectedBtn() {
+  const checked = document.querySelectorAll('#lines-container .line-checkbox:checked');
+  const all = document.querySelectorAll('#lines-container .line-checkbox');
+  document.getElementById('delete-selected-btn').classList.toggle('hidden', checked.length === 0);
+  const selAll = document.getElementById('select-all-lines');
+  if (all.length === 0) { selAll.checked = false; selAll.indeterminate = false; return; }
+  selAll.indeterminate = checked.length > 0 && checked.length < all.length;
+  selAll.checked = checked.length === all.length && all.length > 0;
+}
+
+document.getElementById('lines-container').addEventListener('change', e => {
+  if (e.target.classList.contains('line-checkbox')) updateDeleteSelectedBtn();
+});
 
 // ── Totals + balance hint + effect column ─────────────────────────────────────
 const DEBIT_NORMAL = new Set(['asset', 'expense']);
@@ -429,6 +524,32 @@ function updateTotals() {
   } else {
     hintEl.classList.add('hidden');
   }
+
+  const emptyRows = [...document.querySelectorAll('#lines-container [data-line-idx]')]
+    .filter(r => !(parseFloat(r.querySelector('.amount-hidden').value) > 0));
+  const canAutoBalance = !balanced && diff >= 0.005 && emptyRows.length === 1;
+  document.getElementById('auto-balance-btn').classList.toggle('hidden', !canAutoBalance);
+}
+
+function autoBalance() {
+  let debits = 0, credits = 0;
+  const rows = [...document.querySelectorAll('#lines-container [data-line-idx]')];
+  rows.forEach(r => {
+    const amt = parseFloat(r.querySelector('.amount-hidden').value) || 0;
+    if (amt <= 0) return;
+    if (r.querySelector('.type-hidden').value === 'debit') debits += amt;
+    else credits += amt;
+  });
+  const diff = Math.abs(debits - credits);
+  if (diff < 0.005) return;
+  const empty = rows.filter(r => !(parseFloat(r.querySelector('.amount-hidden').value) > 0));
+  if (empty.length !== 1) return;
+  const row = empty[0];
+  const fillSide = debits > credits ? 'credit' : 'debit';
+  const amountStr = diff.toFixed(2);
+  const input = row.querySelector(fillSide === 'debit' ? '.debit-input' : '.credit-input');
+  input.value = amountStr;
+  input.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
 // ── Seed lines ────────────────────────────────────────────────────────────────

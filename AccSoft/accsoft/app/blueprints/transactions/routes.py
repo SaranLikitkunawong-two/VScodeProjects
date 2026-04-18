@@ -6,7 +6,7 @@ from datetime import date as date_cls
 from flask import Blueprint, Response, current_app, render_template, redirect, url_for, flash, request
 from flask_login import login_required
 from app.extensions import db
-from app.models.transaction import Transaction
+from app.models.transaction import Transaction, TRANSACTION_KINDS
 from app.models.attachment import Attachment
 from app.models.customer import Customer
 from app.models.supplier import Supplier
@@ -47,46 +47,189 @@ transactions_bp = Blueprint(
 def list_transactions():
     search = request.args.get("search", "").strip()
     sort = request.args.get("sort", "date_desc")
-    txns = service.get_transactions(search=search or None, sort=sort)
-    return render_template("transactions/list.html", transactions=txns, search=search, sort=sort)
+    date_from_str = request.args.get("date_from", "").strip()
+    date_to_str = request.args.get("date_to", "").strip()
+    account_ids = request.args.getlist("accounts")
+    selected_kinds = [k for k in request.args.getlist("kinds") if k in TRANSACTION_KINDS]
+
+    date_from = date_to = None
+    if date_from_str:
+        try:
+            date_from = date_cls.fromisoformat(date_from_str)
+        except ValueError:
+            date_from_str = ""
+    if date_to_str:
+        try:
+            date_to = date_cls.fromisoformat(date_to_str)
+        except ValueError:
+            date_to_str = ""
+
+    all_accounts = service.get_active_accounts()
+    txns = service.get_transactions(
+        search=search or None, sort=sort,
+        date_from=date_from, date_to=date_to,
+        account_ids=account_ids or None,
+        kinds=selected_kinds or None,
+    )
+    return render_template(
+        "transactions/list.html",
+        transactions=txns, search=search, sort=sort,
+        all_accounts=all_accounts,
+        date_from=date_from_str, date_to=date_to_str,
+        selected_accounts=account_ids,
+        all_kinds=TRANSACTION_KINDS,
+        selected_kinds=selected_kinds,
+    )
+
+
+_KIND_TITLES = {
+    "manual_journal": "New Manual Journal",
+    "customer_invoice": "New Customer Invoice",
+    "supplier_bill": "New Supplier Bill",
+    "customer_credit_note": "New Customer Credit Note",
+    "supplier_credit_note": "New Supplier Credit Note",
+}
+
+
+def _render_new_form(kind: str, prefill=None, lines=None,
+                     related_transaction_id: str | None = None):
+    accounts = service.get_active_accounts()
+    customers = _get_active_customers()
+    suppliers = _get_active_suppliers()
+    return render_template(
+        "transactions/form.html",
+        title=_KIND_TITLES.get(kind, "New Transaction"),
+        form_action=request.path,
+        accounts=accounts, transaction=None,
+        prefill=prefill or {}, lines=lines or [],
+        customers=customers, suppliers=suppliers,
+        kind=kind,
+        related_transaction_id=related_transaction_id,
+    )
+
+
+def _handle_create(kind: str, success_redirect=None,
+                   related_transaction_id: str | None = None):
+    """Shared POST handler for new-transaction routes. On GET, callers render
+    the form themselves. On POST, we validate, create, then redirect."""
+    lines_data, parse_errors = _parse_lines(request.form)
+    errors = _validate_header(request.form) + parse_errors + service.validate_lines(lines_data)
+
+    if kind == "customer_invoice" or kind == "customer_credit_note":
+        if not request.form.get("customer_id", "").strip():
+            errors.append("Customer is required.")
+    if kind == "supplier_bill" or kind == "supplier_credit_note":
+        if not request.form.get("supplier_id", "").strip():
+            errors.append("Supplier is required.")
+
+    if errors:
+        for e in errors:
+            flash(e, "danger")
+        return _render_new_form(
+            kind,
+            prefill=request.form,
+            lines=lines_data,
+            related_transaction_id=related_transaction_id,
+        )
+
+    txn = service.create_transaction(
+        date=date_cls.fromisoformat(request.form["date"]),
+        description=request.form["description"].strip(),
+        reference=request.form.get("reference", "").strip(),
+        lines_data=lines_data,
+        customer_id=request.form.get("customer_id", "").strip() or None,
+        supplier_id=request.form.get("supplier_id", "").strip() or None,
+        kind=kind,
+        related_transaction_id=related_transaction_id,
+    )
+    _save_attachments(request.files.getlist("attachments"), txn.id)
+    flash(f"{txn.kind_label} '{txn.description}' saved.", "success")
+    return redirect(success_redirect or url_for("transactions.edit_transaction", txn_id=txn.id))
 
 
 @transactions_bp.route("/add", methods=["GET", "POST"])
 @login_required
 def add_transaction():
-    accounts = service.get_active_accounts()
-    customers = _get_active_customers()
-    suppliers = _get_active_suppliers()
     if request.method == "POST":
-        lines_data, parse_errors = _parse_lines(request.form)
-        errors = _validate_header(request.form) + parse_errors + service.validate_lines(lines_data)
-        if errors:
-            for e in errors:
-                flash(e, "danger")
-            return render_template(
-                "transactions/form.html", title="New Transaction",
-                form_action=url_for("transactions.add_transaction"),
-                accounts=accounts, transaction=None,
-                prefill=request.form, lines=lines_data,
-                customers=customers, suppliers=suppliers,
-            )
-        txn = service.create_transaction(
-            date=date_cls.fromisoformat(request.form["date"]),
-            description=request.form["description"].strip(),
-            reference=request.form.get("reference", "").strip(),
-            lines_data=lines_data,
-            customer_id=request.form.get("customer_id", "").strip() or None,
-            supplier_id=request.form.get("supplier_id", "").strip() or None,
-        )
-        _save_attachments(request.files.getlist("attachments"), txn.id)
-        flash(f"Transaction '{txn.description}' saved.", "success")
-        return redirect(url_for("transactions.edit_transaction", txn_id=txn.id))
+        return _handle_create("manual_journal")
+    return _render_new_form("manual_journal")
 
-    return render_template(
-        "transactions/form.html", title="New Transaction",
-        form_action=url_for("transactions.add_transaction"),
-        accounts=accounts, transaction=None, prefill={}, lines=[],
-        customers=customers, suppliers=suppliers,
+
+@transactions_bp.route("/invoices/new", methods=["GET", "POST"])
+@login_required
+def new_customer_invoice():
+    if request.method == "POST":
+        return _handle_create("customer_invoice")
+    return _render_new_form("customer_invoice")
+
+
+@transactions_bp.route("/bills/new", methods=["GET", "POST"])
+@login_required
+def new_supplier_bill():
+    if request.method == "POST":
+        return _handle_create("supplier_bill")
+    return _render_new_form("supplier_bill")
+
+
+_CREDIT_NOTE_KIND = {
+    "customer": "customer_credit_note",
+    "supplier": "supplier_credit_note",
+}
+
+
+@transactions_bp.route("/credit-notes/new", methods=["GET", "POST"])
+@login_required
+def new_credit_note():
+    cn_type = request.args.get("type", "").strip()
+    if cn_type not in _CREDIT_NOTE_KIND:
+        # Show picker screen
+        return render_template("transactions/credit_note_picker.html")
+
+    kind = _CREDIT_NOTE_KIND[cn_type]
+    if request.method == "POST":
+        return _handle_create(kind)
+    return _render_new_form(kind)
+
+
+@transactions_bp.route("/<txn_id>/credit-note", methods=["GET", "POST"])
+@login_required
+def new_credit_note_from(txn_id):
+    original = db.session.get(Transaction, txn_id)
+    if not original:
+        flash("Original transaction not found.", "danger")
+        return redirect(url_for("transactions.list_transactions"))
+    if original.kind == "customer_invoice":
+        kind = "customer_credit_note"
+    elif original.kind == "supplier_bill":
+        kind = "supplier_credit_note"
+    else:
+        flash("Credit notes can only be created from customer invoices or supplier bills.", "danger")
+        return redirect(url_for("transactions.edit_transaction", txn_id=txn_id))
+
+    if request.method == "POST":
+        return _handle_create(kind, related_transaction_id=original.id)
+
+    # Pre-populate lines as a reversal of the original
+    reversed_lines = [
+        {
+            "account_id": l.account_id,
+            "type": "credit" if l.type == "debit" else "debit",
+            "amount": str(l.amount),
+        }
+        for l in original.lines
+    ]
+    prefill = {
+        "date": date_cls.today().isoformat(),
+        "description": f"Credit Note for {original.description}",
+        "reference": f"CN-{original.reference}" if original.reference else "",
+        "customer_id": original.customer_id or "",
+        "supplier_id": original.supplier_id or "",
+    }
+    return _render_new_form(
+        kind,
+        prefill=prefill,
+        lines=reversed_lines,
+        related_transaction_id=original.id,
     )
 
 
@@ -104,15 +247,22 @@ def edit_transaction(txn_id):
     if request.method == "POST":
         lines_data, parse_errors = _parse_lines(request.form)
         errors = _validate_header(request.form) + parse_errors + service.validate_lines(lines_data)
+        if txn.kind in ("customer_invoice", "customer_credit_note"):
+            if not request.form.get("customer_id", "").strip():
+                errors.append("Customer is required.")
+        if txn.kind in ("supplier_bill", "supplier_credit_note"):
+            if not request.form.get("supplier_id", "").strip():
+                errors.append("Supplier is required.")
         if errors:
             for e in errors:
                 flash(e, "danger")
             return render_template(
-                "transactions/form.html", title="Edit Transaction",
+                "transactions/form.html", title=f"Edit {txn.kind_label}",
                 form_action=url_for("transactions.edit_transaction", txn_id=txn_id),
                 accounts=accounts, transaction=txn,
                 prefill=request.form, lines=lines_data,
                 customers=customers, suppliers=suppliers,
+                kind=txn.kind,
             )
         service.update_transaction(
             txn,
@@ -123,7 +273,7 @@ def edit_transaction(txn_id):
             customer_id=request.form.get("customer_id", "").strip() or None,
             supplier_id=request.form.get("supplier_id", "").strip() or None,
         )
-        flash("Transaction updated.", "success")
+        flash(f"{txn.kind_label} updated.", "success")
         return redirect(url_for("transactions.list_transactions"))
 
     existing_lines = [
@@ -131,10 +281,11 @@ def edit_transaction(txn_id):
         for l in txn.lines
     ]
     return render_template(
-        "transactions/form.html", title="Edit Transaction",
+        "transactions/form.html", title=f"Edit {txn.kind_label}",
         form_action=url_for("transactions.edit_transaction", txn_id=txn_id),
         accounts=accounts, transaction=txn, prefill={}, lines=existing_lines,
         customers=customers, suppliers=suppliers,
+        kind=txn.kind,
     )
 
 
@@ -160,7 +311,29 @@ def delete_transaction(txn_id):
 @login_required
 def export_csv():
     search = request.args.get("search", "").strip()
-    txns = service.get_transactions(search=search or None, sort="date_desc")
+    date_from_str = request.args.get("date_from", "").strip()
+    date_to_str = request.args.get("date_to", "").strip()
+    account_ids = request.args.getlist("accounts")
+    selected_kinds = [k for k in request.args.getlist("kinds") if k in TRANSACTION_KINDS]
+
+    date_from = date_to = None
+    if date_from_str:
+        try:
+            date_from = date_cls.fromisoformat(date_from_str)
+        except ValueError:
+            pass
+    if date_to_str:
+        try:
+            date_to = date_cls.fromisoformat(date_to_str)
+        except ValueError:
+            pass
+
+    txns = service.get_transactions(
+        search=search or None, sort="date_asc",
+        date_from=date_from, date_to=date_to,
+        account_ids=account_ids or None,
+        kinds=selected_kinds or None,
+    )
 
     buf = io.StringIO()
     writer = csv.writer(buf)
@@ -187,35 +360,32 @@ def export_csv():
 @transactions_bp.route("/ledger")
 @login_required
 def ledger():
-    account_id = request.args.get("account_id", "")
-    date_from_str = request.args.get("date_from") or None
-    date_to_str = request.args.get("date_to") or None
+    account_ids = request.args.getlist("accounts")
+    date_from_str = request.args.get("date_from", "").strip()
+    date_to_str = request.args.get("date_to", "").strip()
 
     date_from = date_to = None
     if date_from_str:
         try:
             date_from = date_cls.fromisoformat(date_from_str)
         except ValueError:
-            pass
+            date_from_str = ""
     if date_to_str:
         try:
             date_to = date_cls.fromisoformat(date_to_str)
         except ValueError:
-            pass
+            date_to_str = ""
 
     all_accounts = service.get_active_accounts()
-    account, entries = (None, [])
-    if account_id:
-        account, entries = service.get_general_ledger(account_id, date_from, date_to)
+    entries = service.get_general_ledger(account_ids, date_from, date_to) if account_ids else []
 
     return render_template(
         "transactions/ledger.html",
         all_accounts=all_accounts,
-        account=account,
         entries=entries,
-        account_id=account_id,
-        date_from=date_from,
-        date_to=date_to,
+        selected_accounts=account_ids,
+        date_from=date_from_str,
+        date_to=date_to_str,
     )
 
 

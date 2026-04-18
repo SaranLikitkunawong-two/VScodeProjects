@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Match History — AccSoft{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <a href="{{ url_for('reconciliation.detail', session_id=session.id) }}"
+     class="text-sm text-gray-500 hover:text-blue-600">&larr; Back to reconciliation</a>
+</div>
+
+<h1 class="text-xl font-semibold mb-1">Match History</h1>
+<p class="text-sm text-gray-500 mb-6">
+  {{ session.account.code }} {{ session.account.name }} &nbsp;·&nbsp;
+  {{ session.period_start.strftime('%d %b %Y') }} – {{ session.period_end.strftime('%d %b %Y') }}
+</p>
+
+{% if matches %}
+<div class="bg-white border border-gray-200 rounded overflow-hidden">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 border-b border-gray-200 text-gray-500 uppercase text-xs">
+      <tr>
+        <th class="px-4 py-3 text-left">Matched at</th>
+        <th class="px-4 py-3 text-left">Bank line</th>
+        <th class="px-4 py-3 text-right">Bank amt</th>
+        <th class="px-4 py-3 text-left">Transaction</th>
+        <th class="px-4 py-3 text-left">Matched by</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-100">
+      {% for m in matches %}
+      <tr class="hover:bg-gray-50">
+        <td class="px-4 py-3 text-gray-500 whitespace-nowrap">
+          {{ m.matched_at.strftime('%d %b %Y %H:%M') }}
+        </td>
+        <td class="px-4 py-3">
+          <span class="font-medium">{{ m.bank_line.date.strftime('%d %b %Y') }}</span>
+          <span class="text-gray-600 ml-1">{{ m.bank_line.description }}</span>
+        </td>
+        <td class="px-4 py-3 text-right font-mono
+                   {% if m.bank_line.amount >= 0 %}text-green-700{% else %}text-red-600{% endif %}">
+          {{ "%.2f"|format(m.bank_line.amount) }}
+        </td>
+        <td class="px-4 py-3">
+          <span class="font-medium">{{ m.transaction.date.strftime('%d %b %Y') }}</span>
+          <span class="text-gray-600 ml-1">{{ m.transaction.description }}</span>
+        </td>
+        <td class="px-4 py-3 text-gray-500">
+          {{ m.matched_by.email if m.matched_by else '—' }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="text-center py-16 text-gray-400">
+  No matches have been made in this session yet.
+</div>
+{% endif %}
+{% endblock %}

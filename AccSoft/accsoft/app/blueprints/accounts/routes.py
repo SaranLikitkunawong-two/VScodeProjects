@@ -15,16 +15,16 @@ accounts_bp = Blueprint(
 @accounts_bp.route("/")
 @login_required
 def list_accounts():
-    grouped = service.get_accounts_grouped()
     return render_template(
         "list.html",
-        grouped=grouped,
+        grouped=service.get_accounts_grouped(),
         type_order=TYPE_ORDER,
         type_labels=TYPE_LABELS,
         type_colors=TYPE_COLORS,
         next_codes=service.get_next_codes_all(),
         account_types=ACCOUNT_TYPES,
         type_locked_ids=service.get_accounts_with_transactions(),
+        parent_accounts_js=service.get_parent_accounts_for_js(),
     )
 
 
@@ -36,39 +36,33 @@ def add_account():
         acct_type   = request.form.get("type", "").strip()
         code        = request.form.get("code", "").strip()
         description = request.form.get("description", "").strip()
+        hierarchy   = _parse_hierarchy(request.form.get("hierarchy", "0"))
+        allows_posting = request.form.get("allows_posting") == "1"
+        level_0_id  = request.form.get("level_0_account_id", "").strip() or None
+        level_1_id  = request.form.get("level_1_account_id", "").strip() or None
+        gl_desc     = request.form.get("gl_description", "").strip()
 
         errors = _validate_new(name, acct_type, code)
         if errors:
             for e in errors:
                 flash(e, "danger")
-            return render_template(
-                "form.html",
-                title="Add Account",
-                form_action=url_for("accounts.add_account"),
-                account=None,
-                account_types=ACCOUNT_TYPES,
-                next_codes=service.get_next_codes_all(),
-                type_locked=False,
-                prefill=request.form,
-            )
+            return redirect(url_for("accounts.list_accounts"))
 
-        acct = service.create_account(name, acct_type, code, description)
+        acct = service.create_account(
+            name, acct_type, code, description,
+            hierarchy=hierarchy,
+            allows_posting=allows_posting,
+            level_0_account_id=level_0_id,
+            level_1_account_id=level_1_id,
+            gl_description=gl_desc,
+        )
         flash(f"Account '{acct.name}' ({acct.code}) created.", "success")
         return redirect(url_for("accounts.list_accounts"))
 
-    return render_template(
-        "form.html",
-        title="Add Account",
-        form_action=url_for("accounts.add_account"),
-        account=None,
-        account_types=ACCOUNT_TYPES,
-        next_codes=service.get_next_codes_all(),
-        type_locked=False,
-        prefill={},
-    )
+    return redirect(url_for("accounts.list_accounts"))
 
 
-@accounts_bp.route("/<account_id>/edit", methods=["GET", "POST"])
+@accounts_bp.route("/<account_id>/edit", methods=["POST"])
 @login_required
 def edit_account(account_id):
     account = db.session.get(Account, account_id)
@@ -77,45 +71,33 @@ def edit_account(account_id):
         return redirect(url_for("accounts.list_accounts"))
 
     type_locked = service.has_transactions(account_id)
+    name        = request.form.get("name", "").strip()
+    code        = request.form.get("code", "").strip()
+    description = request.form.get("description", "").strip()
+    acct_type   = request.form.get("type", account.type).strip()
+    hierarchy   = _parse_hierarchy(request.form.get("hierarchy", str(account.hierarchy)))
+    allows_posting = request.form.get("allows_posting") == "1"
+    level_0_id  = request.form.get("level_0_account_id", "").strip() or None
+    level_1_id  = request.form.get("level_1_account_id", "").strip() or None
+    gl_desc     = request.form.get("gl_description", "").strip()
 
-    if request.method == "POST":
-        name        = request.form.get("name", "").strip()
-        code        = request.form.get("code", "").strip()
-        description = request.form.get("description", "").strip()
-        acct_type   = request.form.get("type", account.type).strip()
-
-        errors = _validate_edit(name, code, acct_type, account_id, type_locked)
-        if errors:
-            for e in errors:
-                flash(e, "danger")
-            return render_template(
-                "form.html",
-                title=f"Edit — {account.code} {account.name}",
-                form_action=url_for("accounts.edit_account", account_id=account_id),
-                account=account,
-                account_types=ACCOUNT_TYPES,
-                next_codes=service.get_next_codes_all(),
-                type_locked=type_locked,
-                prefill=request.form,
-            )
-
-        service.update_account(
-            account, name, code, description,
-            account_type=None if type_locked else acct_type,
-        )
-        flash(f"Account '{account.name}' updated.", "success")
+    errors = _validate_edit(name, code, acct_type, account_id, type_locked)
+    if errors:
+        for e in errors:
+            flash(e, "danger")
         return redirect(url_for("accounts.list_accounts"))
 
-    return render_template(
-        "form.html",
-        title=f"Edit — {account.code} {account.name}",
-        form_action=url_for("accounts.edit_account", account_id=account_id),
-        account=account,
-        account_types=ACCOUNT_TYPES,
-        next_codes=service.get_next_codes_all(),
-        type_locked=type_locked,
-        prefill={},
+    service.update_account(
+        account, name, code, description,
+        account_type=None if type_locked else acct_type,
+        hierarchy=hierarchy,
+        allows_posting=allows_posting,
+        level_0_account_id=level_0_id,
+        level_1_account_id=level_1_id,
+        gl_description=gl_desc,
     )
+    flash(f"Account '{account.name}' updated.", "success")
+    return redirect(url_for("accounts.list_accounts"))
 
 
 @accounts_bp.route("/<account_id>/deactivate", methods=["POST"])
@@ -151,7 +133,15 @@ def delete_account(account_id):
     return redirect(url_for("accounts.list_accounts"))
 
 
-# ── validation helpers ────────────────────────────────────────────────────────
+# ── helpers ───────────────────────────────────────────────────────────────────
+
+def _parse_hierarchy(raw: str) -> int:
+    try:
+        v = int(raw)
+        return v if v in (0, 1, 2) else 0
+    except (ValueError, TypeError):
+        return 0
+
 
 def _validate_new(name: str, acct_type: str, code: str) -> list[str]:
     errors = []

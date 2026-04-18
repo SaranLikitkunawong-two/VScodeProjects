@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}New Credit Note — AccSoft{% endblock %}
+
+{% block content %}
+<div class="flex items-center gap-3 mb-6">
+  <a href="{{ url_for('transactions.list_transactions') }}"
+     class="text-gray-500 hover:text-gray-700 text-sm">← Transactions</a>
+  <h1 class="text-2xl font-bold">New Credit Note</h1>
+</div>
+
+<p class="text-sm text-gray-500 mb-5">What kind of credit note are you creating?</p>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl">
+
+  <a href="{{ url_for('transactions.new_credit_note', type='customer') }}"
+     class="block bg-white border border-gray-200 rounded-lg p-5 hover:border-blue-400 hover:shadow-sm transition">
+    <div class="flex items-start gap-3">
+      <span class="text-xs px-2 py-1 rounded-full bg-purple-100 text-purple-700 font-medium">Customer</span>
+    </div>
+    <h2 class="font-semibold text-gray-800 mt-3 mb-1">Customer Credit Note</h2>
+    <p class="text-xs text-gray-500">
+      Credit issued to a customer — reduces the amount they owe you. Use when a customer was
+      over-billed, returned goods, or is owed a refund.
+    </p>
+  </a>
+
+  <a href="{{ url_for('transactions.new_credit_note', type='supplier') }}"
+     class="block bg-white border border-gray-200 rounded-lg p-5 hover:border-blue-400 hover:shadow-sm transition">
+    <div class="flex items-start gap-3">
+      <span class="text-xs px-2 py-1 rounded-full bg-rose-100 text-rose-700 font-medium">Supplier</span>
+    </div>
+    <h2 class="font-semibold text-gray-800 mt-3 mb-1">Supplier Credit Note</h2>
+    <p class="text-xs text-gray-500">
+      Credit received from a supplier — reduces the amount you owe them. Use when a supplier
+      over-charged, you returned goods, or they owe you a refund.
+    </p>
+  </a>
+
+</div>
+
+<p class="text-xs text-gray-400 mt-6">
+  Tip: credit notes can also be created directly from an existing invoice or bill — just open it
+  and click "Create Credit Note".
+</p>
+{% endblock %}

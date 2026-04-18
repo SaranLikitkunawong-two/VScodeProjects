@@ -2,66 +2,185 @@
 {% block title %}General Ledger — AccSoft{% endblock %}
 
 {% block content %}
-<div class="flex items-center gap-3 mb-6">
-  <a href="{{ url_for('transactions.list_transactions') }}"
-     class="text-gray-500 hover:text-gray-700 text-sm">← Transactions</a>
-  <h1 class="text-2xl font-bold">General Ledger</h1>
+
+{% set has_filters = date_from or date_to or selected_accounts %}
+
+<div class="flex items-center justify-between mb-6">
+  <div class="flex items-center gap-3">
+    <a href="{{ url_for('transactions.list_transactions') }}"
+       class="text-gray-500 hover:text-gray-700 text-sm">← Transactions</a>
+    <h1 class="text-2xl font-bold">General Ledger</h1>
+  </div>
+  {% if has_filters %}
+  <a href="{{ url_for('transactions.ledger') }}"
+     class="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50 text-gray-600">Clear all</a>
+  {% endif %}
 </div>
 
-<!-- Filter bar -->
-<form method="get" id="ledger-form"
-      class="bg-white border border-gray-200 rounded-lg p-4 mb-6">
-  <div class="flex flex-wrap gap-4 items-end">
-    <div>
-      <label class="block text-xs font-medium text-gray-600 mb-1">Account</label>
-      <select name="account_id"
-              class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 min-w-[260px]">
-        <option value="">— select account —</option>
-        {% for a in all_accounts %}
-        <option value="{{ a.id }}" {% if a.id == account_id %}selected{% endif %}>
-          {{ a.code }} — {{ a.name }}
-        </option>
-        {% endfor %}
-      </select>
-    </div>
-    <div>
-      <label class="block text-xs font-medium text-gray-600 mb-1">From</label>
-      <input type="date" id="date_from" name="date_from"
-             value="{{ date_from.isoformat() if date_from else '' }}"
-             onclick="try{this.showPicker()}catch(e){}"
-             class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer" />
-    </div>
-    <div>
-      <label class="block text-xs font-medium text-gray-600 mb-1">To</label>
-      <input type="date" id="date_to" name="date_to"
-             value="{{ date_to.isoformat() if date_to else '' }}"
-             onclick="try{this.showPicker()}catch(e){}"
-             class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 cursor-pointer" />
-    </div>
-    <button class="px-4 py-2 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">View</button>
-    {% if account_id %}
-    <a href="{{ url_for('transactions.ledger') }}"
-       class="px-4 py-2 border border-gray-300 rounded text-sm hover:bg-gray-50">Clear</a>
-    {% endif %}
-  </div>
+<form method="get" id="ledger-form">
+  <div class="flex gap-6 items-start">
 
-  <!-- Preset date range buttons -->
-  <div class="flex flex-wrap gap-2 mt-3 pt-3 border-t border-gray-100">
-    <span class="text-xs text-gray-400 self-center mr-1">Quick range:</span>
-    <button type="button" onclick="setDatePreset('today')"
-            class="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">Today</button>
-    <button type="button" onclick="setDatePreset('yesterday')"
-            class="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">Yesterday</button>
-    <button type="button" onclick="setDatePreset('last7')"
-            class="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">Last 7 Days</button>
-    <button type="button" onclick="setDatePreset('thisMonth')"
-            class="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">This Month</button>
-    <button type="button" onclick="setDatePreset('lastMonth')"
-            class="px-3 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">Last Month</button>
+    <!-- ── Filter sidebar ──────────────────────────────────────────────── -->
+    <aside class="w-56 shrink-0">
+      <div class="bg-white border border-gray-200 rounded-lg p-4 sticky top-4">
+
+        <div class="flex items-center justify-between mb-4">
+          <span class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Filters</span>
+        </div>
+
+        <div class="mb-3">
+          <label class="block text-xs font-medium text-gray-500 mb-1.5">Date From</label>
+          <input type="date" id="date_from" name="date_from" value="{{ date_from }}"
+                 class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+        </div>
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-gray-500 mb-1.5">Date To</label>
+          <input type="date" id="date_to" name="date_to" value="{{ date_to }}"
+                 class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400">
+        </div>
+
+        <!-- Preset date range buttons -->
+        <div class="flex flex-wrap gap-1 mb-5">
+          <button type="button" onclick="setDatePreset('today')"
+                  class="px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">Today</button>
+          <button type="button" onclick="setDatePreset('yesterday')"
+                  class="px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">Yesterday</button>
+          <button type="button" onclick="setDatePreset('last7')"
+                  class="px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">Last 7d</button>
+          <button type="button" onclick="setDatePreset('thisMonth')"
+                  class="px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">This Mo</button>
+          <button type="button" onclick="setDatePreset('lastMonth')"
+                  class="px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50">Last Mo</button>
+        </div>
+
+        <div class="mb-5">
+          <div class="flex items-center justify-between mb-1.5">
+            <label class="text-xs font-medium text-gray-500">Accounts</label>
+            <span class="text-xs text-gray-400">
+              <button type="button" onclick="setAllAccounts(true)"
+                      class="hover:text-blue-600 hover:underline">All</button>
+              <span class="mx-1">·</span>
+              <button type="button" onclick="setAllAccounts(false)"
+                      class="hover:text-blue-600 hover:underline">None</button>
+            </span>
+          </div>
+          <input type="text" id="acct-search-filter" placeholder="Search…"
+                 oninput="filterAcctList(this.value)"
+                 class="w-full border border-gray-300 rounded px-2 py-1.5 text-sm mb-2 focus:outline-none focus:ring-1 focus:ring-blue-400">
+          <div id="acct-filter-list" class="max-h-80 overflow-y-auto space-y-0.5 border border-gray-100 rounded p-1">
+            {% for acct in all_accounts %}
+            <label class="acct-filter-item flex items-center gap-2 cursor-pointer hover:bg-gray-50 rounded px-1.5 py-1"
+                   data-name="{{ (acct.code ~ ' ' ~ acct.name) | lower }}">
+              <input type="checkbox" name="accounts" value="{{ acct.id }}"
+                     {{ 'checked' if acct.id in selected_accounts else '' }}
+                     class="accent-blue-600 shrink-0">
+              <span class="font-mono text-xs text-gray-400 shrink-0">{{ acct.code }}</span>
+              <span class="truncate text-sm text-gray-700">{{ acct.name }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- ── Ledger table ────────────────────────────────────────────────── -->
+    <div class="flex-1 min-w-0">
+
+      {% if selected_accounts %}
+        {% if entries %}
+        {% set ns = namespace(total_debit=0, total_credit=0) %}
+        {% for txn, line, acct in entries %}
+          {% if line.type == 'debit' %}{% set ns.total_debit = ns.total_debit + line.amount %}{% endif %}
+          {% if line.type == 'credit' %}{% set ns.total_credit = ns.total_credit + line.amount %}{% endif %}
+        {% endfor %}
+
+        <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+          <div class="px-6 py-3 border-b border-gray-100 flex items-center justify-between text-sm">
+            <span class="text-gray-500">
+              {{ entries|length }} {{ 'entry' if entries|length == 1 else 'entries' }}
+              across {{ selected_accounts|length }} {{ 'account' if selected_accounts|length == 1 else 'accounts' }}
+            </span>
+            <span class="text-gray-500">
+              <span class="mr-4">Total Debit: <span class="font-mono font-semibold text-gray-800">${{ '{:,.2f}'.format(ns.total_debit) }}</span></span>
+              <span>Total Credit: <span class="font-mono font-semibold text-gray-800">${{ '{:,.2f}'.format(ns.total_credit) }}</span></span>
+            </span>
+          </div>
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 text-gray-600 text-left">
+              <tr>
+                <th class="px-4 py-3 font-medium">Date</th>
+                <th class="px-4 py-3 font-medium">Account</th>
+                <th class="px-4 py-3 font-medium">Description</th>
+                <th class="px-4 py-3 font-medium">Reference</th>
+                <th class="px-4 py-3 font-medium text-right">Debit</th>
+                <th class="px-4 py-3 font-medium text-right">Credit</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+              {% for txn, line, acct in entries %}
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-3 whitespace-nowrap">{{ txn.date.strftime('%d %b %Y') }}</td>
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <span class="font-mono text-xs text-gray-400">{{ acct.code }}</span>
+                  <span class="ml-1.5 text-gray-700">{{ acct.name }}</span>
+                </td>
+                <td class="px-4 py-3">
+                  <a href="{{ url_for('transactions.edit_transaction', txn_id=txn.id) }}"
+                     class="hover:text-blue-600 hover:underline">{{ txn.description }}</a>
+                </td>
+                <td class="px-4 py-3 text-gray-500">{{ txn.reference or '—' }}</td>
+                <td class="px-4 py-3 text-right font-mono text-gray-700">
+                  {% if line.type == 'debit' %}${{ '%.2f'|format(line.amount) }}{% else %}&nbsp;{% endif %}
+                </td>
+                <td class="px-4 py-3 text-right font-mono text-gray-700">
+                  {% if line.type == 'credit' %}${{ '%.2f'|format(line.amount) }}{% else %}&nbsp;{% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% else %}
+        <div class="bg-white border border-gray-200 rounded-lg p-10 text-center text-gray-400 text-sm">
+          No entries for the selected accounts{% if date_from or date_to %} in the selected date range{% endif %}.
+        </div>
+        {% endif %}
+      {% else %}
+        <div class="bg-white border border-gray-200 rounded-lg p-10 text-center text-gray-400 text-sm">
+          Select one or more accounts from the sidebar to view ledger entries.
+        </div>
+      {% endif %}
+
+    </div>
+
   </div>
 </form>
 
 <script>
+function filterAcctList(q) {
+  const lower = q.toLowerCase();
+  document.querySelectorAll('.acct-filter-item').forEach(item => {
+    item.style.display = item.dataset.name.includes(lower) ? '' : 'none';
+  });
+}
+
+let filterTimer;
+
+function setAllAccounts(checked) {
+  document.querySelectorAll('#acct-filter-list input[type="checkbox"]').forEach(cb => { cb.checked = checked; });
+  clearTimeout(filterTimer);
+  filterTimer = setTimeout(() => document.getElementById('ledger-form').submit(), 200);
+}
+
+document.getElementById('ledger-form').addEventListener('change', e => {
+  const name = e.target.name;
+  if (name === 'date_from' || name === 'date_to' || name === 'accounts') {
+    clearTimeout(filterTimer);
+    filterTimer = setTimeout(() => document.getElementById('ledger-form').submit(), 200);
+  }
+});
+
 function setDatePreset(preset) {
   const today = new Date();
   const fmt = d => d.toISOString().slice(0, 10);
@@ -87,73 +206,4 @@ function setDatePreset(preset) {
 }
 </script>
 
-{% if account %}
-<div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
-  <!-- Account header -->
-  <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-    <div>
-      <span class="font-semibold text-lg">{{ account.code }} — {{ account.name }}</span>
-      <span class="ml-3 text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600 capitalize">
-        {{ account.type }}
-      </span>
-    </div>
-    {% if entries %}
-    <div class="text-sm">
-      <span class="text-gray-500">Closing balance:</span>
-      <span class="ml-2 font-mono font-semibold
-        {% if entries[-1][2] >= 0 %}text-gray-800{% else %}text-red-600{% endif %}">
-        ${{ '%.2f'|format(entries[-1][2]) }}
-      </span>
-    </div>
-    {% endif %}
-  </div>
-
-  {% if entries %}
-  <table class="w-full text-sm">
-    <thead class="bg-gray-50 text-gray-600 text-left">
-      <tr>
-        <th class="px-4 py-3 font-medium">Date</th>
-        <th class="px-4 py-3 font-medium">Description</th>
-        <th class="px-4 py-3 font-medium">Reference</th>
-        <th class="px-4 py-3 font-medium text-right">Debit</th>
-        <th class="px-4 py-3 font-medium text-right">Credit</th>
-        <th class="px-4 py-3 font-medium text-right">Balance</th>
-      </tr>
-    </thead>
-    <tbody class="divide-y divide-gray-100">
-      {% for txn, line, balance in entries %}
-      <tr class="hover:bg-gray-50">
-        <td class="px-4 py-3 whitespace-nowrap">{{ txn.date.strftime('%d %b %Y') }}</td>
-        <td class="px-4 py-3">
-          <a href="{{ url_for('transactions.edit_transaction', txn_id=txn.id) }}"
-             class="hover:text-blue-600 hover:underline">{{ txn.description }}</a>
-        </td>
-        <td class="px-4 py-3 text-gray-500">{{ txn.reference or '—' }}</td>
-        <td class="px-4 py-3 text-right font-mono text-gray-700">
-          {% if line.type == 'debit' %}${{ '%.2f'|format(line.amount) }}{% else %}&nbsp;{% endif %}
-        </td>
-        <td class="px-4 py-3 text-right font-mono text-gray-700">
-          {% if line.type == 'credit' %}${{ '%.2f'|format(line.amount) }}{% else %}&nbsp;{% endif %}
-        </td>
-        <td class="px-4 py-3 text-right font-mono font-medium
-          {% if balance >= 0 %}text-gray-800{% else %}text-red-600{% endif %}">
-          ${{ '%.2f'|format(balance) }}
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <p class="px-6 py-10 text-gray-500 text-sm text-center">
-    No entries for this account{% if date_from or date_to %} in the selected date range{% endif %}.
-  </p>
-  {% endif %}
-</div>
-
-{% elif account_id %}
-<p class="text-red-600 text-sm">Account not found.</p>
-
-{% else %}
-<p class="text-gray-500 text-sm">Select an account above to view its ledger entries.</p>
-{% endif %}
 {% endblock %}
