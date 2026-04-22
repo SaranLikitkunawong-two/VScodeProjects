@@ -17,7 +17,10 @@
       "Bash(\"venv/Scripts/python.exe\" -c \"from app import create_app; app = create_app\\(\\); print\\('OK'\\)\")",
       "Bash(FLASK_APP=run.py flask db migrate -m \"add bulk upload tables\")",
       "Bash(venv\\\\Scripts\\\\activate.bat)",
-      "Bash(flask db *)"
+      "Bash(flask db *)",
+      "Bash(xxd \"C:\\\\Users\\\\Saran Likitkunawong\\\\VScode\\\\NDIS/Plan Management Start.md\")",
+      "Bash(xxd \"C:/Users/Saran Likitkunawong/VScode/NDIS/Plan Management Start.md\")",
+      "WebSearch"
     ]
   }
 }

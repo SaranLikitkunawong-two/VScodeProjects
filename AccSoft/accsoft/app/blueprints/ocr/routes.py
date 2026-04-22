@@ -27,61 +27,8 @@ _ALLOWED_EXT = {"pdf", "jpg", "jpeg", "png"}
 @ocr_bp.route("/upload", methods=["GET", "POST"])
 @login_required
 def upload():
-    if request.method == "GET":
-        return render_template("ocr/upload.html")
-
-    f = request.files.get("invoice")
-    if not f or not f.filename:
-        flash("Please select a file to upload.", "danger")
-        return render_template("ocr/upload.html")
-
-    ext = f.filename.rsplit(".", 1)[-1].lower() if "." in f.filename else ""
-    if ext not in _ALLOWED_EXT:
-        flash("Only PDF, JPG, and PNG files are supported.", "danger")
-        return render_template("ocr/upload.html")
-
-    # Save file to uploads folder (no transaction yet)
-    folder = os.path.join(current_app.root_path, "static", "uploads")
-    os.makedirs(folder, exist_ok=True)
-    stored_name = f"{_uuid.uuid4()}.{ext}"
-    file_path = os.path.join(folder, stored_name)
-    f.save(file_path)
-
-    # Store a placeholder attachment (transaction_id null until confirmed)
-    attachment = Attachment(
-        transaction_id=_placeholder_txn_id(),
-        filename=f.filename,
-        storage_path=stored_name,
-        mime_type="application/pdf" if ext == "pdf" else f"image/{ext}",
-    )
-    db.session.add(attachment)
-    db.session.flush()
-
-    # Run pipeline
-    raw_text, confidence = pipeline.extract_text(file_path)
-    fields = extractor.extract_fields(raw_text)
-    suggestion = gl_suggester.suggest(fields.get("vendor", ""), fields.get("notes", ""))
-
-    ocr_result = OcrResult(
-        attachment_id=attachment.id,
-        raw_text=raw_text,
-        extracted_fields=fields,
-        confidence=confidence,
-    )
-    db.session.add(ocr_result)
-    db.session.commit()
-
-    if not raw_text:
-        flash(
-            "No text could be extracted from this file. "
-            "Please fill in the fields manually.",
-            "warning",
-        )
-
-    return redirect(url_for("ocr.review", ocr_id=ocr_result.id,
-                             suggestion_debit=suggestion["debit_account_id"] or "",
-                             suggestion_credit=suggestion["credit_account_id"] or "",
-                             vendor_known=int(suggestion["vendor_known"])))
+    # Legacy single-file URL — the Scan Invoice flow lives at /ocr/bulk now.
+    return redirect(url_for("ocr.bulk_upload"))
 
 
 @ocr_bp.route("/review/<ocr_id>", methods=["GET", "POST"])
@@ -90,7 +37,7 @@ def review(ocr_id):
     ocr = db.session.get(OcrResult, ocr_id)
     if not ocr:
         flash("OCR result not found.", "danger")
-        return redirect(url_for("ocr.upload"))
+        return redirect(url_for("ocr.bulk_upload"))
 
     accounts = txn_service.get_active_accounts()
     fields = ocr.extracted_fields or {}
@@ -116,7 +63,7 @@ def confirm(ocr_id):
     ocr = db.session.get(OcrResult, ocr_id)
     if not ocr:
         flash("OCR result not found.", "danger")
-        return redirect(url_for("ocr.upload"))
+        return redirect(url_for("ocr.bulk_upload"))
 
     accounts = txn_service.get_active_accounts()
 

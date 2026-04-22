@@ -1,11 +1,11 @@
 {% extends "base.html" %}
-{% block title %}Bulk Invoice Upload – AccSoft{% endblock %}
+{% block title %}Scan Invoice – AccSoft{% endblock %}
 
 {% block content %}
 <div class="max-w-lg mx-auto">
-  <h1 class="text-2xl font-bold mb-2">Bulk Invoice Upload</h1>
+  <h1 class="text-2xl font-bold mb-2">Scan Invoice</h1>
   <p class="text-sm text-gray-500 mb-6">
-    Upload multiple invoices at once. Each file is extracted and queued for review.
+    Upload one or more invoice files. Each file is extracted and queued for review.
     Known vendors with a clean digital PDF are auto-approved.
   </p>
 
@@ -15,7 +15,7 @@
     <div>
       <label class="block text-sm font-medium mb-1">
         Invoice files
-        <span class="text-gray-400 font-normal">(PDF, JPG, PNG — select multiple)</span>
+        <span class="text-gray-400 font-normal">(PDF, JPG, PNG — one or many)</span>
       </label>
       <input id="file-input" type="file" name="invoices"
              accept=".pdf,.jpg,.jpeg,.png" multiple required
@@ -32,13 +32,9 @@
 
     <button type="submit"
             class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded">
-      Upload &amp; Process All
+      Upload &amp; Extract
     </button>
   </form>
-
-  <p class="mt-4 text-sm text-center text-gray-500">
-    <a href="{{ url_for('ocr.upload') }}" class="text-blue-600 hover:underline">Single invoice upload</a>
-  </p>
 </div>
 
 <script>

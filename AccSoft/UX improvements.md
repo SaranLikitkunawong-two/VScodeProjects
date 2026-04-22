@@ -39,9 +39,10 @@
 - Multi-select GL lines on transaction entry form: checkbox column on each journal line, select-all header checkbox, "Delete selected" button (enforces 2-line minimum)
 
 ### Done ✓ (Session 7 polish — 2026-04-18)
-- **Transaction form**: "Auto balance" button next to "+ Add line" — appears when exactly one line is empty and debits ≠ credits; fills the empty line's debit or credit with the diff
-- **Transaction list**: Kind badge column (compact, colour-coded — Journal/Invoice/Bill/Credit Note)
-- **Transaction list**: Kind filter in sidebar (multi-select with All/None, auto-submit, respected by CSV export)
+- **Transaction form**: Auto-balance toggle (default on, persisted in localStorage) — prefilling one side auto-fills the opposite side of a single empty line with the diff; re-fires on subsequent edits. Manual "Auto balance" button still appears when the toggle is off
+- **Transaction list**: Transaction type badge column (compact, colour-coded — Journal/Invoice/Bill/Credit Note)
+- **Transaction list**: Transaction type filter in sidebar (multi-select with All/None, auto-submit, respected by CSV export)
+- **OCR**: "Scan Invoice" and "Bulk Upload" merged into a single **Scan Invoice** entry point (bulk flow retained, accepts one or many files). Legacy `/ocr/upload` redirects to the unified page
 
 ### Done ✓ (Session 6 — 2026-04-18)
 - **Ledger**: account filter moved to left sidebar (mirroring transactions list) — type-to-search, multi-select checkboxes, All/None shortcuts, date range + presets, auto-submit
@@ -93,8 +94,9 @@
 | 2026-04-18 | Dashboard: `+ New Transaction` split into 3-option dropdown | ✓ Done |
 | 2026-04-18 | Lean customer-invoice / supplier-bill / credit-note flows (kind-aware form) | ✓ Done |
 | 2026-04-18 | Credit note creation from invoice/bill (auto line reversal + related_transaction_id) | ✓ Done |
-| 2026-04-18 | Transaction form: Auto-balance button (fills sole empty line with diff) | ✓ Done |
-| 2026-04-18 | Transactions list: Kind badge column + kind filter in sidebar | ✓ Done |
+| 2026-04-18 | Transaction form: Auto-balance (automatic on edit, with off toggle) | ✓ Done |
+| 2026-04-18 | Transactions list: Transaction-type badge column + type filter in sidebar | ✓ Done |
+| 2026-04-18 | OCR: unified Scan Invoice + Bulk Upload into one page | ✓ Done |
 
 ---
 
@@ -124,10 +126,96 @@
 - **"Outstanding AR" / "Outstanding AP" cards** on the dashboard (now trivial because `kind` is queryable)
 - **Customer/Supplier detail pages**: split into "Invoices", "Bills", "Credit Notes" tabs instead of one unified list
 
+### Transactions
+- **Import transactions from CSV** — "Import CSV" button on the transactions list. Clicking opens a dialog with two options:
+  - **Download template** — downloads a blank CSV with the standardised header row
+  - **Upload CSV** — user picks a file and submits
+  Standard header row: `date, Account Code, Description, Debit Amount, Credit Amount`.
+  One CSV row = one journal line. Rows sharing the same `date + Description` group into a single transaction. After parse, the file is validated using the existing manual-journal rules (2+ lines per txn, accounts exist + `allows_posting`, debits == credits per txn, amounts > 0). The user lands on a preview/confirm page showing each parsed transaction with its lines and any validation errors per-row; they click **Confirm Import** to post all valid transactions atomically, or fix the CSV and retry.
+
 ### Data integrity
 - **DB check constraints**: a `customer_invoice`/`customer_credit_note` must have `customer_id` set; `supplier_bill`/`supplier_credit_note` must have `supplier_id` set (currently enforced at form layer only)
 - **Audit trail**: `updated_at` / `updated_by` on Transaction so edits to posted transactions are traceable
 - **Prevent editing kind** after creation (currently relies on UI not exposing a widget)
+
+---
+
+## Research-backed suggestions — 2026-04-18
+
+> Observed from a read-through of `base.html`, dashboard, transactions list/form, ledger, OCR templates (`bulk_upload.html`, `bulk_queue.html`, `bulk_review.html`), reconciliation (`list.html`, `new.html`, `detail.html`), customers list/detail, and accounts list. Items already in the "Suggested Future Improvements" section above are not repeated here.
+
+### Navigation (base.html)
+- **Active-page indicator in top nav** — currently every link is plain hover-blue; users can't tell where they are. Add an underline / bold / colour shift when the route matches.
+- **Mobile / narrow-window menu** — the horizontal nav overflows below ~900px (9 links + logo + logout). Collapse into a hamburger under a breakpoint.
+- **Auto-dismissing flash messages** — they currently persist until the next navigation. Add a fade-out after ~5s (or a close-button) so success toasts don't pile up.
+- **Global quick-jump search (Ctrl+K / `/`)** — a command-palette style overlay that matches transactions (description/reference), customers, suppliers, and accounts. Cheap to build and eliminates a lot of clicking as the dataset grows.
+
+### Dashboard
+- **Cash-on-hand card pinned at top** — sum of active Asset ▸ Bank & Cash subaccount balances. The current Account-Balances list buries this.
+- **Unreconciled indicator per bank account** — e.g. "ANZ Cheque · 4 unreconciled lines →". Links straight into `/reconciliation/<id>`. Promotes the Reconciliation feature which is otherwise easy to forget.
+- **Pending OCR-batch banner** — if `BulkUploadJob.status == 'processing'` exists, surface a "Resume batch review" banner at the top of the dashboard. Closing the tab currently leaves orphan items with no reminder.
+- **Time-window toggle on Recent Transactions** — currently shows a fixed set; Month-to-date / Last 30d / Custom toggle makes it more useful.
+
+### Transactions list
+- **Live debounced search** — the input already triggers filter auto-submit for other fields, but text search still needs the Search button. Make it consistent (debounce 300ms on typing).
+- **Sort by Amount / Type / Reference** — `sort` select only offers date asc/desc.
+- **Bulk delete checkboxes on the list** — mirror the pattern already used inside the journal-line editor (select-all header, Delete selected).
+- **"Duplicate" row action** — clone description/lines/kind with today's date, land on a new edit page. Big win for recurring manual journals and monthly bills.
+- **Row-level "add attachment" quick-action** — drag-drop a file onto a row to attach, without opening the edit page.
+- **Pagination** — acknowledged for the ledger in Suggested Future; the list will need it too once the table grows.
+
+### Transaction form
+- **"Save & New" button** — saves and returns to a blank form of the same `kind`, preserving customer/supplier if a "keep party" toggle is on. Essential for entering a run of bills in one sitting.
+- **Drag-and-drop attachment zone** — currently file-picker only. A drop zone + paste-from-clipboard (image data) is cheap and matches how invoices arrive.
+- **Ctrl+S to submit** — keyboard users (the primary user for this app) never need to hunt for the button.
+- **Inline "Create new" in customer/supplier autocomplete** — when the typed string has zero matches, show a "+ Create '{query}'" row at the bottom of the dropdown that opens a quick-add modal and returns the new ID. Current flow forces the user out of the form.
+- **Account dropdown shows up to 12 matches only (`routes.py` line ~375)** — make it virtual-scroll or paginated so power users can scroll the whole chart. 12 is fine when you know the name but breaks browsing.
+- **Reference auto-suggest** — prefill `INV-####` / `BILL-####` / `CN-####` based on max existing reference for the kind (dovetails with the "Invoice numbering" item in the main list).
+
+### Ledger
+- **Consistency with Transactions list filters** — ledger has date presets but no kind filter; list has kind filter but no date presets. Both should expose both.
+- **Group-by-transaction toggle** — one row per journal (collapsed) vs one row per line (current). Reduces noise when browsing a busy account.
+- **Print-friendly view** — Session 7 touches print layouts for reports; the ledger benefits from the same treatment for auditor hand-off.
+- **Remember last-used filter selections in `localStorage`** — re-opening the ledger should restore accounts/date range, not reset to empty.
+
+### OCR / Scan Invoice
+- **Drag-and-drop upload zone on `bulk_upload.html`** — currently a plain file-input.
+- **Selected-file preview list before submit** — show names, sizes, and a remove-this-one (×) button per file. Right now you only get a count.
+- **Progress indicator during extraction** — `/ocr/bulk` runs pdfplumber synchronously; on a batch of 10+ PDFs the user stares at a hung Upload button. Either show a spinner with per-file status, or move to polling + job-status endpoint.
+- **Side-by-side invoice preview on `bulk_review.html`** — today the PDF opens in a modal. Splitting the page into preview-left / form-right removes a click per file and is the usual pattern for AP-automation tools.
+- **Vendor field → Supplier record link** — currently free-text `fields.vendor`. Turn it into an autocomplete against `Supplier.name`; on approve, auto-populate `Transaction.supplier_id`. Avoids the AR/AP-profile data drifting from OCR-extracted vendor names.
+- **"Approve all remaining" action on the queue when every pending item is a known vendor** — mirrors existing auto-approve path but user-initiated.
+- **Remember "Save mapping" as default on** per-session — most users will always want to save.
+
+### Bank Reconciliation
+- **Auto-match suggestions** — exact-amount + same-day first, then ±3 days / exact-amount, surfaced as a "Suggested matches: N" banner with a one-click "Accept all suggested" button. Biggest productivity win in this feature.
+- **Sortable / searchable columns in both unmatched tables** — dates, amount, description. Hard-coded order today.
+- **Mark Complete guard** — currently just a confirm('Mark this reconciliation as complete?'). Warn explicitly if `totals.unmatched_count > 0` or if a closing-balance field (proposed below) differs from ledger.
+- **Capture closing balance on Mark Complete** — prompt for the bank's end-of-period balance and record a diff vs the ledger. Makes the "complete" state meaningful rather than just a status flag.
+- **CSV preview step after upload, before commit** — show parsed columns + first 10 rows + row count, let the user map columns if headers don't match. Reduces fear of feeding a wrongly-formatted CSV.
+- **Description truncation** — `max-w-[140px]` hard-clips every bank line. Let the column flex; wrap on hover or show a full tooltip.
+
+### Customers / Suppliers
+- **Search + sort on the list page** — needed once the list grows past ~20 rows.
+- **"New Invoice for this customer" / "New Bill for this supplier" CTA on detail page** — jumps to the kind-specific form with the party pre-filled.
+- **Filter linked transactions by kind/date on the detail page** — the Suggested Future tabs item solves part of this; a simple filter bar is a smaller step.
+- **AR/AP balance aging** — even a rough 0–30 / 31–60 / 60+ split on the customer/supplier detail card gives the number context.
+
+### Chart of Accounts
+- **Collapse/expand tree** — per-type and per Level-2 node. Currently the whole tree renders expanded; with 50+ leaves the page gets long.
+- **Search/filter box** — same filter pattern already used in Transactions-list sidebar.
+- **Balance column next to each posting account** — quick glance avoids bouncing to dashboard/ledger to check a number.
+
+### Global polish
+- **Loading states** — no spinner on any submit button. Adds feedback when OCR extraction or CSV import takes >1s.
+- **Undo toast for destructive actions** — delete transaction / attachment / customer pops a 10s "Undone" window before committing. Current `confirm()` dialogs are easy to misclick.
+- **Keyboard-shortcut help dialog** — `?` opens an overlay listing app-wide shortcuts. Pairs with the Ctrl+K palette and Save & New / Ctrl+S above.
+- **Consistent date formatting** — lists use `dd MMM yyyy`, forms use ISO, flash messages are plain. Standardise on `dd MMM yyyy` for display, ISO only inside `<input type=date>`.
+
+### Gaps / structural
+- **Reports blueprint is empty** — `blueprints/reports/` contains only `__init__.py`; no routes or templates. Session 7 will fill this but worth noting.
+- **No activity / audit log UI** — even before adding `updated_at`/`updated_by` to the model, a "Recent activity" feed on the dashboard (deletes, reconciliation completes, OCR approvals) is a confidence-builder for single-user accounting data.
+- **No error page templates** — 404/500 fall back to Flask's default HTML. A branded error page with a link to dashboard is a small, cheap polish item.
 
 ---
 

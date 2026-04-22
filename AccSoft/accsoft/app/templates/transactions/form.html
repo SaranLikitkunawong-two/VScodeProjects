@@ -139,6 +139,12 @@
               class="hidden text-sm text-blue-600 hover:underline">
         Auto balance
       </button>
+      <label class="ml-auto flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none"
+             title="Automatically fill the opposite side of a single empty line">
+        <input type="checkbox" id="auto-balance-toggle" checked
+               class="accent-blue-600 cursor-pointer">
+        Auto-balance
+      </label>
     </div>
 
     <!-- Running totals -->
@@ -412,6 +418,7 @@ function addLine(accountId = '', lineType = 'debit', amount = '') {
   }
 
   div.querySelector('.debit-input').addEventListener('input', function() {
+    div.removeAttribute('data-auto-filled');
     if (this.value) {
       div.querySelector('.credit-input').value = '';
       div.querySelector('.type-hidden').value   = 'debit';
@@ -419,10 +426,12 @@ function addLine(accountId = '', lineType = 'debit', amount = '') {
     } else {
       div.querySelector('.amount-hidden').value = '';
     }
+    tryAutoBalance();
     updateTotals();
   });
 
   div.querySelector('.credit-input').addEventListener('input', function() {
+    div.removeAttribute('data-auto-filled');
     if (this.value) {
       div.querySelector('.debit-input').value  = '';
       div.querySelector('.type-hidden').value   = 'credit';
@@ -430,6 +439,7 @@ function addLine(accountId = '', lineType = 'debit', amount = '') {
     } else {
       div.querySelector('.amount-hidden').value = '';
     }
+    tryAutoBalance();
     updateTotals();
   });
 
@@ -527,29 +537,64 @@ function updateTotals() {
 
   const emptyRows = [...document.querySelectorAll('#lines-container [data-line-idx]')]
     .filter(r => !(parseFloat(r.querySelector('.amount-hidden').value) > 0));
+  const autoOn = document.getElementById('auto-balance-toggle')?.checked;
   const canAutoBalance = !balanced && diff >= 0.005 && emptyRows.length === 1;
-  document.getElementById('auto-balance-btn').classList.toggle('hidden', !canAutoBalance);
+  document.getElementById('auto-balance-btn').classList.toggle('hidden', autoOn || !canAutoBalance);
 }
 
-function autoBalance() {
-  let debits = 0, credits = 0;
+function autoBalance() { tryAutoBalance(true); }
+
+function tryAutoBalance(force = false) {
+  const toggle = document.getElementById('auto-balance-toggle');
+  if (!force && !(toggle && toggle.checked)) return;
+
   const rows = [...document.querySelectorAll('#lines-container [data-line-idx]')];
+  let debits = 0, credits = 0;
   rows.forEach(r => {
+    if (r.hasAttribute('data-auto-filled')) return;
     const amt = parseFloat(r.querySelector('.amount-hidden').value) || 0;
     if (amt <= 0) return;
     if (r.querySelector('.type-hidden').value === 'debit') debits += amt;
     else credits += amt;
   });
   const diff = Math.abs(debits - credits);
-  if (diff < 0.005) return;
-  const empty = rows.filter(r => !(parseFloat(r.querySelector('.amount-hidden').value) > 0));
-  if (empty.length !== 1) return;
-  const row = empty[0];
-  const fillSide = debits > credits ? 'credit' : 'debit';
-  const amountStr = diff.toFixed(2);
-  const input = row.querySelector(fillSide === 'debit' ? '.debit-input' : '.credit-input');
-  input.value = amountStr;
-  input.dispatchEvent(new Event('input', { bubbles: true }));
+  const candidates = rows.filter(r =>
+    r.hasAttribute('data-auto-filled')
+    || !(parseFloat(r.querySelector('.amount-hidden').value) > 0)
+  );
+
+  if (candidates.length !== 1) {
+    rows.forEach(r => { if (r.hasAttribute('data-auto-filled')) clearAutoRow(r); });
+    return;
+  }
+  const row = candidates[0];
+  if (diff < 0.005) {
+    if (row.hasAttribute('data-auto-filled')) clearAutoRow(row);
+    return;
+  }
+  const side = debits > credits ? 'credit' : 'debit';
+  fillAutoRow(row, side, diff.toFixed(2));
+  row.setAttribute('data-auto-filled', 'true');
+}
+
+function clearAutoRow(row) {
+  row.querySelector('.debit-input').value = '';
+  row.querySelector('.credit-input').value = '';
+  row.querySelector('.amount-hidden').value = '';
+  row.removeAttribute('data-auto-filled');
+}
+
+function fillAutoRow(row, side, amountStr) {
+  const debitInput = row.querySelector('.debit-input');
+  const creditInput = row.querySelector('.credit-input');
+  if (side === 'debit') {
+    debitInput.value = amountStr; creditInput.value = '';
+    row.querySelector('.type-hidden').value = 'debit';
+  } else {
+    creditInput.value = amountStr; debitInput.value = '';
+    row.querySelector('.type-hidden').value = 'credit';
+  }
+  row.querySelector('.amount-hidden').value = amountStr;
 }
 
 // ── Seed lines ────────────────────────────────────────────────────────────────
@@ -559,6 +604,19 @@ if (seedLines.length >= 2) {
   addLine('', 'debit',  '');
   addLine('', 'credit', '');
 }
+
+// ── Auto-balance toggle: persist + react ──────────────────────────────────────
+(function initAutoBalanceToggle() {
+  const toggle = document.getElementById('auto-balance-toggle');
+  if (!toggle) return;
+  const stored = localStorage.getItem('accsoft.autoBalance');
+  if (stored !== null) toggle.checked = stored === '1';
+  toggle.addEventListener('change', () => {
+    localStorage.setItem('accsoft.autoBalance', toggle.checked ? '1' : '0');
+    if (toggle.checked) tryAutoBalance();
+    updateTotals();
+  });
+})();
 
 // ── Form submit validation (browser skips hidden inputs) ──────────────────────
 document.getElementById('txn-form').addEventListener('submit', e => {

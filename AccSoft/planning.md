@@ -76,6 +76,43 @@ A personal web-based accounting portal for a small service business. Accessible 
 - [ ] Multi-currency support
 - [ ] Claude API fallback for GL suggestions (unrecognised vendor/description → AI suggests account from chart of accounts)
 
+### Phase 4 — NDIS Portal Integration
+AccSoft will act as the accounting backend for the NDIS Plan Management portal (separate Next.js + Supabase app).
+
+**How it works:**
+- NDIS portal exposes a webhook trigger on invoice approval
+- NDIS portal POSTs invoice data to AccSoft's REST API endpoint
+- AccSoft creates a `supplier_bill` transaction automatically — no manual entry needed
+
+**AccSoft changes required:**
+- [ ] Expose a REST API endpoint: `POST /api/bills/create` (API key authenticated)
+- [ ] Accept JSON payload with invoice fields (see below)
+- [ ] Auto-match or create supplier record based on ABN
+- [ ] Post double-entry: Debit NDIS Client Expense account → Credit Accounts Payable
+- [ ] Link original invoice PDF (download from NDIS portal Supabase Storage URL, store as attachment)
+- [ ] Return `{ transaction_id, status }` to NDIS portal for confirmation
+
+**Expected payload from NDIS portal:**
+```json
+{
+  "provider_name": "ABC Support Services",
+  "provider_abn": "12 345 678 901",
+  "invoice_number": "INV-001",
+  "invoice_date": "2026-04-20",
+  "support_category": "Daily Activities",
+  "subtotal": 450.00,
+  "gst_amount": 0.00,
+  "total_amount": 450.00,
+  "participant_name": "John Smith",
+  "ndis_number": "430 123 456",
+  "file_url": "https://supabase-storage-url/invoices/abc.pdf"
+}
+```
+
+**New GL accounts needed (to add to seed/CoA):**
+- `4100` NDIS Plan Management Fees (Revenue — monthly management fee per participant)
+- `5400` NDIS Client Disbursements (Expense — provider payments on behalf of participants)
+
 ---
 
 ## Chart of Accounts
@@ -377,52 +414,74 @@ Two-tier approach:
 ---
 
 ## Project Structure
+
+### Tree (current — as of Session 6)
 ```
 accsoft/
 ├── app/
-│   ├── __init__.py           # App factory — registers all blueprints
+│   ├── __init__.py           # App factory — registers all 9 blueprints
 │   ├── extensions.py         # db, migrate, login_manager instances
 │   ├── models/
 │   │   ├── user.py
-│   │   ├── account.py
-│   │   ├── transaction.py    # Transaction + TransactionLine
+│   │   ├── account.py                # 3-level hierarchy (hierarchy / allows_posting / level_0/1 FKs)
+│   │   ├── transaction.py            # Transaction (with kind enum + related_transaction_id) + TransactionLine
 │   │   ├── attachment.py
 │   │   ├── customer.py
 │   │   ├── supplier.py
-│   │   ├── ocr_result.py     # Stores raw text + extracted fields per attachment
-│   │   ├── vendor_mapping.py # Vendor name → default GL debit account
-│   │   └── keyword_mapping.py# Keyword → GL account (with priority)
+│   │   ├── vendor_mapping.py         # Vendor name → default GL debit account
+│   │   ├── keyword_mapping.py        # Keyword → GL account (priority-ordered)
+│   │   ├── ocr_result.py             # Raw text + extracted fields per attachment
+│   │   ├── bulk_upload.py            # BulkUploadJob + BulkUploadItem
+│   │   └── reconciliation.py         # BankStatement, BankStatementLine, ReconciliationSession, ReconciliationMatch
 │   ├── blueprints/
-│   │   ├── auth/
-│   │   ├── dashboard/
-│   │   ├── accounts/         # Chart of Accounts CRUD
-│   │   ├── transactions/     # Transaction entry, list, ledger, CSV export
-│   │   ├── attachments/      # File upload, view, delete
-│   │   ├── customers/
-│   │   ├── suppliers/
-│   │   └── ocr/
-│   │       ├── routes.py     # /ocr/upload, /ocr/review/<id>, /ocr/confirm/<id>
-│   │       ├── pipeline.py   # pdfplumber extraction; image → empty (PaddleOCR deferred)
-│   │       ├── extractor.py  # Regex parser → vendor, date, invoice_no, subtotal, GST, total
-│   │       └── gl_suggester.py # vendor_mappings → keyword_mappings → flag unknown
-│   ├── templates/
-│   │   ├── base.html
-│   │   ├── auth/
-│   │   ├── accounts/
-│   │   ├── transactions/
-│   │   ├── customers/
-│   │   ├── suppliers/
-│   │   ├── ocr/              # upload.html, review.html
-│   │   └── dashboard/
-│   └── static/
-│       └── uploads/          # Attached invoices/receipts/photos (UUID filenames)
-├── migrations/               # Flask-Migrate auto-generated
-├── config.py                 # App config (dev / prod)
-├── requirements.txt          # Core deps
-├── requirements-ocr.txt      # OCR deps (install separately)
-├── seed.py                   # Seed starter chart of accounts + admin user
-└── run.py                    # Entry point (exposes `app` for flask CLI)
+│   │   ├── auth/                     # routes.py, forms.py
+│   │   ├── dashboard/                # routes.py
+│   │   ├── accounts/                 # routes.py + service.py — CoA CRUD, tree build, parent resolution
+│   │   ├── transactions/             # routes.py + service.py — entry, list, ledger, CSV export, credit-note flows
+│   │   ├── attachments/              # routes.py — upload/view/delete
+│   │   ├── customers/                # routes.py
+│   │   ├── suppliers/                # routes.py
+│   │   ├── ocr/                      # routes.py + pipeline.py + extractor.py + gl_suggester.py
+│   │   ├── reconciliation/           # routes.py + service.py — session/CSV import/match/complete
+│   │   └── reports/                  # __init__.py only — Session 7 will fill
+│   ├── templates/                    # See "Template map" below
+│   ├── static/uploads/               # Attached invoices/receipts/photos (UUID filenames)
+│   └── utils/                        # (empty — reserved)
+├── migrations/                       # Flask-Migrate auto-generated
+├── tests/
+├── config.py                         # Dev/prod config
+├── requirements.txt                  # Core deps
+├── requirements-ocr.txt              # OCR deps (paddlepaddle/paddleocr deferred)
+├── seed.py                           # Starter CoA + admin user
+└── run.py                            # Entry point (exposes `app` for flask CLI)
 ```
+
+### Codebase reference — where to look first
+
+| Area | Routes | Service / helpers | Templates | Key models |
+|---|---|---|---|---|
+| Auth | `auth/routes.py` | `auth/forms.py` | `templates/auth/` | `User` |
+| Dashboard | `dashboard/routes.py` | — | `templates/dashboard/index.html` | — |
+| Chart of Accounts | `accounts/routes.py` | `accounts/service.py` (tree build, code suggestion) | `templates/accounts/list.html` (tree + slide-in sidebar form) | `Account` (3-level, `hierarchy`, `allows_posting`, `level_0_account_id`, `level_1_account_id`) |
+| Transactions | `transactions/routes.py` | `transactions/service.py` (query, balance) | `transactions/form.html` (journal editor + auto-balance JS), `transactions/list.html` (filter sidebar + kind badges), `transactions/ledger.html`, `transactions/credit_note_picker.html` | `Transaction`, `TransactionLine`, `TRANSACTION_KINDS` |
+| Attachments | `attachments/routes.py` | — | (embedded in `transactions/form.html`) | `Attachment` |
+| Customers / Suppliers | `customers/routes.py`, `suppliers/routes.py` | — | `templates/customers/*.html`, `templates/suppliers/*.html` | `Customer`, `Supplier` |
+| OCR — single/bulk | `ocr/routes.py` (`/ocr/upload` redirects to bulk) | `ocr/pipeline.py` (pdfplumber; image → empty), `ocr/extractor.py` (regex parser), `ocr/gl_suggester.py` | `ocr/bulk_upload.html`, `ocr/bulk_queue.html`, `ocr/bulk_review.html`, `ocr/bulk_summary.html`, `ocr/review.html`, `ocr/upload.html` | `OcrResult`, `BulkUploadJob`, `BulkUploadItem`, `VendorMapping`, `KeywordMapping` |
+| Reconciliation | `reconciliation/routes.py` | `reconciliation/service.py` (CSV import, unmatched queries, matching, complete/reopen) | `reconciliation/list.html`, `reconciliation/new.html`, `reconciliation/detail.html` (two-column match UI), `reconciliation/history.html` | `BankStatement`, `BankStatementLine`, `ReconciliationSession`, `ReconciliationMatch` |
+| Reports | (empty, Session 7) | — | — | — |
+
+### Conventions to know before editing
+- **Blueprint pattern**: every blueprint exports `<name>_bp`; `app/__init__.py` imports and registers all of them. Add new ones there.
+- **URL prefixes** are set on the Blueprint, not per-route (see `url_prefix="/transactions"` etc.).
+- **Service layer** (`accounts/service.py`, `transactions/service.py`, `reconciliation/service.py`): all DB queries live here; routes only orchestrate. Follow this split when adding features.
+- **Template inheritance**: everything extends `templates/base.html`. Flash messages, nav, and Tailwind CDN are defined there — don't duplicate them. Nav link injection belongs in `base.html`.
+- **Styling**: Tailwind via CDN (no Node). `font-mono` is overridden to Open Sans (see `base.html`) — use it on all amounts.
+- **Transaction `kind`**: one of `manual_journal`, `customer_invoice`, `supplier_bill`, `customer_credit_note`, `supplier_credit_note`. Form templates branch on this.
+- **Account posting guard**: transaction dropdowns must only show accounts where `allows_posting=True` (currently Level-0 leaves).
+- **File uploads**: go to `app/static/uploads/` with UUID filenames; original name kept in `Attachment.filename`.
+- **Scroll preservation**: the accounts list hides the page pre-paint and restores `sessionStorage['accountsScroll']` on `DOMContentLoaded` — replicate this pattern for any page with POST-then-redirect flows.
+- **JS**: all inline in Jinja templates. No build step, no SPA framework.
+- **Migrations**: run `flask db migrate -m "message"` before `flask db upgrade`. Both must complete or the schema silently diverges.
 
 ---
 
