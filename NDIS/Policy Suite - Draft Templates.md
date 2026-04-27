@@ -460,9 +460,9 @@ This policy applies to all operations of [Business Name], including risks to par
 ## 8. Insurance
 
 As a key risk treatment control, [Business Name] holds:
-- **Professional Indemnity Insurance:** [CUSTOMISE: policy number, insurer, coverage amount — minimum $2M recommended]
-- **Public Liability Insurance:** [CUSTOMISE: policy number, insurer, coverage amount — minimum $10M recommended]
-- **Cyber Insurance:** [CUSTOMISE: consider cyber-specific coverage given data held]
+- **Professional Indemnity Insurance:** CGU, Policy No. 9644196 (combined PI + PL policy), effective 13/05/2026, coverage $1,000,000
+- **Public Liability Insurance:** CGU, Policy No. 9644196 (combined PI + PL policy), effective 13/05/2026, coverage $5,000,000
+- **Cyber Insurance:** [CUSTOMISE: consider cyber-specific coverage given the sensitive participant financial data held]
 
 Insurance policies are reviewed annually.
 
@@ -2307,8 +2307,8 @@ These examples show auditors what a functioning register looks like. Replace wit
 - [ ] NDIS Code of Conduct training refreshed: ___________
 
 **Insurance review:**
-- [ ] Professional indemnity insurance current — expiry: _____________
-- [ ] Public liability insurance current — expiry: _____________
+- [ ] Professional indemnity insurance current (CGU 9644196) — expiry: [CUSTOMISE: confirm from policy schedule, approx May 2027]
+- [ ] Public liability insurance current (CGU 9644196) — expiry: [CUSTOMISE: confirm from policy schedule, approx May 2027]
 - [ ] Cyber insurance (if held) current — expiry: _____________
 
 **Backup and continuity review:**

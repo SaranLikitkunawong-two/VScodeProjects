@@ -115,7 +115,7 @@ CTA Button: "Get Started — It's Free" → /contact
 3. We handle your invoices — you focus on your life
 
 **Social proof section (once you have participants):**
-- Testimonials with consent (see PM-POL-016 Section 6)
+- Testimonials with consent (see PM-POL-016 Section 6) — see Appendix A for example testimonial copy and format
 - Number of participants managed, invoices processed
 
 **Final CTA:**
@@ -661,6 +661,49 @@ The following Melbourne/Australian NDIS Facebook groups have large, active membe
 
 Meaningful engagement: answer a question about plan management → your name and business become associated with helpful, accurate advice → members look you up → convert.
 
+## 4.3 Reddit — Organic Recommendation Campaign
+
+Reddit is where NDIS participants, carers, and families go when they want unfiltered, peer-to-peer advice. "Which plan manager do you recommend?" threads appear regularly in r/NDIS, often with hundreds of upvotes and dozens of replies. A single well-timed, genuine comment in one of these threads can reach thousands of readers and drive direct inbound enquiries — at zero cost.
+
+**The approach: be genuinely helpful first, business second.**
+
+Reddit users can immediately spot promotional content and will downvote or report it. The goal is to build a reputation as a knowledgeable, honest participant in the community. Your business name enters naturally once trust is established.
+
+**Target subreddits:**
+
+| Subreddit | Size | Why it matters |
+|-----------|------|----------------|
+| r/NDIS | 30,000+ | The primary Australian NDIS community — participants, carers, coordinators |
+| r/australia | 600,000+ | Broad NDIS questions surface here from people who don't know r/NDIS exists |
+| r/disability | 60,000+ | International but significant AU participation; plan management questions appear |
+| r/ausfinance | 500,000+ | Occasionally: NDIS participants asking about money management and plan management |
+
+**Account setup:**
+- Use your own Reddit account (or create a persistent one under your name/business name) — do not use throwaway accounts. Reddit's algorithms and users distrust new accounts with no history. Post in other threads (general NDIS questions, unrelated topics) to build a natural account history before engaging in recommendation threads.
+- Add your business name and website link to your Reddit profile bio once the site is live.
+
+**When to engage:**
+
+Search Reddit regularly (set a Google Alert: `site:reddit.com NDIS plan manager recommend`) for threads asking:
+- "Which plan manager do you recommend in Melbourne / Victoria?"
+- "Is [large plan manager name] any good?"
+- "Looking for a new plan manager — who do people like?"
+- "My plan manager is terrible, looking for recommendations"
+
+**Key positioning phrase — use this (or a natural variation) when people ask for recommendations:**
+
+> "I think the experience most people have is that a small plan manager works really great, so they keep getting business. But they reach a point around the 100 client mark where they start hiring people and standards drop, or they need better software. The plan managers I'd steer people toward are the ones who are still small enough to pick up the phone, but have invested in proper systems so they don't fall behind."
+
+Then, if it fits naturally: *"I run a small plan management practice in Melbourne — CA ANZ qualified, built our own participant portal so clients can see their budget in real time. Happy to answer any questions here or DM me."*
+
+**Rules of engagement:**
+- Never post the business name as your first comment in a thread — answer the question genuinely first
+- Never badmouth specific plan managers by name (defamation risk, and it reads as unprofessional)
+- Disclose that you run a plan management business if you're recommending yourself — Reddit communities expect transparency and will call it out if you don't
+- Upvote other helpful comments; be a good community member, not just a poster
+
+**Volume target:** Engage in 2–4 threads per week across all subreddits. Quality over quantity — one insightful comment in a high-traffic thread is worth more than ten low-effort replies.
+
 ---
 
 ---
@@ -750,3 +793,52 @@ When your NDIS registration is confirmed, execute in this order:
 ---
 
 *Document prepared: April 2026 | Review: October 2026 (adjust based on actual growth data)*
+
+---
+
+# Appendix A: Mock Testimonial Examples
+
+> **These are fictional examples only — for internal use to illustrate tone, format, and positioning. Do not use these publicly. All real testimonials must be unsolicited, genuine, and given with explicit written consent per PM-POL-016.**
+
+These examples show what strong testimonials look like from the three key audiences. Use them as a reference when coaching participants, support coordinators, and support workers on what to include in a review, or as copy inspiration when designing the website testimonial section.
+
+---
+
+## From a Support Coordinator
+
+> "I refer a lot of my clients to plan managers, and I've learned to be quite selective. What stands out with [Business Name] is the responsiveness — when I send through a support letter or a new service agreement, I actually get a reply the same day. That doesn't happen with the big players.
+>
+> A few of my clients have also commented that they can log in and see their budget in real time, which means they're not calling me to ask how much is left in their Core support. That alone saves me about half an hour a week. I'll keep recommending them."
+>
+> — **Priya M.**, Support Coordinator, Melbourne (inner north)
+
+---
+
+## From an NDIS Participant
+
+> "I've been through three plan managers in four years. The first one took two weeks to pay a single invoice. The second one was fine but I never knew where my money was going — I'd just get a PDF at the end of the month that I didn't really understand.
+>
+> With [Business Name] it's completely different. I can log into the portal and see exactly what's been claimed, what's been paid, and how much is left in each support category. My OT got paid in three days last week. I actually feel like I'm in control of my plan for the first time, which is kind of the whole point isn't it."
+>
+> — **James K.**, NDIS Participant, Melbourne (south-east)
+
+---
+
+## From a Support Worker
+
+> "Getting paid on time sounds like a low bar but honestly, for support workers it's a big deal. I've had clients with plan managers who take three or four weeks to process an invoice, which means I'm chasing it up, my client's embarrassed, and the whole thing becomes awkward.
+>
+> [Business Name] has been the smoothest experience I've had. I submit the invoice, and within a few days it's done. My client told me their plan manager actually messaged them when the invoice came in, just to let them know it was being processed. That kind of communication makes the whole support relationship easier."
+>
+> — **Tanya R.**, Independent Support Worker, Melbourne (western suburbs)
+
+---
+
+### Notes on collecting real testimonials
+
+When the time comes to collect genuine testimonials:
+- Ask open-ended questions: *"What's been the most useful thing about having us as your plan manager?"* — don't suggest answers
+- Request written consent (email confirmation is sufficient) before publishing anywhere
+- Offer to draft based on a conversation and let them approve the wording
+- Never offer incentives of any kind (gift cards, discounts, etc.) — this violates PM-POL-016 and NDIS anti-inducement rules
+- Google reviews (written directly by participants) do not require a separate consent process but must remain voluntary
