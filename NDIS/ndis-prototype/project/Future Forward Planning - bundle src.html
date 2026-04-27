@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Future Forward Planning — NDIS plan management</title>
+  <meta name="description" content="Future Forward Planning is independent NDIS plan management for Australian participants. Clear budgets, prompt invoice payments, a named plan manager you can actually reach."/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css"/>
+
+  <template id="__bundler_thumbnail" data-bg-color="#3F51B5">
+    <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+      <rect width="1200" height="800" fill="#3F51B5"/>
+      <g transform="translate(420 220)">
+        <rect width="360" height="360" rx="56" fill="#FFFFFF"/>
+        <rect x="80" y="80" width="120" height="120" rx="20" fill="#3F51B5"/>
+        <rect x="180" y="180" width="120" height="120" rx="20" fill="#00897B"/>
+      </g>
+      <text x="600" y="660" font-family="Inter, system-ui, sans-serif" font-size="44" font-weight="600"
+            text-anchor="middle" fill="#FFFFFF" letter-spacing="-0.5">Future Forward Planning</text>
+    </svg>
+  </template>
+</head>
+<body>
+  <a href="#main" style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;"
+     onfocus="this.style.cssText='position:fixed;top:8px;left:8px;padding:8px 12px;background:#fff;border:2px solid #00897B;border-radius:8px;z-index:9999;width:auto;height:auto;'"
+     onblur="this.style.cssText='position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;'">
+    Skip to content
+  </a>
+
+  <div id="root"></div>
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <!-- Tweakable defaults -->
+  <script>
+    window.__DEFAULT_TWEAKS = /*EDITMODE-BEGIN*/{
+      "heroLayout": "split",
+      "heroArt": "chart",
+      "accent": "#2E7D6A",
+      "radius": "soft"
+    }/*EDITMODE-END*/;
+  </script>
+
+  <!-- Components -->
+  <script type="text/babel" src="components/Shell.jsx"></script>
+  <script type="text/babel" src="components/HeroArt.jsx"></script>
+  <script type="text/babel" src="components/Calculator.jsx"></script>
+  <script type="text/babel" src="components/HomePage.jsx"></script>
+  <script type="text/babel" src="components/SignupPage.jsx"></script>
+  <script type="text/babel" src="components/NewsPage.jsx"></script>
+  <script type="text/babel" src="components/ArticlePage.jsx"></script>
+
+  <!-- App shell -->
+  <script type="text/babel">
+    const ROUTES = ['home', 'signup', 'news', 'article'];
+    const PATHS  = { home: '/', signup: '/signup', news: '/news' };
+
+    function parseHash() {
+      const h = (location.hash || '').replace(/^#/, '') || '/';
+      if (h.startsWith('/signup')) return 'signup';
+      if (/^\/news\/.+/.test(h))   return 'article';
+      if (h.startsWith('/news'))   return 'news';
+      return 'home';
+    }
+
+    function getArticleSlug() {
+      const h = (location.hash || '').replace(/^#/, '') || '/';
+      const m = h.match(/^\/news\/(.+)/);
+      return m ? m[1] : null;
+    }
+
+    window.navigate = (route, param) => {
+      if (route === 'article' && param) {
+        location.hash = `/news/${param}`;
+        window.scrollTo({top: 0, behavior: 'instant'});
+        return;
+      }
+      if (!ROUTES.includes(route)) route = 'home';
+      const path = PATHS[route] || '/';
+      location.hash = path;
+      window.scrollTo({top: 0, behavior: 'instant'});
+    };
+
+    function applyTweaks(t) {
+      const root = document.documentElement;
+      root.style.setProperty('--teal', t.accent);
+      // derive hover
+      const accent = t.accent;
+      root.style.setProperty('--teal-700', darken(accent, 0.15));
+      root.style.setProperty('--teal-100', lighten(accent, 0.82));
+
+      const r = t.radius === 'sharp' ? {sm:'2px', md:'4px', lg:'6px'}
+             :  t.radius === 'round' ? {sm:'10px', md:'16px', lg:'24px'}
+             :                         {sm:'6px', md:'10px', lg:'16px'};
+      root.style.setProperty('--radius-sm', r.sm);
+      root.style.setProperty('--radius',    r.md);
+      root.style.setProperty('--radius-lg', r.lg);
+    }
+    function hex2rgb(h){h=h.replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
+    function rgb2hex(r,g,b){return '#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('');}
+    function darken(h,amt){const[r,g,b]=hex2rgb(h);return rgb2hex(r*(1-amt),g*(1-amt),b*(1-amt));}
+    function lighten(h,amt){const[r,g,b]=hex2rgb(h);return rgb2hex(r+(255-r)*amt,g+(255-g)*amt,b+(255-b)*amt);}
+
+    function App() {
+      const [route, setRoute] = React.useState(parseHash());
+      const [slug, setSlug]   = React.useState(getArticleSlug());
+      const [tweaks, setTweaks] = React.useState(() => ({...window.__DEFAULT_TWEAKS}));
+      const [editMode, setEditMode] = React.useState(false);
+
+      React.useEffect(() => {
+        const h = () => { setRoute(parseHash()); setSlug(getArticleSlug()); };
+        window.addEventListener('hashchange', h);
+        return () => window.removeEventListener('hashchange', h);
+      }, []);
+
+      React.useEffect(() => { applyTweaks(tweaks); }, [tweaks]);
+
+      // Edit mode wiring — register listener FIRST, then announce.
+      React.useEffect(() => {
+        const onMsg = (ev) => {
+          const d = ev.data || {};
+          if (d.type === '__activate_edit_mode')   setEditMode(true);
+          if (d.type === '__deactivate_edit_mode') setEditMode(false);
+        };
+        window.addEventListener('message', onMsg);
+        try { window.parent.postMessage({type: '__edit_mode_available'}, '*'); } catch(e){}
+        return () => window.removeEventListener('message', onMsg);
+      }, []);
+
+      let page;
+      if (route === 'signup')       page = <SignupPage/>;
+      else if (route === 'article') page = <ArticlePage slug={slug}/>;
+      else if (route === 'news')    page = <NewsPage/>;
+      else                          page = <HomePage tweaks={tweaks}/>;
+
+      return (
+        <div data-screen-label={`${route==='home'?'01 Home':route==='signup'?'02 Sign up':route==='article'?'04 Article':'03 News'}`}>
+          <Nav route={route}/>
+          {page}
+          <Tweaks
+            active={editMode}
+            tweaks={tweaks}
+            setTweaks={setTweaks}
+            onClose={() => setEditMode(false)}
+          />
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App/>);
+  </script>
+</body>
+</html>
