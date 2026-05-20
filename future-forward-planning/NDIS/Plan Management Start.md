@@ -3,15 +3,40 @@
 > **Date:** April 2026
 
 TFN 958 027 530
-ABN 20 931 095 007
+ABN 24 697 821 408
 
 ---
 
+## Outstanding To-Do List — as at 15 May 2026
+
+### Immediate (before audit)
+- [ ] **Apply for NDIS Worker Screening Clearance** — not yet submitted; takes 2–6 weeks; mandatory before onboarding first participant
+- [ ] **Complete NDIS Commission Code of Conduct online training** — free modules at ndiscommission.gov.au
+- [ ] **Finalise Policies 1, 6–17** — fill remaining [CUSTOMISE] placeholders and answer Questions to Consider
+- [ ] **Add Viet Nguyen's contact details** to the Business Continuity Plan (PM-POL-009) — named as trusted emergency contact
+- [ ] **Register business name** — "Future Forward Planning" (in progress)
+- [ ] **Open business bank account** under SC Partnering Pty Ltd
+
+### Documents to create
+- [ ] **Annual participant satisfaction survey template**
+- [ ] **Service agreement template** (for participant onboarding)
+- [ ] **Risk Register** — populate with the 6 launch risks documented in PM-POL-003
+- [ ] **Incident Register** — set up in portal (or Google Sheets interim); add a mock entry
+- [ ] **Complaints Register** — set up in portal (or Google Sheets interim); add a mock entry
+
+### Registration
+- [ ] **Engage AQA** — get quotes, book verification audit (Week 3–4)
+- [ ] **Submit NDIS Commission registration application** (Week 4–5)
+
+---
+
+## Original Week-by-Week Plan
+
 Week 1:    Register business name + GST ✅ + business bank account (Westpac Business One) ✅ + Xero
-Week 1–2:  Get professional indemnity + public liability insurance
+Week 1–2:  Get professional indemnity + public liability insurance ✅ (CGU Policy 9644196, effective 13/05/2026)
 Week 1–2:  Set up myID (Standard/Strong level) ✅
-Week 1–2:  Apply for NDIS Worker Screening clearance (takes 2–6 weeks)
-Week 2–4:  Write policy suite
+Week 1–2:  Apply for NDIS Worker Screening clearance (takes 2–6 weeks) ⬜ NOT YET DONE
+Week 2–4:  Write policy suite ✅ (17 policies complete; Policies 2–5 fully finalised 15/05/2026)
 Week 3–4:  Engage AQA, get quotes, book audit
 Week 4–5:  Submit NDIS Commission registration application
 Week 4–12: Build portal Phase 0 + 1 (skeleton + admin/participant data)

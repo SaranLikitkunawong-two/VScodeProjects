@@ -76,6 +76,15 @@ A personal web-based accounting portal for a small service business. Accessible 
 - [ ] Multi-currency support
 - [ ] Claude API fallback for GL suggestions (unrecognised vendor/description → AI suggests account from chart of accounts)
 
+### Phase 3.5 — CRM (Sessions 9–13)
+AccSoft will expand from accounting into a full CRM for SC Partnering Pty Ltd (Future Forward Planning), managing NDIS participants, providers, plan budgets, and service agreements.
+
+- [ ] **Session 9** — Contacts hub (unified customer + supplier list), contact tags, activity log / notes per contact
+- [ ] **Session 10** — NDIS Participant profiles (NDIS number, plan dates, LAC/coordinator, monthly fee, expiry status)
+- [ ] **Session 11** — Plan budget tracking (support categories, allocations per participant, spend vs budget, utilisation dashboard)
+- [ ] **Session 12** — Provider profiles (NDIS registration), service agreements (provider ↔ participant ↔ support category, rate, term)
+- [ ] **Session 13** — CRM reports (plan summaries, budget burn rate, upcoming renewals, provider payment summaries) + CSV exports
+
 ### Phase 4 — NDIS Portal Integration
 AccSoft will act as the accounting backend for the NDIS Plan Management portal (separate Next.js + Supabase app).
 
@@ -238,6 +247,97 @@ Code convention:
 | storage_path | VARCHAR | Path on server |
 | mime_type | VARCHAR | image/jpeg, application/pdf, etc. |
 | uploaded_at | TIMESTAMP | |
+
+### CRM Tables (Sessions 9–13)
+
+#### `contact_notes`
+| Column | Type | Notes |
+|---|---|---|
+| id | UUID | |
+| contact_type | ENUM | `customer` / `supplier` |
+| contact_id | UUID | Resolved at query time (not FK) |
+| note_type | ENUM | `call` / `email` / `meeting` / `note` |
+| body | TEXT | |
+| created_at | TIMESTAMP | |
+
+#### `contact_tags`
+| Column | Type | Notes |
+|---|---|---|
+| id | UUID | |
+| name | VARCHAR | e.g. "VIP", "Inactive" |
+| colour | VARCHAR | Hex colour for badge |
+
+#### `contact_tag_assignments`
+| Column | Type | Notes |
+|---|---|---|
+| tag_id | UUID | FK → contact_tags |
+| contact_type | ENUM | `customer` / `supplier` |
+| contact_id | UUID | |
+
+#### `participants`
+| Column | Type | Notes |
+|---|---|---|
+| id | UUID | |
+| customer_id | UUID | FK → customers (one-to-one) |
+| ndis_number | VARCHAR | |
+| date_of_birth | DATE | Nullable |
+| plan_start_date | DATE | |
+| plan_end_date | DATE | |
+| monthly_management_fee | NUMERIC(12,2) | |
+| lac_name | VARCHAR | Nullable |
+| lac_email | VARCHAR | Nullable |
+| lac_phone | VARCHAR | Nullable |
+| status | ENUM | `active` / `expiring_soon` / `expired` / `inactive` |
+| notes | TEXT | |
+
+#### `support_categories`
+| Column | Type | Notes |
+|---|---|---|
+| id | UUID | |
+| name | VARCHAR | Core Supports / Capacity Building / Capital Supports |
+| ndis_code | VARCHAR | NDIS support purpose code |
+| gst_applicable | BOOLEAN | Default false — most NDIS supports are GST-free |
+
+#### `participant_budgets`
+| Column | Type | Notes |
+|---|---|---|
+| id | UUID | |
+| participant_id | UUID | FK → participants |
+| support_category_id | UUID | FK → support_categories |
+| plan_year | INT | e.g. 2026 |
+| allocated_amount | NUMERIC(12,2) | |
+| notes | TEXT | |
+
+#### `provider_profiles`
+| Column | Type | Notes |
+|---|---|---|
+| id | UUID | |
+| supplier_id | UUID | FK → suppliers (one-to-one) |
+| ndis_registration_number | VARCHAR | Nullable |
+| registration_groups | JSONB | Array of registration group names |
+| service_regions | VARCHAR | Nullable |
+| notes | TEXT | |
+
+#### `service_agreements`
+| Column | Type | Notes |
+|---|---|---|
+| id | UUID | |
+| provider_id | UUID | FK → suppliers |
+| participant_id | UUID | FK → participants |
+| support_category_id | UUID | FK → support_categories |
+| start_date | DATE | |
+| end_date | DATE | |
+| agreed_rate | NUMERIC(10,4) | |
+| rate_unit | ENUM | `hour` / `session` / `km` / `item` |
+| status | ENUM | `active` / `expired` / `cancelled` |
+| notes | TEXT | |
+
+#### Additional columns added to `transactions` (Sessions 11–12)
+| Column | Type | Notes |
+|---|---|---|
+| support_category_id | UUID | Nullable FK → support_categories |
+| participant_id | UUID | Nullable FK → participants |
+| service_agreement_id | UUID | Nullable FK → service_agreements |
 
 ---
 

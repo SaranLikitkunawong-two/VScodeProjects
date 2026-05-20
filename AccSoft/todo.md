@@ -179,14 +179,114 @@ Two-column layout with checkboxes on both sides. User selects one or many from e
 
 ---
 
-## Session 8 — VPS Deployment (Hetzner)
+## Session 9 — CRM: Contacts Hub & Activity Log
+**Goal:** Unified contacts hub combining customers and suppliers; internal notes and activity log per contact.
+
+### Steps
+- [ ] `ContactNote` model — `id`, `contact_type` (enum: `customer`/`supplier`), `contact_id` (UUID, not FK — resolved at query time), `note_type` (enum: `call`/`email`/`meeting`/`note`), `body` (TEXT), `created_at`
+- [ ] `ContactTag` model — `id`, `name`, `colour` (hex); `ContactTagAssignment` join table — `tag_id`, `contact_type`, `contact_id`
+- [ ] `flask db migrate && flask db upgrade`
+- [ ] `/contacts` hub page — unified list of customers + suppliers, searchable, filterable by type/tag
+- [ ] Add tag selector to customer + supplier add/edit forms
+- [ ] Activity timeline on customer + supplier detail pages (notes, linked transactions)
+- [ ] "Add note" form on detail pages (select note type, body, submit)
+- [ ] Register blueprint + nav link in `base.html`
+
+### Verify
+- `/contacts` shows all customers and suppliers, type badges, searchable
+- Add a tag to a customer → appears on list and detail page
+- Log a call note on a supplier → appears in activity timeline on their detail page
+- Linked transactions still appear on detail page as before
+
+---
+
+## Session 10 — CRM: NDIS Participant Profiles
+**Goal:** NDIS-specific profile layer on top of existing Customer records.
+
+### Steps
+- [ ] `Participant` model — `id`, `customer_id` (FK → Customer, one-to-one), `ndis_number` (VARCHAR), `date_of_birth` (DATE, nullable), `plan_start_date` (DATE), `plan_end_date` (DATE), `monthly_management_fee` (NUMERIC 12,2), `lac_name` (VARCHAR, nullable), `lac_email` (VARCHAR, nullable), `lac_phone` (VARCHAR, nullable), `status` (enum: `active`/`expiring_soon`/`expired`/`inactive`), `notes` (TEXT)
+- [ ] `flask db migrate && flask db upgrade`
+- [ ] `/participants` list — NDIS number, plan dates, status badge (Active / Expiring <30d / Expired), monthly fee
+- [ ] Add/edit participant form — linked to an existing customer, or create inline
+- [ ] Participant detail page — NDIS fields + inherited customer contact info + activity timeline + linked transactions
+- [ ] Nightly status recalculation: cron-style function (called on page load) to set `expiring_soon` / `expired` from `plan_end_date`
+- [ ] Register blueprint + nav link
+
+### Verify
+- Create a participant linked to an existing customer → NDIS fields saved
+- Participant with `plan_end_date` within 30 days → badge shows "Expiring Soon"
+- Participant detail shows linked invoices/transactions
+
+---
+
+## Session 11 — CRM: Plan Budget Tracking
+**Goal:** Track NDIS plan budgets by support category and monitor spend against allocation.
+
+### Steps
+- [ ] `SupportCategory` model — `id`, `name` (Core Supports / Capacity Building / Capital Supports), `ndis_code` (VARCHAR), `gst_applicable` (BOOLEAN, default False — most NDIS supports are GST-free)
+- [ ] `ParticipantBudget` model — `id`, `participant_id` (FK), `support_category_id` (FK), `plan_year` (INT, e.g. 2026), `allocated_amount` (NUMERIC 12,2), `notes`
+- [ ] Add `support_category_id` (nullable FK → SupportCategory) and `participant_id` (nullable FK → Participant) to `transactions` table
+- [ ] `flask db migrate && flask db upgrade`
+- [ ] Budget entry form on participant detail page — add/edit allocations per category per plan year
+- [ ] Budget utilisation panel: for each category, show allocated / spent (sum of linked transactions) / remaining / % bar; highlight >80% in amber, >100% in red
+- [ ] Dashboard card: "Participants near budget limit" (>80% in any category)
+- [ ] Support category seeder (Core Supports, Capacity Building, Capital Supports)
+
+### Verify
+- Add budget allocation of $10,000 Core Supports for a participant
+- Link two transactions (total $8,200) to that participant + category
+- Budget panel shows $8,200 spent / $1,800 remaining / 82% (amber highlight)
+- Dashboard card lists that participant
+
+---
+
+## Session 12 — CRM: Provider Profiles & Service Agreements
+**Goal:** NDIS provider data on supplier records; service agreement tracking linking providers to participants.
+
+### Steps
+- [ ] `ProviderProfile` model — `id`, `supplier_id` (FK → Supplier, one-to-one), `ndis_registration_number` (VARCHAR, nullable), `registration_groups` (JSONB array of strings), `service_regions` (VARCHAR, nullable), `notes`
+- [ ] `ServiceAgreement` model — `id`, `provider_id` (FK → Supplier), `participant_id` (FK → Participant), `support_category_id` (FK → SupportCategory), `start_date`, `end_date`, `agreed_rate` (NUMERIC 10,4), `rate_unit` (enum: `hour`/`session`/`km`/`item`), `status` (enum: `active`/`expired`/`cancelled`), `notes`
+- [ ] Add optional `service_agreement_id` (FK → ServiceAgreement) to `transactions`
+- [ ] `flask db migrate && flask db upgrade`
+- [ ] Provider profile tab/section on supplier detail page — add/edit NDIS fields
+- [ ] `/service-agreements` list — filterable by provider, participant, status, expiry
+- [ ] Add/edit service agreement form
+- [ ] Link a transaction to a service agreement on the transaction form (optional dropdown)
+- [ ] Register blueprint + nav link
+
+### Verify
+- Add NDIS registration details to an existing supplier → saved and shown on their detail page
+- Create a service agreement between a provider and participant → appears in `/service-agreements`
+- Post a transaction linked to that service agreement → shows on agreement detail page
+
+---
+
+## Session 13 — CRM: Reports & Alerts
+**Goal:** CRM-specific reports — plan summaries, budget burn rates, provider payments, renewal alerts.
+
+### Steps
+- [ ] **Participant Plan Summary** — per participant: support categories, allocated vs spent vs remaining; CSV export
+- [ ] **Budget Burn Rate** — monthly spend by support category across all participants (bar/table); date range filter; CSV export
+- [ ] **Upcoming Renewals** — participants with `plan_end_date` within 0–90 days, sorted ascending; CSV export
+- [ ] **Provider Payment Summary** — total paid per provider by date range, broken down by support category; CSV export
+- [ ] Add CRM reports to `/reports` page (new tab or section alongside financial reports)
+- [ ] Budget alert emails/notifications — deferred; for now surface alerts only on dashboard
+
+### Verify
+- Participant Plan Summary matches manually calculated figures from Session 11 budget data
+- Upcoming Renewals correctly shows participants with plan expiry within 90 days
+- All four reports export to CSV correctly
+
+---
+
+## Session 14 — VPS Deployment (Hetzner)
 **Goal:** App live on Hetzner VPS with HTTPS.
 
 ### Steps
 - [ ] Provision Hetzner CX22 (Ubuntu 24.04)
 - [ ] Install: Python, PostgreSQL, Nginx, Certbot, Git
 - [ ] Clone repo to VPS, set up production `.env`
-- [ ] Set up PostgreSQL on VPS, run migrations, seed accounts
+- [ ] Set up PostgreSQL on VPS, run migrations, seed accounts + support categories
 - [ ] Configure Gunicorn as systemd service
 - [ ] Configure Nginx as reverse proxy
 - [ ] Issue Let's Encrypt SSL cert via Certbot
@@ -195,7 +295,7 @@ Two-column layout with checkboxes on both sides. User selects one or many from e
 
 ### Verify
 - Visit `https://yourdomain.com` → login page loads with valid SSL
-- All Session 1–7 features work on production
+- All Session 1–13 features work on production
 - `pg_dump` backup runs and produces a valid file
 
 ---
@@ -213,4 +313,10 @@ Two-column layout with checkboxes on both sides. User selects one or many from e
 | 5.5 | Bulk invoice upload | **Complete** |
 | 6 | Bank reconciliation | **Ready for testing** |
 | 7 | Reports + CSV | Not started |
-| 8 | VPS deployment | Not started |
+| 8 | VPS deployment | Pushed to Session 14 |
+| 9 | CRM: Contacts hub + activity log | Not started |
+| 10 | CRM: NDIS participant profiles | Not started |
+| 11 | CRM: Plan budget tracking | Not started |
+| 12 | CRM: Provider profiles + service agreements | Not started |
+| 13 | CRM: CRM reports + alerts | Not started |
+| 14 | VPS deployment | Not started |

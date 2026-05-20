@@ -20,7 +20,16 @@
       "Bash(flask db *)",
       "Bash(xxd \"C:\\\\Users\\\\Saran Likitkunawong\\\\VScode\\\\NDIS/Plan Management Start.md\")",
       "Bash(xxd \"C:/Users/Saran Likitkunawong/VScode/NDIS/Plan Management Start.md\")",
-      "WebSearch"
+      "WebSearch",
+      "WebFetch(domain:www.ndiscommission.gov.au)",
+      "WebFetch(domain:training.ndiscommission.gov.au)",
+      "Bash(xargs wc -l)",
+      "PowerShell(Rename-Item *)",
+      "PowerShell(Remove-Item *)",
+      "PowerShell(Get-Process *)",
+      "PowerShell(New-Item *)",
+      "PowerShell(Move-Item *)",
+      "PowerShell(robocopy \"C:\\\\Users\\\\Saran Likitkunawong\\\\VScode\\\\NDIS\" \"C:\\\\Users\\\\Saran Likitkunawong\\\\VScode\\\\future-forward-planning\\\\NDIS\" /E /NP /NFL /NDL; Write-Output \"NDIS copy exit: $LASTEXITCODE\")"
     ]
   }
 }

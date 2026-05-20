@@ -1,6 +1,6 @@
 # NDIS Plan Management — Policy Suite
-**Business:** [Business Name]
-**ABN:** 20 931 095 007
+**Business:** SC Partnering Pty Ltd (trading as Future Forward Planning)
+**ABN:** 24 697 821 408
 **Location:** Melbourne, Victoria
 **Date:** April 2026
 **Version:** 2.0 (Revised and Expanded — April 2026)
@@ -28,11 +28,11 @@
 
 | # | Policy | NDIS Standard / Basis |
 |---|--------|-----------------------|
-| 1 | Privacy and Confidentiality | 1.3, Privacy Act 1988, APPs |
-| 2 | Incident Management | 1.9, NDIS Incident Rules 2018 |
-| 3 | Complaints and Feedback Management | 1.10 |
-| 4 | Risk Management | 1.7 |
-| 5 | Human Resources and Worker Screening | 1.8 |
+| 1 | Incident Management | 1.9, NDIS Incident Rules 2018 |
+| 2 | Complaints and Feedback Management | 1.10 |
+| 3 | Risk Management | 1.7 |
+| 4 | Human Resources and Worker Screening | 1.8 |
+| 5 | Privacy and Confidentiality | 1.3, Privacy Act 1988, APPs |
 | 6 | Code of Conduct | NDIS Code of Conduct |
 | 7 | Record Keeping and Information Management | 1.11 |
 | 8 | Participant Rights and Responsibilities | 1.1–1.5 |
@@ -50,24 +50,438 @@
 
 ---
 
-# POLICY 1: Privacy and Confidentiality Policy
+# POLICY 1: Incident Management Policy
 
 **Policy Number:** PM-POL-001
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-This policy sets out how [Business Name] collects, holds, uses, and discloses personal and sensitive information about participants, workers, and other individuals in accordance with the Privacy Act 1988 (Cth), the Australian Privacy Principles (APPs), the Notifiable Data Breaches (NDB) scheme, and the NDIS Practice Standards.
+To ensure that all incidents — including reportable incidents — are identified, reported, managed, and learned from in a timely and appropriate manner, consistent with the NDIS (Incident Management and Reportable Incidents) Rules 2018 and the NDIS Amendment (Integrity and Safeguarding) Act 2025.
 
 ## 2. Scope
 
-This policy applies to all staff, contractors, and volunteers of [Business Name], and to all personal information held by [Business Name] regardless of format (digital or physical).
+This policy applies to all staff, contractors, and volunteers. It covers incidents affecting participants, workers, and third parties that occur in connection with the delivery of plan management services.
+
+## 3. Definitions
+
+- **Incident:** Any event or circumstance that caused, or could have caused, harm to a participant, worker, or third party.
+- **Reportable Incident:** An incident that must be reported to the NDIS Quality and Safeguards Commission, including:
+  - Death of a person with disability
+  - Serious injury
+  - Abuse or neglect
+  - Unlawful sexual or physical contact
+  - Unauthorised use of a restrictive practice
+  - Any incident prescribed in the NDIS rules
+
+**Incidents most likely to arise in a plan management context:**
+
+| Incident Type | Examples |
+|---------------|---------|
+| Financial exploitation | A provider submitting invoices for services not delivered; a nominee misappropriating NDIS funds |
+| Fraud | Falsified invoices, duplicate claims, identity theft |
+| Privacy breach | Participant data accessed without authorisation; data breach of our systems |
+| Incorrect payment | Overpayment to a provider, claim submitted for wrong support category |
+| Budget overrun | Participant's plan funds exhausted due to processing error |
+| Provider misconduct | Credible allegation of abuse, neglect, or exploitation by a provider |
+| Participant safety concern | We become aware of an immediate risk to a participant's safety or wellbeing |
+
+> Note: As a plan management provider, direct physical contact with participants is minimal. However, we have a duty to act on any participant safety concern that comes to our attention, including through invoice data or participant communications.
+
+## 4. Reporting Procedure
+
+### Step 1 — Identify
+All staff must recognise and record any incident immediately upon discovery, using the **Incident Report Form** (Attachment A).
+
+### Step 2 — Report Internally
+All incidents must be reported to the Director (Saran Likitkunawong) within **24 hours** of discovery.
+
+### Step 3 — Report to NDIS Commission (Reportable Incidents)
+- **Urgent reportable incidents** (where there is immediate risk): notify the NDIS Commission within **24 hours** via the NDIS Commission Provider Portal.
+- **Non-urgent reportable incidents**: notify the NDIS Commission within **5 business days** of becoming aware.
+- Notification is made via the NDIS Commission Provider Portal.
+
+### Step 4 — Report to Other Authorities (Where Required)
+Where suspected criminal conduct is identified (such as provider fraud or financial exploitation), the following escalation order applies:
+
+1. **NDIS Quality and Safeguards Commission** — notify immediately via the Provider Portal as the primary regulatory authority.
+2. **Victoria Police** — where criminal conduct is confirmed or strongly suspected, as directed by the Commission or at the Director's discretion.
+3. **NDIA Fraud Reporting Line:** 1800 650 717 — for suspected NDIS fraud or financial exploitation, as directed.
+
+Additional notifications may include:
+- **OAIC:** Where the incident involves a notifiable data breach (see Privacy Policy PM-POL-005).
+
+**Compliance obligation — NDIS Amendment (Integrity and Safeguarding) Act 2025:**
+SC Partnering Pty Ltd acknowledges that failure to report certain serious incidents may constitute a criminal offence under the NDIS Amendment (Integrity and Safeguarding) Act 2025. All staff and the Director are required to report reportable incidents without delay. No person within the organisation will obstruct, delay, or discourage the reporting of any incident.
+
+### Step 5 — Investigate
+An investigation will be conducted within 10 business days of the incident being identified. The investigation will be:
+- Proportionate to the severity of the incident
+- Documented within the **Incident Report Form (Attachment A)**, Sections 6 and 7 — which capture the investigator, findings, root cause, corrective actions, and post-incident review. No separate investigation report template is used; all investigation documentation is consolidated into the Incident Report Form.
+- Conducted by a person not directly involved in the incident. Where the Director is the subject of the incident, the investigation will be conducted by the nominated trusted contact, Viet Nguyen, or an independent external professional appointed for that purpose.
+
+### Step 6 — Respond and Learn
+Findings and corrective actions will be documented and implemented. Where systemic issues are identified, this policy and related procedures will be updated.
+
+## 5. Post-Incident Review
+
+For any incident rated as High or Extreme severity:
+- A formal Post-Incident Review will be conducted within 20 business days.
+- The Review will assess: root causes, contributing factors, adequacy of the response, and lessons learned.
+- Findings will be recorded in the Incident Register and reviewed at the next scheduled management review.
+
+## 6. Record Keeping
+
+All incident records will be maintained for a minimum of 7 years in the Future Forward Planning portal.
+
+## 7. No Blame Culture
+
+Staff are encouraged to report incidents without fear of retribution. The purpose of incident management is to improve safety, not to punish. Whistleblower protections apply — see Policy PM-POL-014.
+
+## 8. Incident Register
+
+An incident register will be maintained and reviewed monthly by the Director. The register records the incident type, date, severity, actions taken, and resolution status. All open incidents are tracked through to resolution; no incident may be closed without documented corrective actions recorded in the register.
+
+**Provider deregistration monitoring:** The NDIS Commission Provider Register will be checked monthly against the list of active providers used by current participants. If a provider is found to have been deregistered or banned, this will be treated as a potential incident and assessed in accordance with this policy.
+
+---
+
+---
+
+---
+
+# POLICY 2: Complaints and Feedback Management Policy
+
+**Policy Number:** PM-POL-002
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
+
+## 1. Purpose
+
+To ensure that complaints and feedback from participants, their families, carers, and other stakeholders are welcomed, acknowledged, and resolved fairly and promptly, in accordance with the NDIS Practice Standards.
+
+## 2. Scope
+
+This policy applies to all staff, contractors, and volunteers of SC Partnering Pty Ltd (trading as Future Forward Planning).
+
+## 3. Our Commitment
+
+SC Partnering Pty Ltd (trading as Future Forward Planning) views complaints and feedback as an opportunity to improve our services. We will:
+- Make it easy for people to raise concerns, including in accessible formats.
+- Treat all complaints with respect, fairness, and confidentiality.
+- Respond promptly and keep complainants informed of progress.
+- Use complaints to improve our services.
+- Not disadvantage any person for making a complaint.
+- Ensure participants know they can access an advocate at any time.
+
+## 4. How to Make a Complaint
+
+Complaints can be made:
+- **By phone:** 0405 873 812
+- **By email:** saranl@futureforwardplanning.com.au
+- **In writing:** 34 Alward Avenue, Clayton South VIC 3169
+- **In person:** 34 Alward Avenue, Clayton South VIC 3169 (by appointment)
+- **Via the NDIS Commission:** 1800 035 544 or www.ndiscommission.gov.au
+
+Complaints can also be made on behalf of a participant by a carer, nominee, advocate, or support person. Participants do not need to make complaints in their own name.
+
+## 5. Complaint Handling Process
+
+| Step | Action | Timeframe |
+|------|--------|-----------|
+| 1. Receive | Acknowledge receipt of the complaint | Within 2 business days |
+| 2. Assess | Determine the nature and urgency of the complaint | Within 3 business days |
+| 3. Investigate | Gather relevant information; consult with involved parties | Within 10 business days |
+| 4. Resolve | Communicate the outcome and any corrective actions | Within 14 business days |
+| 5. Escalate | If unresolved or complainant unsatisfied, escalate per Section 6 | As required |
+
+Complex complaints may take longer. The complainant will be kept informed of any delays.
+
+## 6. Escalation
+
+If a complaint cannot be resolved internally, or if the complainant is not satisfied with the outcome:
+- **NDIS Quality and Safeguards Commission:** 1800 035 544
+- **NDIS Commission Online Complaint Form:** www.ndiscommission.gov.au
+- **National Disability Advocacy Program (NDAP):** Free advocacy support — 1800 643 787
+- **Victorian Equal Opportunity and Human Rights Commission (VEOHRC):** For discrimination complaints
+- **VCAT or legal avenues** where relevant
+
+## 7. Accessibility and Communication Support
+
+SC Partnering Pty Ltd (trading as Future Forward Planning) recognises that participants have different communication needs. We will:
+- Provide complaint information in plain English, and in alternative formats on request (e.g., large print, audio, Easy Read).
+- Use an interpreter or translator for participants from culturally and linguistically diverse (CALD) backgrounds, on request.
+- Accept complaints made verbally (by phone or in person) and document them on the participant's behalf.
+- Allow a support person, advocate, or nominee to make or assist with a complaint at any time.
+- Adapt our communication style to meet the participant's needs.
+
+## 8. Record Keeping
+
+All complaints will be recorded in the **Complaints Register** (maintained in the Future Forward Planning portal). Records will be kept for 7 years.
+
+The register will record: the date received, the nature of the complaint, the complainant's details (de-identified if requested), actions taken, and the final resolution. The complainant will receive written confirmation by email at each stage of the process — upon acknowledgement, when investigation is underway, and upon resolution. These email records form part of the complaint file and serve as the documentary trail for audit purposes.
+
+## 9. Review
+
+The Complaints Register will be reviewed quarterly to identify trends, systemic issues, and opportunities to improve services. Review findings will be documented and used to update policies and procedures as appropriate.
+
+## 10. Participant Complaints Information Sheet
+
+A Complaints Information Sheet is provided to all participants as part of the onboarding pack. The sheet summarises how to make a complaint, the timeframes that apply, and how to contact the NDIS Commission if the complaint cannot be resolved internally. The sheet is available in plain English and in alternative formats upon request.
+
+## 11. Proactive Feedback
+
+In addition to responding to complaints, SC Partnering Pty Ltd (trading as Future Forward Planning) will send an annual participant satisfaction survey to all active participants. Survey results will be reviewed by the Director and used to identify opportunities to improve service quality. Results and any actions taken will be documented and reviewed as part of the annual management review.
+
+---
+
+---
+
+---
+
+# POLICY 3: Risk Management Policy
+
+**Policy Number:** PM-POL-003
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
+
+## 1. Purpose
+
+To identify, assess, treat, and monitor risks that may affect SC Partnering Pty Ltd (trading as Future Forward Planning)'s ability to deliver safe, high-quality plan management services.
+
+## 2. Scope
+
+This policy applies to all operations of SC Partnering Pty Ltd (trading as Future Forward Planning), including risks to participants, staff, financial integrity, and the organisation.
+
+## 3. Risk Management Framework
+
+SC Partnering Pty Ltd (trading as Future Forward Planning) uses a four-step risk management cycle consistent with ISO 31000:
+
+1. **Identify** — What could go wrong?
+2. **Assess** — How likely and how severe?
+3. **Treat** — What will we do about it?
+4. **Monitor** — Are controls working?
+
+## 4. Risk Categories
+
+| Category | Examples |
+|----------|----------|
+| Participant safety | Financial exploitation, incorrect payments, fraud by providers, provider misconduct |
+| Operational | System outage, key person unavailability, software failure, loss of PACE portal access |
+| Financial | Cash flow, fraud, incorrect NDIS claims, overpayment to providers |
+| Compliance | Failure to meet NDIS Practice Standards, late reporting, audit failure |
+| Cyber and data | Data breach, ransomware, phishing, unauthorised access to participant information |
+| Regulatory/Legislative | Changes to NDIS rules, pricing arrangements, or Practice Standards (e.g., post-2025 reforms) |
+| Reputational | Complaints, data breaches, poor service quality, social media |
+| Legal | Privacy breaches, disputes with participants or providers, Fair Work claims |
+| Key person | Sole operator illness, injury, or extended unavailability |
+
+## 5. Risk Assessment Matrix
+
+**Likelihood:** Rare (1) | Unlikely (2) | Possible (3) | Likely (4) | Almost Certain (5)
+**Consequence:** Insignificant (1) | Minor (2) | Moderate (3) | Major (4) | Catastrophic (5)
+
+**Risk Rating = Likelihood × Consequence**
+
+| Rating | Score | Action |
+|--------|-------|--------|
+| Low | 1–4 | Accept and monitor |
+| Medium | 5–9 | Treat with controls |
+| High | 10–19 | Immediate action required |
+| Extreme | 20–25 | Escalate to director; halt operations if necessary |
+
+## 6. Risk Register
+
+SC Partnering Pty Ltd (trading as Future Forward Planning) maintains a **Risk Register** that is reviewed quarterly. The Risk Register records:
+- Risk description and category
+- Current likelihood and consequence ratings
+- Existing controls
+- Treatment actions, owner, and target completion date
+- Residual risk rating after controls
+
+**Initial risks to document at launch:**
+1. Key person risk (sole operator unavailability)
+2. Provider fraud (invoices for services not delivered)
+3. Participant data breach
+4. Software/PACE portal outage
+5. Failure to comply with NDIS Practice Standards during initial audit period
+6. Changes to NDIS Pricing Arrangements and Price Limits (PAPL) affecting invoice processing
+
+## 7. Business Continuity Planning
+
+Business continuity arrangements are documented in full in the **Continuity of Supports Policy (PM-POL-009)**, which covers key person absence, system and technology failure, data loss and recovery, and business closure procedures. PM-POL-009 is the governing document for all continuity risks identified in this register.
+
+**Key person continuity arrangement:** In the event of the Director's (Saran Likitkunawong) incapacity or extended unavailability, the nominated trusted contact — **Viet Nguyen** — is authorised to notify active participants and the NDIS Commission, and to assist participants in arranging an alternative registered plan manager. Viet Nguyen's contact details are held by the Director and reviewed annually.
+
+## 8. Insurance
+
+As a key risk treatment control, SC Partnering Pty Ltd (trading as Future Forward Planning) holds:
+- **Professional Indemnity Insurance:** CGU, Policy No. 9644196 (combined PI + PL policy), effective 13/05/2026, coverage $1,000,000
+- **Public Liability Insurance:** CGU, Policy No. 9644196 (combined PI + PL policy), effective 13/05/2026, coverage $5,000,000
+
+Insurance policies are reviewed annually.
+
+## 9. Responsibilities
+
+- **Director/Principal:** Overall ownership of risk management; reviewing and updating the register.
+- **All staff:** Identifying and reporting risks to the Director immediately upon identification.
+
+**NDIS Pricing Arrangements and Price Limits (PAPL) monitoring:** The Director subscribes to NDIA provider update emails to receive timely notification of PAPL changes. The NDIA pricing page is also reviewed manually each month as part of routine administrative activities. Any changes to the PAPL are assessed and implemented within 5 business days of notification.
+
+---
+
+---
+
+---
+
+# POLICY 4: Human Resources and Worker Screening Policy
+
+**Policy Number:** PM-POL-004
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
+
+## 1. Purpose
+
+To ensure that SC Partnering Pty Ltd (trading as Future Forward Planning) recruits, engages, and manages workers in a manner that promotes participant safety and upholds the NDIS Code of Conduct and Practice Standards.
+
+## 2. Scope
+
+This policy applies to all employees, contractors, volunteers, and student placements engaged by SC Partnering Pty Ltd (trading as Future Forward Planning).
+
+## 3. Worker Screening
+
+All workers engaged by SC Partnering Pty Ltd (trading as Future Forward Planning) who will have more than incidental contact with NDIS participants must hold a current **NDIS Worker Screening Check** (Worker Clearance) issued by the Victorian Worker Screening Unit.
+
+- No worker will commence in a role involving participant contact without a valid clearance.
+- Clearances must be current and renewed as required (typically every 5 years or upon change of circumstance).
+- SC Partnering Pty Ltd (trading as Future Forward Planning) maintains a **Worker Screening Register** recording each worker's clearance number, expiry date, and status. Expiry dates are monitored and calendar reminders are set 60 days prior to each expiry to initiate renewal before the clearance lapses.
+
+> **Note:** As at 15 May 2026, the Director (Saran Likitkunawong) is in the process of obtaining an NDIS Worker Screening Check. The application requires SC Partnering Pty Ltd to be established as a registered NDIS employer before the check can be submitted — accordingly, this registration application is itself a prerequisite step. The Worker Screening Check application will be submitted immediately upon registration approval, and no participant will be onboarded until a valid clearance is confirmed and recorded in the Worker Screening Register.
+
+> Note: As a plan management provider, direct physical contact with participants is minimal. However, as the person managing participant financial data and submitting NDIS claims, the principal is required to hold a Worker Screening Clearance.
+
+## 4. Recruitment
+
+When recruiting staff, SC Partnering Pty Ltd (trading as Future Forward Planning) will:
+- Conduct structured interviews and at least two reference checks.
+- Verify identity, qualifications, and right to work in Australia.
+- Initiate NDIS Worker Screening Checks before commencement.
+- Verify relevant professional registrations and memberships (see Section 9).
+- Obtain and verify a Working with Children Check (WWCC) if the worker will have contact with participants under 18.
+
+All contractors engaged by SC Partnering Pty Ltd (trading as Future Forward Planning) must hold a current NDIS Worker Screening Clearance prior to commencing any work. This requirement is included as a mandatory condition in all contractor agreements, regardless of the nature of the engagement.
+
+## 5. Induction
+
+All new workers will complete induction training covering:
+- The NDIS Code of Conduct (including the free NDIS Commission online training modules)
+- This policy suite (all 17 policies)
+- Relevant NDIS Practice Standards
+- SC Partnering Pty Ltd (trading as Future Forward Planning)'s systems, processes, and service delivery expectations
+- Mandatory reporting obligations
+- Cyber security and data handling requirements (see Policy PM-POL-015)
+- Whistleblower protections (see Policy PM-POL-014)
+
+Induction must be completed before the worker has any contact with participants or participant financial information. Completion will be recorded using the **Worker Induction Checklist** — a supporting document to this policy — which records each induction item, the date completed, and the worker's signature.
+
+> **Pre-registration action:** The Director (Saran Likitkunawong) is required to complete the free NDIS Commission online training modules on the Code of Conduct prior to onboarding the first participant.
+
+## 6. Ongoing Training
+
+All staff will complete:
+- Annual refresher training on the NDIS Code of Conduct
+- Annual review of this policy suite
+- Relevant CPD or training as identified in performance reviews
+- Training on any changes to NDIS rules or Practice Standards within 30 days of changes taking effect
+
+## 7. Performance Management
+
+Staff performance will be reviewed six-monthly in the first year, then annually thereafter. Concerns will be managed through a fair and documented process consistent with Fair Work Act obligations.
+
+## 8. Misconduct and Termination
+
+Allegations of misconduct will be investigated fairly and promptly. Where a worker's conduct poses a risk to participants, they may be stood down pending investigation. Termination will follow Fair Work Act obligations. Serious misconduct involving participant harm will be reported to the NDIS Commission.
+
+## 9. Worker Qualifications and Professional Memberships
+
+The NDIS Commission requires plan management providers to maintain documented evidence of worker qualifications and professional memberships for audit purposes (NDIS Practice Standards — Qualification and Professional Associations Required Documentation Guide, October 2025).
+
+**Accepted qualifications and memberships for plan management workers include:**
+- Membership of CA ANZ (Chartered Accountants Australia and New Zealand)
+- Membership of CPA Australia
+- Membership of the Institute of Public Accountants (IPA)
+- Membership of the Institute of Certified Bookkeepers (ICB)
+- Membership of the Association of Taxation and Management Accountants (ATMA)
+- A relevant qualification in accounting, finance, or business at Certificate IV level or above
+
+SC Partnering Pty Ltd (trading as Future Forward Planning) will maintain on file for each worker delivering plan management services:
+- A certified copy of the relevant qualification certificate or professional membership card
+- Evidence of current membership (e.g., annual membership certificate or letter from the professional body)
+- A list of all workers delivering plan management services (provided to the auditor)
+
+These documents are to be updated annually and provided to the approved quality auditor at the time of verification audit or renewal.
+
+The Director (Saran Likitkunawong) holds current CA ANZ membership. The annual CA ANZ membership certificate is held on file and will be provided to the approved quality auditor at the time of the verification audit.
+
+---
+
+---
+
+---
+
+# POLICY 5: Privacy and Confidentiality Policy
+
+**Policy Number:** PM-POL-005
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
+
+## 1. Purpose
+
+This policy sets out how SC Partnering Pty Ltd (trading as Future Forward Planning) collects, holds, uses, and discloses personal and sensitive information about participants, workers, and other individuals in accordance with the Privacy Act 1988 (Cth), the Australian Privacy Principles (APPs), the Notifiable Data Breaches (NDB) scheme, and the NDIS Practice Standards.
+
+## 2. Scope
+
+This policy applies to all staff, contractors, and volunteers of SC Partnering Pty Ltd (trading as Future Forward Planning), and to all personal information held by SC Partnering Pty Ltd (trading as Future Forward Planning) regardless of format (digital or physical).
 
 ## 3. Principles
 
-[Business Name] is committed to:
+SC Partnering Pty Ltd (trading as Future Forward Planning) is committed to:
 - Handling personal information with care, respect, and in accordance with the law.
 - Collecting only the information necessary to deliver plan management services.
 - Ensuring participants understand how their information will be used.
@@ -137,7 +551,7 @@ Contact: [CUSTOMISE: email] | [CUSTOMISE: phone]
 
 ## 11. Australian Privacy Principles (APPs) Compliance
 
-[Business Name] complies with all 13 Australian Privacy Principles. Key obligations include:
+SC Partnering Pty Ltd (trading as Future Forward Planning) complies with all 13 Australian Privacy Principles. Key obligations include:
 
 | APP | Obligation | How We Comply |
 |-----|-----------|---------------|
@@ -157,7 +571,7 @@ Contact: [CUSTOMISE: email] | [CUSTOMISE: phone]
 
 ## 12. Third-Party Data Processors
 
-[Business Name] engages the following third-party platforms to process personal information:
+SC Partnering Pty Ltd (trading as Future Forward Planning) engages the following third-party platforms to process personal information:
 
 | Platform | Purpose | Data Processed |
 |----------|---------|---------------|
@@ -186,433 +600,42 @@ For each third-party platform, we ensure:
 
 ---
 
-# POLICY 2: Incident Management Policy
-
-**Policy Number:** PM-POL-002
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
-
-## 1. Purpose
-
-To ensure that all incidents — including reportable incidents — are identified, reported, managed, and learned from in a timely and appropriate manner, consistent with the NDIS (Incident Management and Reportable Incidents) Rules 2018 and the NDIS Amendment (Integrity and Safeguarding) Act 2025.
-
-## 2. Scope
-
-This policy applies to all staff, contractors, and volunteers. It covers incidents affecting participants, workers, and third parties that occur in connection with the delivery of plan management services.
-
-## 3. Definitions
-
-- **Incident:** Any event or circumstance that caused, or could have caused, harm to a participant, worker, or third party.
-- **Reportable Incident:** An incident that must be reported to the NDIS Quality and Safeguards Commission, including:
-  - Death of a person with disability
-  - Serious injury
-  - Abuse or neglect
-  - Unlawful sexual or physical contact
-  - Unauthorised use of a restrictive practice
-  - Any incident prescribed in the NDIS rules
-
-**Incidents most likely to arise in a plan management context:**
-
-| Incident Type | Examples |
-|---------------|---------|
-| Financial exploitation | A provider submitting invoices for services not delivered; a nominee misappropriating NDIS funds |
-| Fraud | Falsified invoices, duplicate claims, identity theft |
-| Privacy breach | Participant data accessed without authorisation; data breach of our systems |
-| Incorrect payment | Overpayment to a provider, claim submitted for wrong support category |
-| Budget overrun | Participant's plan funds exhausted due to processing error |
-| Provider misconduct | Credible allegation of abuse, neglect, or exploitation by a provider |
-| Participant safety concern | We become aware of an immediate risk to a participant's safety or wellbeing |
-
-> Note: As a plan management provider, direct physical contact with participants is minimal. However, we have a duty to act on any participant safety concern that comes to our attention, including through invoice data or participant communications.
-
-## 4. Reporting Procedure
-
-### Step 1 — Identify
-All staff must recognise and record any incident immediately upon discovery, using the **Incident Report Form** (Attachment A).
-
-### Step 2 — Report Internally
-All incidents must be reported to [CUSTOMISE: the Principal/Director] within **24 hours** of discovery.
-
-### Step 3 — Report to NDIS Commission (Reportable Incidents)
-- **Urgent reportable incidents** (where there is immediate risk): notify the NDIS Commission within **24 hours** via the NDIS Commission Provider Portal.
-- **Non-urgent reportable incidents**: notify the NDIS Commission within **5 business days** of becoming aware.
-- Notification is made via the NDIS Commission Provider Portal.
-
-### Step 4 — Report to Other Authorities (Where Required)
-Depending on the nature of the incident, we may also notify:
-- **NDIA Fraud Reporting:** 1800 650 717 (suspected fraud or financial exploitation)
-- **OAIC:** Where the incident involves a notifiable data breach (see Privacy Policy)
-- **Victoria Police:** Where criminal conduct is suspected
-- Under the **NDIS Amendment (Integrity and Safeguarding) Act 2025**, failure to report certain serious incidents may constitute a criminal offence. Workers and the organisation must not obstruct, delay, or discourage reporting.
-
-### Step 5 — Investigate
-An investigation will be conducted within [CUSTOMISE: e.g., 10 business days] of the incident being identified. The investigation will be:
-- Proportionate to the severity of the incident
-- Documented using the Incident Investigation Report template
-- Conducted by a person not directly involved in the incident
-
-### Step 6 — Respond and Learn
-Findings and corrective actions will be documented and implemented. Where systemic issues are identified, this policy and related procedures will be updated.
-
-## 5. Post-Incident Review
-
-For any incident rated as High or Extreme severity:
-- A formal Post-Incident Review will be conducted within 20 business days.
-- The Review will assess: root causes, contributing factors, adequacy of the response, and lessons learned.
-- Findings will be recorded in the Incident Register and reviewed at the next scheduled management review.
-
-## 6. Record Keeping
-
-All incident records will be maintained for a minimum of 7 years in [CUSTOMISE: e.g., your case management or admin system].
-
-## 7. No Blame Culture
-
-Staff are encouraged to report incidents without fear of retribution. The purpose of incident management is to improve safety, not to punish. Whistleblower protections apply — see Policy PM-POL-014.
-
-## 8. Incident Register
-
-An incident register will be maintained and reviewed [CUSTOMISE: e.g., monthly] by [CUSTOMISE: Role]. The register records the incident type, date, severity, actions taken, and resolution status.
-
----
-
-### Questions to Consider — Incident Management Policy
-
-1. Have you created the Incident Report Form (Attachment A) — it is referenced in this policy and will be required for your audit?
-2. Who will conduct an investigation if the sole operator is the subject of the incident?
-3. Do you have a documented escalation path for suspected criminal conduct (e.g., a provider committing fraud) — including who you call and in what order?
-4. How will you track open incidents through to resolution — what system or register will you maintain?
-5. Are you aware that the NDIS Amendment (Integrity and Safeguarding) Act 2025 may make non-reporting of serious incidents a criminal offence in certain circumstances?
-6. How will you ensure you are alerted if a participant's provider is deregistered or banned — this may trigger an incident response?
-
----
-
----
-
-# POLICY 3: Complaints and Feedback Management Policy
-
-**Policy Number:** PM-POL-003
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
-
-## 1. Purpose
-
-To ensure that complaints and feedback from participants, their families, carers, and other stakeholders are welcomed, acknowledged, and resolved fairly and promptly, in accordance with the NDIS Practice Standards.
-
-## 2. Scope
-
-This policy applies to all staff, contractors, and volunteers of [Business Name].
-
-## 3. Our Commitment
-
-[Business Name] views complaints and feedback as an opportunity to improve our services. We will:
-- Make it easy for people to raise concerns, including in accessible formats.
-- Treat all complaints with respect, fairness, and confidentiality.
-- Respond promptly and keep complainants informed of progress.
-- Use complaints to improve our services.
-- Not disadvantage any person for making a complaint.
-- Ensure participants know they can access an advocate at any time.
-
-## 4. How to Make a Complaint
-
-Complaints can be made:
-- **By phone:** [CUSTOMISE: phone number]
-- **By email:** [CUSTOMISE: email address]
-- **In writing:** [CUSTOMISE: postal address]
-- **In person:** [CUSTOMISE: address, by appointment]
-- **Via the NDIS Commission:** 1800 035 544 or www.ndiscommission.gov.au
-
-Complaints can also be made on behalf of a participant by a carer, nominee, advocate, or support person. Participants do not need to make complaints in their own name.
-
-## 5. Complaint Handling Process
-
-| Step | Action | Timeframe |
-|------|--------|-----------|
-| 1. Receive | Acknowledge receipt of the complaint | Within 2 business days |
-| 2. Assess | Determine the nature and urgency of the complaint | Within 3 business days |
-| 3. Investigate | Gather relevant information; consult with involved parties | Within 10 business days |
-| 4. Resolve | Communicate the outcome and any corrective actions | Within 21 business days |
-| 5. Escalate | If unresolved or complainant unsatisfied, escalate per Section 6 | As required |
-
-Complex complaints may take longer. The complainant will be kept informed of any delays.
-
-## 6. Escalation
-
-If a complaint cannot be resolved internally, or if the complainant is not satisfied with the outcome:
-- **NDIS Quality and Safeguards Commission:** 1800 035 544
-- **NDIS Commission Online Complaint Form:** www.ndiscommission.gov.au
-- **National Disability Advocacy Program (NDAP):** Free advocacy support — 1800 643 787
-- **Victorian Equal Opportunity and Human Rights Commission (VEOHRC):** For discrimination complaints
-- **VCAT or legal avenues** where relevant
-
-## 7. Accessibility and Communication Support
-
-[Business Name] recognises that participants have different communication needs. We will:
-- Provide complaint information in plain English, and in alternative formats on request (e.g., large print, audio, Easy Read).
-- Use an interpreter or translator for participants from culturally and linguistically diverse (CALD) backgrounds, on request. [CUSTOMISE: Note whether you use TIS National: 131 450 for interpreter services]
-- Accept complaints made verbally (by phone or in person) and document them on the participant's behalf.
-- Allow a support person, advocate, or nominee to make or assist with a complaint at any time.
-- Adapt our communication style to meet the participant's needs.
-
-## 8. Record Keeping
-
-All complaints will be recorded in the **Complaints Register** (maintained in [CUSTOMISE: e.g., your admin system]). Records will be kept for 7 years.
-
-The register will record: the date received, the nature of the complaint, the complainant's details (de-identified if requested), actions taken, and the final resolution.
-
-## 9. Review
-
-The Complaints Register will be reviewed [CUSTOMISE: e.g., quarterly] to identify trends, systemic issues, and opportunities to improve services. Review findings will be documented and used to update policies and procedures as appropriate.
-
----
-
-### Questions to Consider — Complaints Policy
-
-1. How will participants who are non-verbal, have low literacy, or have a cognitive disability raise complaints — do you have an Easy Read version of your complaints information?
-2. Will you use TIS National (131 450) to provide interpreter services for CALD participants, or another interpreter service?
-3. What is your target resolution time — 21 days is standard but you may want to commit to a faster timeline as a small, responsive provider?
-4. How will you document complaints through to resolution to demonstrate compliance during an NDIS Commission audit?
-5. Do you have a participant-facing complaints information sheet or brochure to include in your onboarding pack?
-6. Will you proactively seek feedback (e.g., annual survey) — not just respond to complaints?
-
----
-
----
-
-# POLICY 4: Risk Management Policy
-
-**Policy Number:** PM-POL-004
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
-
-## 1. Purpose
-
-To identify, assess, treat, and monitor risks that may affect [Business Name]'s ability to deliver safe, high-quality plan management services.
-
-## 2. Scope
-
-This policy applies to all operations of [Business Name], including risks to participants, staff, financial integrity, and the organisation.
-
-## 3. Risk Management Framework
-
-[Business Name] uses a four-step risk management cycle consistent with ISO 31000:
-
-1. **Identify** — What could go wrong?
-2. **Assess** — How likely and how severe?
-3. **Treat** — What will we do about it?
-4. **Monitor** — Are controls working?
-
-## 4. Risk Categories
-
-| Category | Examples |
-|----------|----------|
-| Participant safety | Financial exploitation, incorrect payments, fraud by providers, provider misconduct |
-| Operational | System outage, key person unavailability, software failure, loss of PACE portal access |
-| Financial | Cash flow, fraud, incorrect NDIS claims, overpayment to providers |
-| Compliance | Failure to meet NDIS Practice Standards, late reporting, audit failure |
-| Cyber and data | Data breach, ransomware, phishing, unauthorised access to participant information |
-| Regulatory/Legislative | Changes to NDIS rules, pricing arrangements, or Practice Standards (e.g., post-2025 reforms) |
-| Reputational | Complaints, data breaches, poor service quality, social media |
-| Legal | Privacy breaches, disputes with participants or providers, Fair Work claims |
-| Key person | Sole operator illness, injury, or extended unavailability |
-
-## 5. Risk Assessment Matrix
-
-**Likelihood:** Rare (1) | Unlikely (2) | Possible (3) | Likely (4) | Almost Certain (5)
-**Consequence:** Insignificant (1) | Minor (2) | Moderate (3) | Major (4) | Catastrophic (5)
-
-**Risk Rating = Likelihood × Consequence**
-
-| Rating | Score | Action |
-|--------|-------|--------|
-| Low | 1–4 | Accept and monitor |
-| Medium | 5–9 | Treat with controls |
-| High | 10–19 | Immediate action required |
-| Extreme | 20–25 | Escalate to director; halt operations if necessary |
-
-## 6. Risk Register
-
-[Business Name] maintains a **Risk Register** that is reviewed [CUSTOMISE: e.g., quarterly]. The Risk Register records:
-- Risk description and category
-- Current likelihood and consequence ratings
-- Existing controls
-- Treatment actions, owner, and target completion date
-- Residual risk rating after controls
-
-**Initial risks to document at launch:**
-1. Key person risk (sole operator unavailability)
-2. Provider fraud (invoices for services not delivered)
-3. Participant data breach
-4. Software/PACE portal outage
-5. Failure to comply with NDIS Practice Standards during initial audit period
-6. Changes to NDIS Pricing Arrangements and Price Limits (PAPL) affecting invoice processing
-
-## 7. Business Continuity Planning
-
-[Business Name] maintains a **Business Continuity Plan (BCP)** as a related document to this policy. The BCP covers:
-- Key person absence (see Continuity of Supports Policy PM-POL-009)
-- System and technology failure
-- Data loss and recovery
-- Business closure procedures
-
-## 8. Insurance
-
-As a key risk treatment control, [Business Name] holds:
-- **Professional Indemnity Insurance:** CGU, Policy No. 9644196 (combined PI + PL policy), effective 13/05/2026, coverage $1,000,000
-- **Public Liability Insurance:** CGU, Policy No. 9644196 (combined PI + PL policy), effective 13/05/2026, coverage $5,000,000
-- **Cyber Insurance:** [CUSTOMISE: consider cyber-specific coverage given the sensitive participant financial data held]
-
-Insurance policies are reviewed annually.
-
-## 9. Responsibilities
-
-- **Director/Principal:** Overall ownership of risk management; reviewing and updating the register.
-- **All staff:** Identifying and reporting risks to the Director immediately upon identification.
-
----
-
-### Questions to Consider — Risk Management Policy
-
-1. Have you documented your top 5–6 risks in the Risk Register at launch — the auditor will expect to see a populated register, not a blank template?
-2. Do you have professional indemnity and public liability insurance in place before you take on your first participant?
-3. Who is your backup if you are unavailable — have you made a formal arrangement with another plan manager?
-4. How often will you review the risk register — quarterly is standard, but monthly may be better in your first year?
-5. Have you considered cyber insurance, given the sensitive participant financial and health data you will hold?
-6. How will you monitor changes to the NDIS Pricing Arrangements and Price Limits — will you subscribe to NDIA updates?
-
----
-
----
-
-# POLICY 5: Human Resources and Worker Screening Policy
-
-**Policy Number:** PM-POL-005
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
-
-## 1. Purpose
-
-To ensure that [Business Name] recruits, engages, and manages workers in a manner that promotes participant safety and upholds the NDIS Code of Conduct and Practice Standards.
-
-## 2. Scope
-
-This policy applies to all employees, contractors, volunteers, and student placements engaged by [Business Name].
-
-## 3. Worker Screening
-
-All workers engaged by [Business Name] who will have more than incidental contact with NDIS participants must hold a current **NDIS Worker Screening Check** (Worker Clearance) issued by the Victorian Worker Screening Unit.
-
-- No worker will commence in a role involving participant contact without a valid clearance.
-- Clearances must be current and renewed as required (typically every 5 years or upon change of circumstance).
-- [Business Name] maintains a **Worker Screening Register** recording each worker's clearance number, expiry date, and status.
-
-> Note: As a plan management provider, direct physical contact with participants is minimal. However, as the person managing participant financial data and submitting NDIS claims, the principal is required to hold a Worker Screening Clearance.
-
-## 4. Recruitment
-
-When recruiting staff, [Business Name] will:
-- Conduct structured interviews and at least two reference checks.
-- Verify identity, qualifications, and right to work in Australia.
-- Initiate NDIS Worker Screening Checks before commencement.
-- Verify relevant professional registrations and memberships (see Section 9).
-- Obtain and verify a Working with Children Check (WWCC) if the worker will have contact with participants under 18.
-
-## 5. Induction
-
-All new workers will complete induction training covering:
-- The NDIS Code of Conduct (including the free NDIS Commission online training modules)
-- This policy suite (all 17 policies)
-- Relevant NDIS Practice Standards
-- [Business Name]'s systems, processes, and service delivery expectations
-- Mandatory reporting obligations
-- Cyber security and data handling requirements (see Policy PM-POL-015)
-- Whistleblower protections (see Policy PM-POL-014)
-
-Induction must be completed before the worker has any contact with participants or participant financial information. Completion will be recorded with the worker's signature and date.
-
-## 6. Ongoing Training
-
-All staff will complete:
-- Annual refresher training on the NDIS Code of Conduct
-- Annual review of this policy suite
-- Relevant CPD or training as identified in performance reviews
-- Training on any changes to NDIS rules or Practice Standards within 30 days of changes taking effect
-
-## 7. Performance Management
-
-Staff performance will be reviewed [CUSTOMISE: e.g., annually or six-monthly in the first year]. Concerns will be managed through a fair and documented process consistent with Fair Work Act obligations.
-
-## 8. Misconduct and Termination
-
-Allegations of misconduct will be investigated fairly and promptly. Where a worker's conduct poses a risk to participants, they may be stood down pending investigation. Termination will follow Fair Work Act obligations. Serious misconduct involving participant harm will be reported to the NDIS Commission.
-
-## 9. Worker Qualifications and Professional Memberships
-
-The NDIS Commission requires plan management providers to maintain documented evidence of worker qualifications and professional memberships for audit purposes (NDIS Practice Standards — Qualification and Professional Associations Required Documentation Guide, October 2025).
-
-**Accepted qualifications and memberships for plan management workers include:**
-- Membership of CA ANZ (Chartered Accountants Australia and New Zealand)
-- Membership of CPA Australia
-- Membership of the Institute of Public Accountants (IPA)
-- Membership of the Institute of Certified Bookkeepers (ICB)
-- Membership of the Association of Taxation and Management Accountants (ATMA)
-- A relevant qualification in accounting, finance, or business at Certificate IV level or above
-
-[Business Name] will maintain on file for each worker delivering plan management services:
-- A certified copy of the relevant qualification certificate or professional membership card
-- Evidence of current membership (e.g., annual membership certificate or letter from the professional body)
-- A list of all workers delivering plan management services (provided to the auditor)
-
-These documents are to be updated annually and provided to the approved quality auditor at the time of verification audit or renewal.
-
----
-
-### Questions to Consider — HR and Worker Screening Policy
-
-1. Have you applied for your own NDIS Worker Screening Clearance — it takes 2–6 weeks from application and you must hold it before taking on participants?
-2. As the principal and a CA ANZ member, have you gathered your certified membership certificate to include in your qualification documentation file for the audit?
-3. If you engage contractors (e.g., bookkeeper, admin support), will you require them to hold Worker Screening Checks — and will you include this requirement in their contracts?
-4. Have you completed the free NDIS Commission online training modules on the Code of Conduct?
-5. What induction checklist will you use to ensure every new worker has completed all required training before starting?
-6. How will you track expiry dates for worker screening checks — calendar reminders, a register, or both?
-
----
-
----
-
 # POLICY 6: Code of Conduct Policy
 
 **Policy Number:** PM-POL-006
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-To set clear standards of conduct for all staff, contractors, and volunteers of [Business Name] in line with the **NDIS Code of Conduct**.
+To set clear standards of conduct for all staff, contractors, and volunteers of SC Partnering Pty Ltd (trading as Future Forward Planning) in line with the **NDIS Code of Conduct**.
 
 ## 2. The NDIS Code of Conduct
 
-All workers at [Business Name] must:
+All workers at SC Partnering Pty Ltd (trading as Future Forward Planning) must:
 
 1. **Act with respect for individual rights** — Support the independence and informed decision-making of each participant.
-2. **Respect privacy** — Handle personal information in accordance with privacy laws and Policy PM-POL-001.
+2. **Respect privacy** — Handle personal information in accordance with privacy laws and Policy PM-POL-005.
 3. **Provide supports safely** — Deliver services free from violence, abuse, neglect, exploitation, and discrimination.
 4. **Act with integrity, honesty, and transparency** — Be honest in all dealings with participants, the NDIA, and the NDIS Commission.
 5. **Promptly report and act on concerns** — Report any concerns about a participant's safety, or about another worker's conduct, through appropriate channels.
 6. **Comply with NDIS laws, rules, and practice standards** — Uphold all obligations under the NDIS framework.
 7. **Take reasonable steps to prevent violence, abuse, neglect, exploitation, and discrimination.**
 
-## 3. Additional Conduct Expectations at [Business Name]
+## 3. Additional Conduct Expectations at SC Partnering Pty Ltd (trading as Future Forward Planning)
 
 In addition to the Code, all staff must:
 - Maintain appropriate professional boundaries with participants at all times.
 - Not accept gifts or benefits from participants or providers that could be perceived as influencing professional judgement (see Section 7).
 - Disclose any conflicts of interest to the Director immediately (see Conflict of Interest Policy PM-POL-012).
-- Use [Business Name] systems and resources only for authorised purposes.
+- Use SC Partnering Pty Ltd (trading as Future Forward Planning) systems and resources only for authorised purposes.
 - Not discuss participant information in public or non-secure settings.
 - Comply with all cyber security and data handling requirements (see Policy PM-POL-015).
 
@@ -635,7 +658,7 @@ All workers must:
 
 ## 7. Gifts and Benefits
 
-Receiving gifts or benefits from participants, their families, or service providers creates a real or perceived conflict of interest. [Business Name] policy is:
+Receiving gifts or benefits from participants, their families, or service providers creates a real or perceived conflict of interest. SC Partnering Pty Ltd (trading as Future Forward Planning) policy is:
 
 - Workers must **not solicit** gifts or benefits from participants or providers under any circumstances.
 - Workers may accept **minor, unsolicited courtesy gifts** (e.g., a small box of chocolates at Christmas) valued at under [CUSTOMISE: e.g., $50], provided they are declared to the Director and recorded in the **Gifts and Benefits Register**.
@@ -646,9 +669,9 @@ Receiving gifts or benefits from participants, their families, or service provid
 ## 8. Anti-Inducement and Anti-Promotion Obligations
 
 Under the NDIS Amendment (Integrity and Safeguarding) Act 2025 and the NDIS Code of Conduct:
-- [Business Name] must not pay, receive, or offer referral fees or commissions to or from providers in connection with plan management services.
-- [Business Name] must not use predatory, misleading, or coercive marketing tactics to attract participants.
-- [Business Name] must not offer inducements (e.g., cash payments, gift cards, free services) to participants or their families in exchange for choosing [Business Name] as their plan manager.
+- SC Partnering Pty Ltd (trading as Future Forward Planning) must not pay, receive, or offer referral fees or commissions to or from providers in connection with plan management services.
+- SC Partnering Pty Ltd (trading as Future Forward Planning) must not use predatory, misleading, or coercive marketing tactics to attract participants.
+- SC Partnering Pty Ltd (trading as Future Forward Planning) must not offer inducements (e.g., cash payments, gift cards, free services) to participants or their families in exchange for choosing SC Partnering Pty Ltd (trading as Future Forward Planning) as their plan manager.
 - Any promotional materials must be accurate, not misleading, and comply with Policy PM-POL-016.
 
 ---
@@ -669,17 +692,23 @@ Under the NDIS Amendment (Integrity and Safeguarding) Act 2025 and the NDIS Code
 # POLICY 7: Record Keeping and Information Management Policy
 
 **Policy Number:** PM-POL-007
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-To ensure that [Business Name] creates, maintains, retains, and disposes of records in a manner that supports accountability, compliance, the continuity of services to participants, and readiness for NDIS Commission audit.
+To ensure that SC Partnering Pty Ltd (trading as Future Forward Planning) creates, maintains, retains, and disposes of records in a manner that supports accountability, compliance, the continuity of services to participants, and readiness for NDIS Commission audit.
 
 ## 2. Scope
 
-This policy applies to all records created or received by [Business Name] in the course of its operations, in any format.
+This policy applies to all records created or received by SC Partnering Pty Ltd (trading as Future Forward Planning) in the course of its operations, in any format.
 
 ## 3. Types of Records
 
@@ -704,7 +733,7 @@ This policy applies to all records created or received by [Business Name] in the
 
 - **Electronic records:** Stored in [CUSTOMISE: e.g., Xero / plan management software / Google Workspace / SharePoint] with role-based access controls and regular automated backups. Data stored in Australia.
 - **Physical records:** [CUSTOMISE: e.g., Stored in locked filing cabinets at business premises — or state if paperless].
-- **PACE portal records:** Claims and payment records are retained within the NDIA PACE system. [Business Name] maintains local copies of all key claim and payment records.
+- **PACE portal records:** Claims and payment records are retained within the NDIA PACE system. SC Partnering Pty Ltd (trading as Future Forward Planning) maintains local copies of all key claim and payment records.
 
 ## 6. Retention Periods
 
@@ -723,7 +752,7 @@ For compliance with the NDIS Practice Standards and to support audit readiness:
 - All financial transactions must have a complete, traceable audit trail from invoice receipt through to PACE claim submission and provider payment.
 - Access to participant records must be logged (where the software system supports audit logging).
 - Any changes to records must be logged with the date, user, and reason for the change.
-- [Business Name] will conduct an internal record audit [CUSTOMISE: e.g., annually] to verify completeness, accuracy, and retention compliance.
+- SC Partnering Pty Ltd (trading as Future Forward Planning) will conduct an internal record audit [CUSTOMISE: e.g., annually] to verify completeness, accuracy, and retention compliance.
 
 ## 8. Disposal
 
@@ -756,13 +785,19 @@ Records that have passed their retention period will be disposed of securely:
 # POLICY 8: Participant Rights and Responsibilities Policy
 
 **Policy Number:** PM-POL-008
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-To ensure that all participants engaging with [Business Name] are aware of their rights under the NDIS, are supported to exercise those rights, and understand their responsibilities as a plan management participant.
+To ensure that all participants engaging with SC Partnering Pty Ltd (trading as Future Forward Planning) are aware of their rights under the NDIS, are supported to exercise those rights, and understand their responsibilities as a plan management participant.
 
 ## 2. Participant Rights
 
@@ -781,7 +816,7 @@ Every participant has the right to:
 
 ## 3. How We Support Participant Rights
 
-[Business Name] will:
+SC Partnering Pty Ltd (trading as Future Forward Planning) will:
 - Provide participants with a copy of this policy and a Service Agreement at commencement.
 - Provide monthly statements showing all transactions, claims, and remaining budget by category.
 - Respond to participant enquiries within [CUSTOMISE: e.g., 2 business days].
@@ -794,14 +829,14 @@ Every participant has the right to:
 
 Participants (or their nominees) are responsible for:
 - Providing accurate information about their plan, supports, and providers.
-- Notifying [Business Name] of any changes to their plan, providers, or circumstances.
+- Notifying SC Partnering Pty Ltd (trading as Future Forward Planning) of any changes to their plan, providers, or circumstances.
 - Ensuring invoices submitted for payment relate to legitimate NDIS-funded supports.
-- Notifying [Business Name] if they wish to change plan managers, providing [CUSTOMISE: e.g., 28 days'] notice where possible.
-- Treating [Business Name] staff with respect and courtesy.
+- Notifying SC Partnering Pty Ltd (trading as Future Forward Planning) if they wish to change plan managers, providing [CUSTOMISE: e.g., 28 days'] notice where possible.
+- Treating SC Partnering Pty Ltd (trading as Future Forward Planning) staff with respect and courtesy.
 
 ## 5. Supported Decision-Making
 
-[Business Name] recognises that some participants may require support to make decisions. We will:
+SC Partnering Pty Ltd (trading as Future Forward Planning) recognises that some participants may require support to make decisions. We will:
 - Work with the participant's support network (with consent) to ensure their wishes are respected.
 - Support the use of communication tools or formats as required.
 - Never substitute our judgement for a participant's own decisions.
@@ -809,7 +844,7 @@ Participants (or their nominees) are responsible for:
 
 ## 6. Access to Advocacy
 
-[Business Name] actively supports participants' access to independent advocacy. This includes:
+SC Partnering Pty Ltd (trading as Future Forward Planning) actively supports participants' access to independent advocacy. This includes:
 - Providing information about the **National Disability Advocacy Program (NDAP):** 1800 643 787
 - Providing information about **Disability Advocacy Resource Unit (DARU)** and local Melbourne advocacy organisations on request.
 - Never discouraging a participant from engaging an advocate.
@@ -832,13 +867,19 @@ Participants (or their nominees) are responsible for:
 # POLICY 9: Continuity of Supports Policy
 
 **Policy Number:** PM-POL-009
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-To ensure that participants receiving plan management services from [Business Name] experience minimal disruption to their supports in the event of planned or unplanned interruptions to the business.
+To ensure that participants receiving plan management services from SC Partnering Pty Ltd (trading as Future Forward Planning) experience minimal disruption to their supports in the event of planned or unplanned interruptions to the business.
 
 ## 2. Scope
 
@@ -859,28 +900,9 @@ The primary continuity risks for a plan management provider include:
 
 In the event that the principal is unavailable for more than **3 consecutive business days**, the following arrangements apply:
 
-- A nominated backup plan manager — [CUSTOMISE: Name/Business — see guidance note below] — will be engaged to manage urgent payment requests and participant communications.
 - Participants will be notified within 2 business days if an extended absence is expected.
-- All system access credentials and participant information required for handover are documented in the **Business Continuity Pack** (a document stored in Google Drive and accessible to the backup person under a formal Backup Plan Manager Agreement).
-
-**Is a formal backup arrangement mandatory?**
-
-The NDIS Commission does not prescribe a specific backup arrangement by name. However, Practice Standard 1.6 (Continuity of Supports) requires registered providers to demonstrate that participant supports will not be disrupted due to operational failures — including the unavailability of a sole operator. An approved quality auditor conducting a verification audit will specifically look for evidence that you have planned for this risk. In practice, sole operator plan managers who cannot demonstrate a credible answer to "what happens if you are sick for a month?" will receive an audit finding or non-conformance. It is not a box-ticking exercise — participants are genuinely exposed if their plan manager is unreachable and invoices stop being processed.
-
-**What the backup arrangement needs to cover:**
-- The backup person must be a currently registered NDIS plan manager (or employed by one).
-- They must hold a valid NDIS Worker Screening Clearance.
-- They must be briefed on [Business Name]'s systems, software, and participant list to a level that allows urgent invoice processing.
-- The arrangement must be documented in a written agreement (even a brief email agreement or MOU is sufficient at audit).
-- The agreement does not need to be a formal contract, but it must be in writing and mutual.
-
-**How to find a backup plan manager:**
-- **DIA (Disability Intermediaries Australia) member network** — The industry peak body for plan managers; member forums and networking events are the most direct way to find a peer with a reciprocal arrangement. Website: intermediaries.org.au
-- **LinkedIn** — Search "NDIS plan manager Melbourne sole operator" — many sole operators are actively looking for exactly this arrangement.
-- **NDIS plan management Facebook groups** — "NDIS Plan Managers Australia" is an active group where peer arrangements are commonly discussed.
-- The arrangement is typically mutual — you cover each other — meaning the cost is zero, just goodwill and a written agreement.
-
-**[CUSTOMISE: Once you have identified your backup plan manager, insert their name, business name, phone, and email here, and attach the written agreement as Appendix 1 to this policy.]**
+- The nominated trusted contact — **Viet Nguyen** — is authorised to notify active participants and the NDIS Commission on behalf of the Director, and to assist participants in identifying and transitioning to an alternative registered plan manager of their choice.
+- All critical system access credentials and participant contact information are documented securely and accessible to Viet Nguyen in the event of the Director's incapacity.
 
 ### 4.2 System Failure
 
@@ -892,24 +914,24 @@ The NDIS Commission does not prescribe a specific backup arrangement by name. Ho
 ### 4.3 PACE Portal Outage
 
 - In the event of a NDIA PACE portal outage, participants and providers will be notified that claim processing is temporarily delayed.
-- [Business Name] will monitor the NDIA's system status page and communicate expected resolution times.
+- SC Partnering Pty Ltd (trading as Future Forward Planning) will monitor the NDIA's system status page and communicate expected resolution times.
 
 ### 4.4 Business Closure
 
-In the event that [Business Name] must permanently close:
+In the event that SC Partnering Pty Ltd (trading as Future Forward Planning) must permanently close:
 - Participants will be notified as early as possible and given a minimum of [CUSTOMISE: e.g., 28 days'] notice.
-- [Business Name] will assist participants to transition to a new plan manager of their choice.
+- SC Partnering Pty Ltd (trading as Future Forward Planning) will assist participants to transition to a new plan manager of their choice.
 - NDIA and the NDIS Commission will be notified in accordance with regulatory requirements.
 - All participant records will be retained for the required retention periods (see Policy PM-POL-007).
 - All outstanding invoices and claims will be finalised before or at the time of closure.
 
 ## 5. Participant Notification Procedure
 
-In any continuity event requiring participant notification, [Business Name] will:
+In any continuity event requiring participant notification, SC Partnering Pty Ltd (trading as Future Forward Planning) will:
 1. Identify affected participants and their preferred communication method.
 2. Send written notification (email or letter) within [CUSTOMISE: e.g., 2 business days] of the event.
 3. Include details of the impact, expected duration, and any actions required by the participant.
-4. Provide the contact details of the backup plan manager or alternative support.
+4. Provide the contact details of the trusted contact (Viet Nguyen) or guidance on identifying an alternative registered plan manager.
 5. Document all notifications and responses in the participant's record.
 
 ## 6. Testing and Review
@@ -934,28 +956,34 @@ The continuity arrangements in this policy will be reviewed [CUSTOMISE: e.g., an
 # POLICY 10: Financial Management Policy (Plan Management)
 
 **Policy Number:** PM-POL-010
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-To ensure that [Business Name] administers participant plan budgets with integrity, transparency, and accuracy, in accordance with the NDIS (Plan Management) Rules 2013, the NDIS Act 2013, and the NDIS Practice Standards (Plan Management Supplementary Module).
+To ensure that SC Partnering Pty Ltd (trading as Future Forward Planning) administers participant plan budgets with integrity, transparency, and accuracy, in accordance with the NDIS (Plan Management) Rules 2013, the NDIS Act 2013, and the NDIS Practice Standards (Plan Management Supplementary Module).
 
 ## 2. Scope
 
-This policy applies to all financial operations of [Business Name] relating to the management of NDIS participant plan funds.
+This policy applies to all financial operations of SC Partnering Pty Ltd (trading as Future Forward Planning) relating to the management of NDIS participant plan funds.
 
 ## 3. Our Financial Management Obligations
 
-As a registered NDIS plan manager, [Business Name] must:
+As a registered NDIS plan manager, SC Partnering Pty Ltd (trading as Future Forward Planning) must:
 - Manage participant funds in a dedicated business bank account separate from personal funds.
 - Pay service providers within [CUSTOMISE: e.g., 5 business days] of approving a valid invoice and receiving payment from the NDIA.
 - Submit claims to the NDIA via the PACE portal accurately and only for supports that have been delivered.
 - Provide participants with a monthly financial statement showing all transactions by support category.
 - Alert participants when their budget in a support category is nearing depletion.
 - Ensure participants are not charged fees beyond the NDIS-funded plan management support item rate.
-- Not profit from the float or timing difference between when the NDIA pays [Business Name] and when [Business Name] pays providers.
+- Not profit from the float or timing difference between when the NDIA pays SC Partnering Pty Ltd (trading as Future Forward Planning) and when SC Partnering Pty Ltd (trading as Future Forward Planning) pays providers.
 
 ## 4. Invoice Processing
 
@@ -969,18 +997,18 @@ All invoices submitted by service providers must be:
 
 | Step | Action | Responsibility |
 |------|--------|---------------|
-| 1 | Receive invoice from provider or participant | [Business Name] |
-| 2 | Verify invoice against participant's NDIS plan and current PAPL | [Business Name] |
-| 3 | Check provider registration status on the NDIS provider register | [Business Name] |
-| 4 | Apply participant approval tier (see Approval Framework below) | [Business Name] / Participant |
-| 5 | Submit claim to NDIA via PACE portal | [Business Name] |
-| 6 | Receive funds from NDIA into dedicated business bank account | NDIA → [Business Name] |
-| 7 | Pay provider from received funds | [Business Name] |
-| 8 | Record transaction in participant's monthly statement | [Business Name] |
+| 1 | Receive invoice from provider or participant | SC Partnering Pty Ltd (trading as Future Forward Planning) |
+| 2 | Verify invoice against participant's NDIS plan and current PAPL | SC Partnering Pty Ltd (trading as Future Forward Planning) |
+| 3 | Check provider registration status on the NDIS provider register | SC Partnering Pty Ltd (trading as Future Forward Planning) |
+| 4 | Apply participant approval tier (see Approval Framework below) | SC Partnering Pty Ltd (trading as Future Forward Planning) / Participant |
+| 5 | Submit claim to NDIA via PACE portal | SC Partnering Pty Ltd (trading as Future Forward Planning) |
+| 6 | Receive funds from NDIA into dedicated business bank account | NDIA → SC Partnering Pty Ltd (trading as Future Forward Planning) |
+| 7 | Pay provider from received funds | SC Partnering Pty Ltd (trading as Future Forward Planning) |
+| 8 | Record transaction in participant's monthly statement | SC Partnering Pty Ltd (trading as Future Forward Planning) |
 
 ### Participant Invoice Approval Framework
 
-[Business Name] uses a three-tier, risk-based approach to participant approval. The participant's preferred tier is agreed in the Service Agreement at onboarding, but [Business Name] applies minimum safeguards regardless of preference.
+SC Partnering Pty Ltd (trading as Future Forward Planning) uses a three-tier, risk-based approach to participant approval. The participant's preferred tier is agreed in the Service Agreement at onboarding, but SC Partnering Pty Ltd (trading as Future Forward Planning) applies minimum safeguards regardless of preference.
 
 **Tier 1 — Auto-process (no separate participant approval required):**
 
@@ -1042,7 +1070,7 @@ All NDIS plan management funds are managed through:
 - **Designated NDIS business bank account:** [CUSTOMISE: e.g., Westpac Business One BSB/Account details]
 - This account is used solely for NDIS plan management operations and is separate from all personal accounts and operating expense accounts.
 
-> **Important:** Plan managers do not hold participant funds in trust in the traditional legal sense. The NDIA pays claims directly to [Business Name] upon successful claim submission via PACE. [Business Name] then pays providers promptly from those received funds. There is no requirement for a separate trust account per participant, but all NDIS funds must be clearly distinguishable from the business's own money at all times.
+> **Important:** Plan managers do not hold participant funds in trust in the traditional legal sense. The NDIA pays claims directly to SC Partnering Pty Ltd (trading as Future Forward Planning) upon successful claim submission via PACE. SC Partnering Pty Ltd (trading as Future Forward Planning) then pays providers promptly from those received funds. There is no requirement for a separate trust account per participant, but all NDIS funds must be clearly distinguishable from the business's own money at all times.
 
 ## 8. PACE Portal Claims Process
 
@@ -1059,7 +1087,7 @@ PACE portal access credentials are secured per the Cyber Security Policy (PM-POL
 
 ## 9. Unregistered Provider Payment Process
 
-Participants are entitled to use unregistered providers for supports in certain support categories. [Business Name]'s process for unregistered provider invoices:
+Participants are entitled to use unregistered providers for supports in certain support categories. SC Partnering Pty Ltd (trading as Future Forward Planning)'s process for unregistered provider invoices:
 1. Confirm the support category allows unregistered providers under the participant's plan.
 2. Verify the provider is not on any banned or excluded list (NDIS Commission banning register).
 3. Obtain the provider's ABN and verify it is active (ABN Lookup: www.abn.business.gov.au).
@@ -1069,14 +1097,14 @@ Participants are entitled to use unregistered providers for supports in certain 
 
 ## 10. GST Obligations
 
-- Plan management fees charged to the NDIA are subject to GST. [Business Name] is registered for GST (ABN: 20 931 095 007) and will issue tax invoices for plan management fee claims.
-- Payments made to providers for participant supports are generally GST-free under the NDIS provisions. However, [Business Name] should confirm GST treatment for specific support items with the ATO or a tax adviser if uncertain.
-- [Business Name] lodges BAS [CUSTOMISE: e.g., quarterly] in accordance with ATO requirements.
+- Plan management fees charged to the NDIA are subject to GST. SC Partnering Pty Ltd (trading as Future Forward Planning) is registered for GST (ABN: 24 697 821 408) and will issue tax invoices for plan management fee claims.
+- Payments made to providers for participant supports are generally GST-free under the NDIS provisions. However, SC Partnering Pty Ltd (trading as Future Forward Planning) should confirm GST treatment for specific support items with the ATO or a tax adviser if uncertain.
+- SC Partnering Pty Ltd (trading as Future Forward Planning) lodges BAS [CUSTOMISE: e.g., quarterly] in accordance with ATO requirements.
 
 ## 11. Invoice Reconciliation and Overpayments
 
 - All payments are reconciled against NDIA claims [CUSTOMISE: e.g., weekly].
-- Where an overpayment is identified (payment exceeding the invoiced or approved amount), [Business Name] will:
+- Where an overpayment is identified (payment exceeding the invoiced or approved amount), SC Partnering Pty Ltd (trading as Future Forward Planning) will:
   1. Contact the provider immediately and request repayment of the excess amount.
   2. Notify the participant of the overpayment and the recovery action.
   3. Document the overpayment and recovery in the participant's statement and financial records.
@@ -1106,17 +1134,23 @@ All financial records are maintained in [CUSTOMISE: e.g., Xero] and retained for
 # POLICY 11: Fraud Prevention and Detection Policy
 
 **Policy Number:** PM-POL-011
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-To protect participants, the NDIA, and [Business Name] from fraud, and to ensure that NDIS funds are used only for genuine, approved disability supports.
+To protect participants, the NDIA, and SC Partnering Pty Ltd (trading as Future Forward Planning) from fraud, and to ensure that NDIS funds are used only for genuine, approved disability supports.
 
 ## 2. Scope
 
-This policy applies to all staff, contractors, and volunteers of [Business Name], and covers fraud risk arising from participants, providers, staff, and third parties.
+This policy applies to all staff, contractors, and volunteers of SC Partnering Pty Ltd (trading as Future Forward Planning), and covers fraud risk arising from participants, providers, staff, and third parties.
 
 ## 3. What is NDIS Fraud?
 
@@ -1133,11 +1167,11 @@ NDIS fraud includes:
 **Under the NDIS Amendment (Integrity and Safeguarding) Act 2025:**
 - It is a criminal offence to provide NDIS supports that require registration without being registered (maximum 5 years imprisonment).
 - Aggravated contraventions (systemic fraud, widespread violations causing harm to multiple participants) attract significantly higher civil and criminal penalties.
-- [Business Name] has obligations to detect, report, and not facilitate fraud — failure to do so may result in regulatory action against [Business Name] as well as the fraudulent party.
+- SC Partnering Pty Ltd (trading as Future Forward Planning) has obligations to detect, report, and not facilitate fraud — failure to do so may result in regulatory action against SC Partnering Pty Ltd (trading as Future Forward Planning) as well as the fraudulent party.
 
 ## 4. Prevention Controls
 
-[Business Name] implements the following controls to prevent fraud:
+SC Partnering Pty Ltd (trading as Future Forward Planning) implements the following controls to prevent fraud:
 
 | Control | Detail |
 |---------|--------|
@@ -1147,7 +1181,7 @@ NDIS fraud includes:
 | Participant confirmation | [CUSTOMISE: Participants notified of all transactions; confirmation required for invoices above $[X]] |
 | Duplicate detection | Invoice number and provider+date+amount combination checked before each payment |
 | Segregation of duties | [CUSTOMISE: Person approving invoice does not also submit NDIS claim without oversight — describe your control if sole operator] |
-| Monthly statements | Participants review statements monthly; unexplained transactions flagged to [Business Name] |
+| Monthly statements | Participants review statements monthly; unexplained transactions flagged to SC Partnering Pty Ltd (trading as Future Forward Planning) |
 | Banning register check | NDIS Commission banning register checked for new providers and following any fraud alert |
 
 ## 5. Detection — Red Flags
@@ -1165,7 +1199,7 @@ Warning signs that may indicate fraud include:
 **Participant/nominee red flags:**
 - A nominee or guardian requesting that payments be made to accounts they control
 - Requests to pay providers using bank accounts different from registered provider details
-- A participant or their representative pressuring [Business Name] to approve invoices without adequate documentation
+- A participant or their representative pressuring SC Partnering Pty Ltd (trading as Future Forward Planning) to approve invoices without adequate documentation
 - Sudden, unexplained increase in service usage approaching plan end date
 
 **Internal red flags:**
@@ -1185,7 +1219,7 @@ Where a fraud concern is identified:
 
 ## 7. Reporting Fraud
 
-Any suspected fraud must be reported immediately. [Business Name] will report suspected NDIS fraud to:
+Any suspected fraud must be reported immediately. SC Partnering Pty Ltd (trading as Future Forward Planning) will report suspected NDIS fraud to:
 - **NDIS Fraud Tip-Off Line:** 1800 650 717 (for NDIA)
 - **NDIS Commission:** For provider misconduct — via the NDIS Commission Provider Portal
 - **Victoria Police:** Where criminal conduct is suspected
@@ -1213,17 +1247,23 @@ All fraud concerns, investigations, and outcomes will be documented and retained
 # POLICY 12: Conflict of Interest Policy
 
 **Policy Number:** PM-POL-012
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-To identify, disclose, and manage conflicts of interest that could compromise the integrity, independence, and impartiality of [Business Name]'s plan management services.
+To identify, disclose, and manage conflicts of interest that could compromise the integrity, independence, and impartiality of SC Partnering Pty Ltd (trading as Future Forward Planning)'s plan management services.
 
 ## 2. Scope
 
-This policy applies to all staff, contractors, volunteers, and directors of [Business Name].
+This policy applies to all staff, contractors, volunteers, and directors of SC Partnering Pty Ltd (trading as Future Forward Planning).
 
 ## 3. What is a Conflict of Interest?
 
@@ -1231,7 +1271,7 @@ A conflict of interest arises when a personal, financial, or professional intere
 
 Examples relevant to plan management include:
 - A staff member has a family member who is an NDIS service provider, and they process invoices from that provider.
-- The owner of [Business Name] also operates or has a financial interest in a service provider that participants use.
+- The owner of SC Partnering Pty Ltd (trading as Future Forward Planning) also operates or has a financial interest in a service provider that participants use.
 - A staff member receives gifts, commissions, or benefits from a service provider.
 - Referring participants to specific providers in exchange for referral fees.
 - Providing support coordination and plan management to the same participant (see Section 8).
@@ -1257,7 +1297,7 @@ Upon disclosure, the conflict will be assessed and managed. Options include:
 
 ## 6. Prohibition on Related Party Payments
 
-[Business Name] will not process payments to providers in which a director, owner, or staff member has a financial interest, without:
+SC Partnering Pty Ltd (trading as Future Forward Planning) will not process payments to providers in which a director, owner, or staff member has a financial interest, without:
 1. Prior written disclosure to the participant.
 2. The participant's documented written approval.
 3. An additional verification step by an independent person or documented independent review.
@@ -1268,7 +1308,7 @@ All conflict of interest disclosures and management decisions will be recorded i
 
 ## 8. Dual-Role Prohibition
 
-[Business Name] will not provide both plan management and support coordination services to the same participant without the participant's explicit, informed written consent and a documented management plan to address the inherent conflict of interest. In most cases, [Business Name] will avoid this dual-role arrangement entirely.
+SC Partnering Pty Ltd (trading as Future Forward Planning) will not provide both plan management and support coordination services to the same participant without the participant's explicit, informed written consent and a documented management plan to address the inherent conflict of interest. In most cases, SC Partnering Pty Ltd (trading as Future Forward Planning) will avoid this dual-role arrangement entirely.
 
 ---
 
@@ -1288,13 +1328,19 @@ All conflict of interest disclosures and management decisions will be recorded i
 # POLICY 13: Worker Qualifications and Professional Development Policy
 
 **Policy Number:** PM-POL-013
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-To ensure that all workers delivering plan management services at [Business Name] hold appropriate qualifications or professional memberships, and maintain their professional development in accordance with the NDIS Practice Standards — Qualification and Professional Associations Required Documentation Guide (October 2025) and the NDIS Plan Management Verification Module requirements.
+To ensure that all workers delivering plan management services at SC Partnering Pty Ltd (trading as Future Forward Planning) hold appropriate qualifications or professional memberships, and maintain their professional development in accordance with the NDIS Practice Standards — Qualification and Professional Associations Required Documentation Guide (October 2025) and the NDIS Plan Management Verification Module requirements.
 
 ## 2. Scope
 
@@ -1327,7 +1373,7 @@ Where a worker holds relevant experience but not a formal qualification or membe
 
 ## 5. Documentation Requirements
 
-[Business Name] maintains a **Qualifications Register** that records for each worker delivering plan management:
+SC Partnering Pty Ltd (trading as Future Forward Planning) maintains a **Qualifications Register** that records for each worker delivering plan management:
 - Full name and role
 - Qualification type or professional membership body
 - Membership or qualification number
@@ -1356,7 +1402,7 @@ All workers delivering plan management services are expected to maintain CPD req
 | IPA | 60 hours per year |
 | ICB | [CUSTOMISE: check current ICB requirements] |
 
-[Business Name] will track CPD completion as part of the annual performance review for each worker.
+SC Partnering Pty Ltd (trading as Future Forward Planning) will track CPD completion as part of the annual performance review for each worker.
 
 In addition to professional CPD, all workers delivering plan management must complete:
 - NDIS Commission Code of Conduct training (free online modules) — at induction and annually.
@@ -1364,7 +1410,7 @@ In addition to professional CPD, all workers delivering plan management must com
 
 ## 8. Audit Readiness
 
-[Business Name] will maintain the Qualifications Register and all certified qualification documents in an audit-ready format at all times. At the time of any audit, [Business Name] will provide:
+SC Partnering Pty Ltd (trading as Future Forward Planning) will maintain the Qualifications Register and all certified qualification documents in an audit-ready format at all times. At the time of any audit, SC Partnering Pty Ltd (trading as Future Forward Planning) will provide:
 - A current list of all workers delivering plan management services.
 - Certified copies of each worker's qualifications or membership certificates.
 - Evidence of current CPD compliance.
@@ -1386,22 +1432,28 @@ In addition to professional CPD, all workers delivering plan management must com
 # POLICY 14: Whistleblower Protection Policy
 
 **Policy Number:** PM-POL-014
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-To ensure that anyone who has concerns about unsafe, unlawful, or unethical practices within [Business Name] or its services can report those concerns safely, without fear of reprisal, in accordance with the NDIS Amendment (Integrity and Safeguarding) Act 2025.
+To ensure that anyone who has concerns about unsafe, unlawful, or unethical practices within SC Partnering Pty Ltd (trading as Future Forward Planning) or its services can report those concerns safely, without fear of reprisal, in accordance with the NDIS Amendment (Integrity and Safeguarding) Act 2025.
 
 ## 2. Scope
 
-This policy applies to all staff, contractors, volunteers, participants, their families, carers, and any other person who has concerns about [Business Name]'s conduct or the conduct of a worker, provider, or participant in connection with NDIS services.
+This policy applies to all staff, contractors, volunteers, participants, their families, carers, and any other person who has concerns about SC Partnering Pty Ltd (trading as Future Forward Planning)'s conduct or the conduct of a worker, provider, or participant in connection with NDIS services.
 
 ## 3. Who is Protected?
 
 The following people are protected when making a disclosure in good faith:
-- Current and former employees and contractors of [Business Name]
+- Current and former employees and contractors of SC Partnering Pty Ltd (trading as Future Forward Planning)
 - NDIS participants and their families, nominees, and carers
 - Any person who becomes aware of conduct that may constitute a breach of the NDIS Code of Conduct, NDIS rules, or the NDIS Amendment (Integrity and Safeguarding) Act 2025
 
@@ -1421,7 +1473,7 @@ Protected disclosures may relate to:
 ## 5. How to Make a Disclosure
 
 Disclosures can be made:
-- **Internally:** To the Director/Principal of [Business Name] at [CUSTOMISE: email/phone]
+- **Internally:** To the Director/Principal of SC Partnering Pty Ltd (trading as Future Forward Planning) at [CUSTOMISE: email/phone]
 - **To the NDIS Commission:** 1800 035 544 | www.ndiscommission.gov.au
 - **To the NDIA:** For fraud-related disclosures — NDIA Fraud Tip-Off Line: 1800 650 717
 - **To Victoria Police:** For criminal conduct
@@ -1433,7 +1485,7 @@ A person who makes a protected disclosure will not be:
 - Dismissed, demoted, or have their employment adversely affected.
 - Subjected to harassment, intimidation, or any form of retribution.
 - Identified to others without their consent (to the extent practicable).
-- Disadvantaged in any way in connection with [Business Name].
+- Disadvantaged in any way in connection with SC Partnering Pty Ltd (trading as Future Forward Planning).
 
 Any worker who retaliates against a person for making a protected disclosure will face immediate disciplinary action, which may include termination and referral to the NDIS Commission.
 
@@ -1448,7 +1500,7 @@ Upon receiving a disclosure:
 6. Where the disclosure is substantiated, take corrective action and report to relevant authorities as required.
 7. Document the disclosure, investigation, and outcome in the Incident Register (de-identified where the discloser has requested confidentiality).
 
-> Note: As a sole operator, if the disclosure is about [Business Name]'s own conduct, the appropriate response is to direct the discloser to the NDIS Commission. You cannot investigate a complaint about yourself.
+> Note: As a sole operator, if the disclosure is about SC Partnering Pty Ltd (trading as Future Forward Planning)'s own conduct, the appropriate response is to direct the discloser to the NDIS Commission. You cannot investigate a complaint about yourself.
 
 ## 8. Record Keeping
 
@@ -1470,24 +1522,30 @@ All disclosures and investigation outcomes are retained for 7 years, securely st
 # POLICY 15: Cyber Security and Data Protection Policy
 
 **Policy Number:** PM-POL-015
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-To protect [Business Name]'s information systems, participant data, and financial records from cyber threats, in support of [Business Name]'s obligations under the Privacy Act 1988 (Cth), the NDIS Practice Standards, and sound business practice.
+To protect SC Partnering Pty Ltd (trading as Future Forward Planning)'s information systems, participant data, and financial records from cyber threats, in support of SC Partnering Pty Ltd (trading as Future Forward Planning)'s obligations under the Privacy Act 1988 (Cth), the NDIS Practice Standards, and sound business practice.
 
 ## 2. Scope
 
-This policy applies to all staff, contractors, and volunteers who use [Business Name]'s systems, devices, and data, including remote access.
+This policy applies to all staff, contractors, and volunteers who use SC Partnering Pty Ltd (trading as Future Forward Planning)'s systems, devices, and data, including remote access.
 
 ## 3. Device Management
 
-- Only [CUSTOMISE: company-owned / approved] devices may be used to access participant data, the NDIA PACE portal, or [Business Name]'s accounting and plan management systems.
+- Only [CUSTOMISE: company-owned / approved] devices may be used to access participant data, the NDIA PACE portal, or SC Partnering Pty Ltd (trading as Future Forward Planning)'s accounting and plan management systems.
 - Personal devices may be used for business purposes only if they comply with the security requirements in this policy (e.g., MFA enabled, up-to-date OS and antivirus, encrypted storage).
 - All business devices must be encrypted, have a strong PIN or password, and be set to auto-lock after [CUSTOMISE: e.g., 5 minutes] of inactivity.
-- If a device is lost or stolen, [Business Name] must be notified immediately and remote wipe initiated if the device contains business data.
+- If a device is lost or stolen, SC Partnering Pty Ltd (trading as Future Forward Planning) must be notified immediately and remote wipe initiated if the device contains business data.
 
 ## 4. Passwords and Multi-Factor Authentication
 
@@ -1511,11 +1569,11 @@ This policy applies to all staff, contractors, and volunteers who use [Business 
 
 ## 6. Data Backup
 
-[Business Name] uses a three-tier backup strategy:
+SC Partnering Pty Ltd (trading as Future Forward Planning) uses a three-tier backup strategy:
 
 ### Tier 1 — SaaS Cloud Systems (Xero, Plan Management Software, PACE)
 
-The majority of [Business Name]'s operational data lives in SaaS platforms that maintain their own infrastructure-level backups:
+The majority of SC Partnering Pty Ltd (trading as Future Forward Planning)'s operational data lives in SaaS platforms that maintain their own infrastructure-level backups:
 
 | System | Data Held | Backup Responsibility |
 |--------|-----------|----------------------|
@@ -1523,7 +1581,7 @@ The majority of [Business Name]'s operational data lives in SaaS platforms that 
 | [CUSTOMISE: plan management software] | Participant budget data, statements, claim history | Software provider |
 | NDIA PACE portal | All NDIS claim submissions and authorisations | NDIA |
 
-**Monthly export obligation:** To guard against vendor lock-in or account access loss, on the **first business day of each month** [Business Name] will:
+**Monthly export obligation:** To guard against vendor lock-in or account access loss, on the **first business day of each month** SC Partnering Pty Ltd (trading as Future Forward Planning) will:
 - Download a full transaction export from Xero (CSV format) covering the prior month
 - Download a participant statement summary from [CUSTOMISE: plan management software] covering the prior month
 - Save both exports to the Google Drive folder: `Backups / Monthly Exports / YYYY-MM`
@@ -1533,14 +1591,14 @@ The majority of [Business Name]'s operational data lives in SaaS platforms that 
 All locally created business files — policies, registers, correspondence, downloaded invoices, and induction documents — are stored in and continuously synchronised to **Google Drive** (15 GB free tier) via the Google Drive desktop application.
 
 - **Sync:** Real-time, continuous (any file saved to the local Drive folder is immediately uploaded)
-- **Scope:** All files under the `[Business Name]` folder on the business device
+- **Scope:** All files under the `SC Partnering Pty Ltd (trading as Future Forward Planning)` folder on the business device
 - **Access:** Google account is protected by a strong unique password and MFA (Google Authenticator)
 - **Data location:** Google Drive data centre — note Google stores Australian Google Workspace data in Australia by default; confirm via Google's Data Regions settings
 - **Cost:** Free (15 GB sufficient for a small plan management business handling primarily documents and exported spreadsheets; upgrade to Google One 100 GB for ~$2.49 AUD/month if storage is exceeded)
 
 ### Tier 3 — Full Computer Backup (Recommended: Backblaze Personal Backup)
 
-For full protection against device failure, theft, or ransomware, [Business Name] uses **Backblaze Personal Backup** as a continuous, whole-computer backup:
+For full protection against device failure, theft, or ransomware, SC Partnering Pty Ltd (trading as Future Forward Planning) uses **Backblaze Personal Backup** as a continuous, whole-computer backup:
 
 - **Cost:** ~$99 USD/year (~$155 AUD/year as of 2026) — approximately $13/month
 - **Storage:** Unlimited computer backup
@@ -1551,7 +1609,7 @@ For full protection against device failure, theft, or ransomware, [Business Name
 
 > **Free alternative:** iDrive offers a free tier of 10 GB, which can serve as a secondary backup for critical files only (e.g., Qualifications Register, Conflict of Interest Register, Incident Register). iDrive is available at idrive.com and supports Australian data storage via US-based servers (note: cross-border storage — disclose in Privacy Policy if applicable).
 
-**Backup testing:** On the **first business day of each quarter**, [Business Name] will:
+**Backup testing:** On the **first business day of each quarter**, SC Partnering Pty Ltd (trading as Future Forward Planning) will:
 1. Confirm Google Drive sync is current and files are accessible via a second device or browser.
 2. Confirm Backblaze is active and the last successful backup was within the prior 24 hours.
 3. Restore one test file from Backblaze to confirm recovery function works.
@@ -1566,7 +1624,7 @@ Record the test result in the Governance log (Policy PM-POL-017 management revie
 
 - Staff must not click links or open attachments in unsolicited emails, particularly those requesting login credentials or urgent payment actions.
 - Suspicious emails must be reported to [CUSTOMISE: Director] immediately.
-- [Business Name] will never request payment account changes via email without verbal confirmation.
+- SC Partnering Pty Ltd (trading as Future Forward Planning) will never request payment account changes via email without verbal confirmation.
 - Providers seeking to change their payment bank account details must do so via a verified phone call in addition to written confirmation, before the change is actioned.
 
 > **Critical note on bank account fraud:** A common fraud vector is a provider sending an email requesting a change to their bank account details, with the email appearing to come from the real provider. Always verify bank account changes by calling the provider's known telephone number before updating any payment details.
@@ -1583,13 +1641,13 @@ In the event of a suspected cyber security incident (e.g., ransomware, data brea
 2. Notify the Director [CUSTOMISE: within X hours].
 3. Preserve all evidence (do not delete files or wipe systems without expert advice).
 4. Engage a cyber security professional to assist with containment and recovery.
-5. Assess whether a notifiable data breach has occurred (see Privacy Policy PM-POL-001, Section 9).
+5. Assess whether a notifiable data breach has occurred (see Privacy Policy PM-POL-005, Section 9).
 6. Notify the NDIS Commission if participant data may have been compromised.
 7. Document the incident in the Incident Register.
 
 ## 10. Annual Review
 
-The cyber security posture of [Business Name] will be reviewed annually, or following any significant system change or security incident.
+The cyber security posture of SC Partnering Pty Ltd (trading as Future Forward Planning) will be reviewed annually, or following any significant system change or security incident.
 
 ---
 
@@ -1610,26 +1668,32 @@ The cyber security posture of [Business Name] will be reviewed annually, or foll
 # POLICY 16: Marketing, Referrals and Anti-Inducement Policy
 
 **Policy Number:** PM-POL-016
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-To ensure that [Business Name] markets its services honestly, ethically, and in compliance with the NDIS Code of Conduct and the NDIS Amendment (Integrity and Safeguarding) Act 2025, which prohibits predatory, misleading, and inducement-based marketing practices in the NDIS.
+To ensure that SC Partnering Pty Ltd (trading as Future Forward Planning) markets its services honestly, ethically, and in compliance with the NDIS Code of Conduct and the NDIS Amendment (Integrity and Safeguarding) Act 2025, which prohibits predatory, misleading, and inducement-based marketing practices in the NDIS.
 
 ## 2. Scope
 
-This policy applies to all marketing, promotional, and referral activities of [Business Name], including in-person, online, social media, and printed materials.
+This policy applies to all marketing, promotional, and referral activities of SC Partnering Pty Ltd (trading as Future Forward Planning), including in-person, online, social media, and printed materials.
 
 ## 3. Prohibited Marketing Conduct
 
-Under the NDIS Code of Conduct and the NDIS Amendment (Integrity and Safeguarding) Act 2025, [Business Name] must not:
+Under the NDIS Code of Conduct and the NDIS Amendment (Integrity and Safeguarding) Act 2025, SC Partnering Pty Ltd (trading as Future Forward Planning) must not:
 
 - Use misleading or deceptive representations about its services, qualifications, or pricing.
 - Engage in high-pressure, predatory, or unsolicited contact with potential participants.
-- Offer cash, gift cards, free services, or other inducements to participants, their families, or their nominees in exchange for choosing [Business Name] as their plan manager.
-- Pay referral fees or commissions to support coordinators, support workers, or any other person in exchange for referring participants to [Business Name].
+- Offer cash, gift cards, free services, or other inducements to participants, their families, or their nominees in exchange for choosing SC Partnering Pty Ltd (trading as Future Forward Planning) as their plan manager.
+- Pay referral fees or commissions to support coordinators, support workers, or any other person in exchange for referring participants to SC Partnering Pty Ltd (trading as Future Forward Planning).
 - Receive referral fees or commissions from service providers in exchange for directing participants toward those providers.
 - Make claims about the quality or outcomes of plan management services that cannot be substantiated.
 - Promote services in a way that undermines a participant's trust in or relationship with the NDIA, their support coordinator, or other providers.
@@ -1638,7 +1702,7 @@ The NDIS Commission has powers under the 2025 Act to issue **anti-promotion orde
 
 ## 4. Acceptable Marketing Practices
 
-[Business Name] may promote its services through:
+SC Partnering Pty Ltd (trading as Future Forward Planning) may promote its services through:
 - A professional website describing services, qualifications, fees, and the plan management process.
 - Social media profiles (LinkedIn, Facebook, etc.) containing accurate, professional information about the business.
 - Participation in NDIS community events, expos, and information sessions.
@@ -1648,14 +1712,14 @@ The NDIS Commission has powers under the 2025 Act to issue **anti-promotion orde
 
 ## 5. Fee Transparency
 
-[Business Name] must be clear and upfront with participants about:
-- The plan management support item rate that [Business Name] claims from the participant's NDIS plan (this is the only fee — participants are not charged additional fees out of pocket).
+SC Partnering Pty Ltd (trading as Future Forward Planning) must be clear and upfront with participants about:
+- The plan management support item rate that SC Partnering Pty Ltd (trading as Future Forward Planning) claims from the participant's NDIS plan (this is the only fee — participants are not charged additional fees out of pocket).
 - The current NDIS price for plan management services (updated in the PAPL and claimed under the "Support Coordination" or "Improved Life Choices" support category).
 - Any services that fall outside the NDIS-funded scope and what that means for the participant.
 
 ## 6. Testimonials and Reviews
 
-Where [Business Name] uses participant testimonials or reviews in marketing:
+Where SC Partnering Pty Ltd (trading as Future Forward Planning) uses participant testimonials or reviews in marketing:
 - Testimonials must be genuine, attributed, and provided with the participant's informed, written consent.
 - Testimonials must not be altered, taken out of context, or used in a way that could mislead potential participants.
 - Consent forms must specify how and where the testimonial will be used and for how long.
@@ -1681,21 +1745,27 @@ This policy will be reviewed annually and updated to reflect any changes to NDIS
 # POLICY 17: Governance and Continuous Improvement Policy
 
 **Policy Number:** PM-POL-017
-**Effective Date:** [Date]
-**Review Date:** [Date + 1 year]
-**Owner:** [Your Name / Role]
+**Effective Date:** 15 May 2026
+**Review Date:** 15 May 2027
+**Owner:** Saran Likitkunawong — Director
+
+**Version Control:**
+
+| Version | Date | Approved By | Changes |
+|---------|------|-------------|---------|
+| 1.0 | 15 May 2026 | Saran Likitkunawong | Initial version |
 
 ## 1. Purpose
 
-To establish a governance framework that ensures [Business Name] operates ethically, accountably, and with a commitment to continuous improvement in the quality of plan management services delivered to participants.
+To establish a governance framework that ensures SC Partnering Pty Ltd (trading as Future Forward Planning) operates ethically, accountably, and with a commitment to continuous improvement in the quality of plan management services delivered to participants.
 
 ## 2. Scope
 
-This policy applies to all operations, decision-making, and management activities of [Business Name].
+This policy applies to all operations, decision-making, and management activities of SC Partnering Pty Ltd (trading as Future Forward Planning).
 
 ## 3. Governance Principles
 
-[Business Name] is committed to:
+SC Partnering Pty Ltd (trading as Future Forward Planning) is committed to:
 - **Accountability:** Clearly defined roles, responsibilities, and decision-making authority.
 - **Transparency:** Open and honest communication with participants, the NDIA, the NDIS Commission, and other stakeholders.
 - **Integrity:** Acting ethically and in the best interests of participants at all times.
@@ -1713,7 +1783,7 @@ All policies in this suite are:
 
 ## 5. Management Review
 
-[Business Name] conducts a management review [CUSTOMISE: e.g., annually, or six-monthly in the first year] that covers:
+SC Partnering Pty Ltd (trading as Future Forward Planning) conducts a management review [CUSTOMISE: e.g., annually, or six-monthly in the first year] that covers:
 - Review of the Incident Register (incidents, patterns, corrective actions)
 - Review of the Complaints Register (complaints, trends, resolutions)
 - Review of the Risk Register (risks, controls, residual ratings)
@@ -1727,7 +1797,7 @@ Management review findings and action items will be documented and tracked to co
 
 ## 6. Quality Indicators and Outcomes
 
-[Business Name] monitors the following quality indicators to assess service quality:
+SC Partnering Pty Ltd (trading as Future Forward Planning) monitors the following quality indicators to assess service quality:
 
 | Indicator | Target | Review Frequency |
 |-----------|--------|-----------------|
@@ -1740,7 +1810,7 @@ Management review findings and action items will be documented and tracked to co
 
 ## 7. Audit Preparation
 
-[Business Name] maintains ongoing audit readiness by ensuring all required documentation is current at all times:
+SC Partnering Pty Ltd (trading as Future Forward Planning) maintains ongoing audit readiness by ensuring all required documentation is current at all times:
 - All 17 policies reviewed and version-controlled
 - Incident Register, Complaints Register, Risk Register, and Conflict of Interest Register maintained and current
 - Worker Screening Register and Qualifications Register current
@@ -1748,11 +1818,11 @@ Management review findings and action items will be documented and tracked to co
 - Service agreements in place for all active participants
 - Insurance certificates current
 
-Prior to each audit, [Business Name] will conduct an internal self-assessment against the NDIS Verification Module Required Documentation checklist.
+Prior to each audit, SC Partnering Pty Ltd (trading as Future Forward Planning) will conduct an internal self-assessment against the NDIS Verification Module Required Documentation checklist.
 
 ## 8. Stakeholder Engagement
 
-[Business Name] will:
+SC Partnering Pty Ltd (trading as Future Forward Planning) will:
 - Seek participant feedback at least annually (e.g., via a brief survey).
 - Act on feedback received and communicate changes to participants where relevant.
 - Remain informed of NDIS Commission regulatory updates by subscribing to the NDIS Commission provider newsletter and monitoring the NDIS Commission website.
@@ -1777,24 +1847,24 @@ The following documents are referenced in this policy suite and must be develope
 
 | Document | Referenced In | Priority |
 |----------|--------------|---------|
-| Incident Report Form (Attachment A) | PM-POL-002 | High — required for audit |
-| Incident Register | PM-POL-002, PM-POL-017 | High — required for audit |
-| Complaints Register | PM-POL-003, PM-POL-017 | High — required for audit |
-| Risk Register | PM-POL-004, PM-POL-017 | High — required for audit |
+| Incident Report Form (Attachment A) | PM-POL-001 | High — required for audit |
+| Incident Register | PM-POL-001, PM-POL-017 | High — required for audit |
+| Complaints Register | PM-POL-002, PM-POL-017 | High — required for audit |
+| Risk Register | PM-POL-003, PM-POL-017 | High — required for audit |
 | Conflict of Interest Register | PM-POL-012 | High — required for audit |
 | Conflict of Interest Declaration Form | PM-POL-012 | High — required for audit |
-| Worker Screening Register | PM-POL-005 | High — required for audit |
+| Worker Screening Register | PM-POL-004 | High — required for audit |
 | Worker Qualifications Register | PM-POL-013 | High — required for audit |
 | Gifts and Benefits Register | PM-POL-006, PM-POL-012 | Medium |
-| Business Continuity Plan | PM-POL-009, PM-POL-004 | High |
+| Business Continuity Plan | PM-POL-009, PM-POL-003 | High |
 | Participant Service Agreement Template | PM-POL-010, PM-POL-008 | High — required before first participant |
 | Participant Welcome Pack / Onboarding Information | PM-POL-008 | High — required before first participant |
 | Invoice Verification Checklist | PM-POL-010, PM-POL-011 | High |
 | Provider Onboarding Checklist | PM-POL-010, PM-POL-011 | High |
-| Staff Induction Checklist | PM-POL-005 | High |
+| Staff Induction Checklist | PM-POL-004 | High |
 | Code of Conduct Declaration Form | PM-POL-006 | High |
 | Whistleblower Reporting Form | PM-POL-014 | Medium |
-| Data Breach Response Checklist | PM-POL-001 | High |
+| Data Breach Response Checklist | PM-POL-005 | High |
 
 ---
 
@@ -1857,25 +1927,25 @@ This case study traces a fictional participant through the complete plan managem
 | Improved Life Choices — Plan Management | $1,900 | $158 |
 | **Total** | **$56,200** | **$4,683** |
 
-> Note: Plan management fees (~$233 setup + ~$124.57/month) are claimed from the Improved Life Choices budget by [Business Name]. Check current rates against the NDIS Pricing Arrangements and Price Limits (PAPL) at the time of Jane's plan commencement.
+> Note: Plan management fees (~$233 setup + ~$124.57/month) are claimed from the Improved Life Choices budget by SC Partnering Pty Ltd (trading as Future Forward Planning). Check current rates against the NDIS Pricing Arrangements and Price Limits (PAPL) at the time of Jane's plan commencement.
 
 ---
 
 ### A1.1 — Onboarding Workflow (Month 0)
 
-**How this was initiated:** Jane's support coordinator referred her to [Business Name]. Jane called to express interest.
+**How this was initiated:** Jane's support coordinator referred her to SC Partnering Pty Ltd (trading as Future Forward Planning). Jane called to express interest.
 
 | Step | Action | Policy Reference | Evidence Created |
 |------|--------|-----------------|-----------------|
 | 1 | Initial enquiry call — explain plan management, fees, and service model | PM-POL-016 (marketing) | Call log note |
-| 2 | Send welcome email with Service Agreement, Privacy Policy summary, and Participant Welcome Pack | PM-POL-008, PM-POL-001 | Email + timestamp |
+| 2 | Send welcome email with Service Agreement, Privacy Policy summary, and Participant Welcome Pack | PM-POL-008, PM-POL-005 | Email + timestamp |
 | 3 | Jane reviews and signs Service Agreement | PM-POL-010 | Signed agreement on file |
-| 4 | Obtain Jane's consent to access her NDIS plan via PACE portal (consent recorded in Service Agreement) | PM-POL-001 (APP 3, APP 5) | Signed service agreement |
+| 4 | Obtain Jane's consent to access her NDIS plan via PACE portal (consent recorded in Service Agreement) | PM-POL-005 (APP 3, APP 5) | Signed service agreement |
 | 5 | Locate Jane's plan in PACE portal, confirm budget categories and amounts | PM-POL-010 | PACE access log |
 | 6 | Add Jane to participant register in plan management software | PM-POL-007 | Software record |
 | 7 | Set up Jane's budget tracking spreadsheet / software record | PM-POL-010 | Budget record |
 | 8 | Submit plan management setup fee claim to PACE ($233.45 — verify current PAPL rate) | PM-POL-010 | PACE claim reference |
-| 9 | Send Jane a confirmation email: "You are now active with [Business Name], here's how to submit invoices" | PM-POL-008 | Email + timestamp |
+| 9 | Send Jane a confirmation email: "You are now active with SC Partnering Pty Ltd (trading as Future Forward Planning), here's how to submit invoices" | PM-POL-008 | Email + timestamp |
 | 10 | Record Jane's preferred invoice approval tier (Tier 1 auto-process for known providers) | PM-POL-010 | Service agreement / software record |
 
 **Auditor note:** At the audit, you should be able to show a completed service agreement, an onboarding checklist ticked off, and a screenshot or record showing Jane's plan loaded in your system.
@@ -1951,16 +2021,16 @@ By February, Jane's Improved Daily Living budget has been used heavily due to an
 >
 > *Please contact us if you have any questions.*
 
-- Jane responds that she is aware and wishes to request a plan review. [Business Name] records this communication and notes the alert was sent.
+- Jane responds that she is aware and wishes to request a plan review. SC Partnering Pty Ltd (trading as Future Forward Planning) records this communication and notes the alert was sent.
 - Future invoices from Improved Daily Living providers will continue to be processed, but Jane is notified of each remaining transaction until the budget is exhausted or a new plan is in place.
 
 ---
 
 ### A1.4 — Incident Scenario: Incorrect Payment (Month 5: November 2026)
 
-**What happened:** [Business Name] discovers it submitted a duplicate claim for ABC Support Co's October invoice (PACE claim submitted twice due to a system error — same invoice reference, same amount).
+**What happened:** SC Partnering Pty Ltd (trading as Future Forward Planning) discovers it submitted a duplicate claim for ABC Support Co's October invoice (PACE claim submitted twice due to a system error — same invoice reference, same amount).
 
-**Response (Policy PM-POL-002):**
+**Response (Policy PM-POL-001):**
 
 | Step | Action | Date | Outcome |
 |------|--------|------|---------|
@@ -1979,9 +2049,9 @@ By February, Jane's Improved Daily Living budget has been used heavily due to an
 
 ### A1.5 — Complaint Scenario (Month 7: January 2027)
 
-**What happened:** Jane contacts [Business Name] unhappy that her October statement arrived 10 days late.
+**What happened:** Jane contacts SC Partnering Pty Ltd (trading as Future Forward Planning) unhappy that her October statement arrived 10 days late.
 
-**Response (Policy PM-POL-003):**
+**Response (Policy PM-POL-002):**
 
 | Step | Action | Date |
 |------|--------|------|
@@ -2003,7 +2073,7 @@ Jane decides to switch to a different plan manager at her plan renewal.
 | 1 | Jane provides notice per service agreement | PM-POL-010 |
 | 2 | Process all outstanding invoices and finalise budget to plan end date | PM-POL-010 |
 | 3 | Generate final participant statement showing all transactions for the full plan year | PM-POL-007 |
-| 4 | Remove [Business Name] as plan manager from PACE portal at Jane's instruction | PM-POL-010 |
+| 4 | Remove SC Partnering Pty Ltd (trading as Future Forward Planning) as plan manager from PACE portal at Jane's instruction | PM-POL-010 |
 | 5 | Send Jane a copy of all records she is entitled to, including 12 months of statements | PM-POL-008 |
 | 6 | Retain all Jane's records for 7 years from 30 June 2027 (see PM-POL-007) | PM-POL-007 |
 | 7 | Send Jane an exit satisfaction survey (optional but demonstrates continuous improvement) | PM-POL-017 |
@@ -2025,7 +2095,7 @@ The following scenarios demonstrate how the Participant Invoice Approval Framewo
 | **7 — Bank account change** | Provider email requests change of payment BSB/Account | Policy: verify by phone before any change | Call known provider number to verbally confirm; document confirmation; then update if confirmed | Tier 3 |
 | **8 — Invoice for wrong category** | Provider submits invoice under "Improved Daily Living" but service is personal care (Core) | Support category mismatch | Contact provider to resubmit under correct category; do not process until corrected | N/A — Returned |
 | **9 — Provider on banning register** | Provider submits invoice; NDIS Commission banning register check reveals provider is deregistered | Banning register flag | Do not process; notify participant; raise as incident (INC register); report to NDIS Commission | Incident |
-| **10 — Participant disputes invoice** | Participant contacts [Business Name] to say they did not receive the service on the invoice | Participant dispute received | Place hold on invoice; investigate; do not pay while disputed; document in incident register if not resolved | Hold / Incident |
+| **10 — Participant disputes invoice** | Participant contacts SC Partnering Pty Ltd (trading as Future Forward Planning) to say they did not receive the service on the invoice | Participant dispute received | Place hold on invoice; investigate; do not pay while disputed; document in incident register if not resolved | Hold / Incident |
 
 ---
 
@@ -2035,9 +2105,9 @@ The following scenarios demonstrate how the Participant Invoice Approval Framewo
 
 ---
 
-**[Business Name]**
+**SC Partnering Pty Ltd (trading as Future Forward Planning)**
 **NDIS Plan Management Statement**
-ABN: 20 931 095 007
+ABN: 24 697 821 408
 
 **Participant:** Jane Smith
 **NDIS Number:** 43XXXXXXX
@@ -2078,7 +2148,7 @@ Plan Budget: $1,900.00 | Previously Used: $482.43 | This Month: $124.57 | **Rema
 
 | Date | Provider | Description | Amount | Claim Ref |
 |------|---------|-------------|--------|-----------|
-| 01/09/2026 | [Business Name] | Plan management monthly fee — Sep 2026 | $124.57 | PAC-2026-09-00101 |
+| 01/09/2026 | SC Partnering Pty Ltd (trading as Future Forward Planning) | Plan management monthly fee — Sep 2026 | $124.57 | PAC-2026-09-00101 |
 
 ---
 
@@ -2329,11 +2399,11 @@ These examples show auditors what a functioning register looks like. Replace wit
 Use this checklist to ensure your documentation package is complete before sending to your approved quality auditor.
 
 ### Core Policy Documents
-- [ ] PM-POL-001 Privacy and Confidentiality Policy (v2.0+)
-- [ ] PM-POL-002 Incident Management Policy
-- [ ] PM-POL-003 Complaints and Feedback Management Policy
-- [ ] PM-POL-004 Risk Management Policy
-- [ ] PM-POL-005 HR and Worker Screening Policy
+- [ ] PM-POL-005 Privacy and Confidentiality Policy (v2.0+)
+- [ ] PM-POL-001 Incident Management Policy
+- [ ] PM-POL-002 Complaints and Feedback Management Policy
+- [ ] PM-POL-003 Risk Management Policy
+- [ ] PM-POL-004 HR and Worker Screening Policy
 - [ ] PM-POL-006 Code of Conduct Policy
 - [ ] PM-POL-007 Record Keeping and Information Management Policy
 - [ ] PM-POL-008 Participant Rights and Responsibilities Policy

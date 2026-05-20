@@ -1,0 +1,14 @@
+{
+  "name": "ffp",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:marketing": "npm run dev -w apps/marketing",
+    "build:marketing": "npm run build -w apps/marketing",
+    "lint:marketing": "npm run lint -w apps/marketing"
+  }
+}

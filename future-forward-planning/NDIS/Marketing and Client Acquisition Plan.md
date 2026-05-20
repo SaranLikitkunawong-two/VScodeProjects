@@ -1,7 +1,7 @@
 # NDIS Plan Management — Marketing and Client Acquisition Plan
 
 **Business:** [Business Name]
-**ABN:** 20 931 095 007
+**ABN:** 24 697 821 408
 **Location:** Melbourne, Victoria
 **Date:** April 2026
 **Version:** 1.0
